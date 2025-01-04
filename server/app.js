@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser'
 
 import fs from 'fs'
 
+import userRouter from './routes/user-routes.js'
+
 
 const app = express()
 
@@ -14,6 +16,12 @@ app.use(cookieParser())
 
 const logStream = fs.createWriteStream('./access.log' ,{flags: 'a'})
 app.use(morgan('combined', {stream: logStream}))
+
+
+
+ //routing api middleware
+app.use('/api/v1', userRouter)
+
 
 
 

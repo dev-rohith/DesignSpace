@@ -10,7 +10,7 @@ const userSchema = new Schema({
     type: String,
     unique: true,
   },
-  passoword: String,
+  password: String,
   firstName: String,
   lastName: String,
   profilePicture: String,
