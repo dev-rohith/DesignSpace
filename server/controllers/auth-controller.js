@@ -7,6 +7,7 @@ import catchAsync from "../utils/catch-async-util.js";
 const authController = {};
 
 
+// authController.googleAuth = ()
 
 authController.signup = catchAsync(async (req, res, next) => {
   
