@@ -4,13 +4,15 @@ import bcryptjs from "bcryptjs";
 const userSchema = new Schema({
   googleId: {
     type: String,
-    unique: true,
   },
   email: {
     type: String,
     unique: true,
   },
-  password: String,
+  password: {
+    type: String,
+    select: false,
+  },
   firstName: String,
   lastName: String,
   profilePicture: String,
@@ -20,12 +22,22 @@ const userSchema = new Schema({
 
   role: {
     type: String,
-    enum: ["super-admin", "designer", "space-executer", "client"],
+    enum: ["admin", "designer", "carpenter", "client"],
+    default: "client",
   },
   status: {
     type: String,
     enum: ["active", "inactive", "suspended"],
   },
+  devices: [
+    {
+      deviceId: String,
+      name: String,
+      lastLogin: Date,
+      refreshToken: String,
+    },
+  ],
+  maxDevices: { type: Number, default: 3 },
 
   subscription: {
     plan: {
@@ -38,7 +50,6 @@ const userSchema = new Schema({
     lastPaymentDate: { type: Date, default: null },
   },
 
-
   otp: Number,
   otp_chances: {
     type: Number,
@@ -46,7 +57,6 @@ const userSchema = new Schema({
     max: 3,
     min: 1,
   },
-  passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
 });
@@ -60,12 +70,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.pre("save", function (next) {
-  if (!this.isModified("password") || this.isNew) return next();
-
-  this.passwordChangedAt = Date.now() - 1000;
-  next();
-});
 
 //mongoose userdefined methods
 
@@ -76,19 +80,6 @@ userSchema.methods.correctPassword = async function (
   return await bcryptjs.compare(candidatePassword, userPassword);
 };
 
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
-  if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(
-      this.passwordChangedAt.getTime() / 1000,
-      10
-    );
-
-    return JWTTimestamp < changedTimestamp;
-  }
-
-  // False means NOT changed
-  return false;
-};
 
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
