@@ -41,6 +41,6 @@ router.put('/resetPassword/:token', authController.resetPassword)
 
 router.use(authMiddleWare.protect)
 
-router.put('/updatePassword',  userCtrl.updatePassword)
+router.put('/updatePassword',  userCtrl.updatePassword)  // currentPassword, newPassword
 
 export default router

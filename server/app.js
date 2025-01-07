@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 
 const logStream = fs.createWriteStream("./access.log", { flags: "a" });
-app.use(morgan("combined", { stream: logStream }));
+app.use(morgan("dev", { stream: logStream }));
 
 //routing api middleware
 app.use("/api/v1", userRouter);
