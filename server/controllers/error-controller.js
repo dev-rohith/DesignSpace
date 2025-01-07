@@ -1,7 +1,6 @@
 
    //Error in developemnt environment to track easily while api testing
 const sendDevError = (err,res) => {
-    console.log(err.message)
       return res.status(err.statusCode || 500).json({
         status: err.status,
         error: err,
@@ -20,7 +19,6 @@ const sendProdError = (err,res) => {
         })
     }
 
-    console.log(err)
     return res.status(500).json({
         status: 'error',
         message: 'Something went Wrong please try again later!'

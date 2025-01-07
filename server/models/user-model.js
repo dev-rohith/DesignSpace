@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import bcryptjs from "bcryptjs";
+import crypto from "crypto";
 
 const userSchema = new Schema({
   googleId: {
@@ -22,13 +23,23 @@ const userSchema = new Schema({
 
   role: {
     type: String,
-    enum: ["admin", "designer", "carpenter", "client"],
+    enum: ["admin", "designer", "associate", "client"],
     default: "client",
   },
   status: {
     type: String,
     enum: ["active", "inactive", "suspended"],
   },
+  recent_works: [String],
+  average_rating: Number,
+  subline: String,
+  country: String,
+  laguages_known: [String],
+  proffesional_info: {
+    type: Schema.Types.ObjectId,
+    ref: "ProffesionalInfo",
+  },
+  location:{Number},
   devices: [
     {
       deviceId: String,
@@ -68,7 +79,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-
 //mongoose userdefined methods
 
 userSchema.methods.correctPassword = async function (
@@ -77,7 +87,6 @@ userSchema.methods.correctPassword = async function (
 ) {
   return await bcryptjs.compare(candidatePassword, userPassword);
 };
-
 
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");

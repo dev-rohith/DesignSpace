@@ -1,5 +1,9 @@
 import { UAParser } from "ua-parser-js";
 import { v4 as uuidv4 } from "uuid";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import crypto from "crypto";
+
 import User from "../models/user-model.js";
 import { TokenManager } from "../services/redis-service.js";
 import { Token } from "../services/token-service.js";
@@ -8,8 +12,69 @@ import catchAsync from "../utils/catch-async-util.js";
 
 const authController = {};
 
-// authController.googleAuth = ()
+//passport middileware
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "auth/google/callback",
+    },
+    async (_, __, profile, done) => {
+      try {
+        let user = await User.find({ googleId: profile.id });
 
+        if (!user) {
+          user = await User.create({
+            email: profile.emails[0].value,
+            googleId: profile.id,
+          });
+        }
+
+        return done(null, user);
+      } catch (error) {
+        return done(error, null);
+      }
+    }
+  )
+);
+
+//need to work on this
+authController.googleLoginSuccess = catchAsync(async (req, res) => {
+  // Handle successful authentication
+  const deviceId = uuidv4();
+  const accessToken = jwt.sign(
+    { userId: req.user._id, deviceId },
+    process.env.JWT_SECRET,
+    { expiresIn: "15m" }
+  );
+
+  const refreshToken = jwt.sign(
+    { userId: req.user._id, deviceId },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: "30d" }
+  );
+
+  // Store device info
+  req.user.devices.push({
+    deviceId,
+    name: "Google OAuth Login",
+    lastLogin: new Date(),
+    refreshToken,
+  });
+  await req.user.save();
+
+  // Store refresh token in Redis
+  await TokenManager.storeRefreshToken(req.user._id, deviceId, refreshToken);
+
+  // Redirect to frontend with tokens
+  res.redirect(
+    `${process.env.FRONTEND_URL}/auth/callback?` +
+      `accessToken=${accessToken}&refreshToken=${refreshToken}&deviceId=${deviceId}`
+  );
+});
+
+//normal login flow
 authController.signup = catchAsync(async (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
 
@@ -62,7 +127,11 @@ authController.login = catchAsync(async (req, res, next) => {
 
   const accessToken = Token.generateAccessToken(user._id, user.role);
 
-  const refreshToken = Token.generateRefreshToken(user._id,user.role, deviceId);
+  const refreshToken = Token.generateRefreshToken(
+    user._id,
+    user.role,
+    deviceId
+  );
 
   await TokenManager.storeRefreshToken(user._id, deviceId, refreshToken);
 
@@ -96,10 +165,11 @@ authController.forgotPassword = catchAsync(async (req, res, next) => {
 
     // await new Email(user, resetURL).sendPasswordReset();
 
-    res.status(200).json({
-      status: "success",
-      message: "Token sent to email!",
-    });
+    // res.status(200).json({
+    //   status: "success",
+    //   message: "Token sent to email!",
+    // });
+    res.json({ resetToken });
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
@@ -122,22 +192,25 @@ authController.resetPassword = catchAsync(async (req, res, next) => {
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
-    passwordResetExpires: { $gt: Date.now() },
   });
 
   // 2) If token has not expired, and there is user, set the new password
   if (!user) {
     return next(new AppError("Token is invalid or has expired", 400));
   }
+  user.devices.forEach(async (device) => {
+    await TokenManager.removeRefreshToken(user._id, device.deviceId);
+  });
+
   user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
-  user.passwordResetExpires = undefined;
   await user.save();
 
   // 3) Update changedPasswordAt property for the user
   // 4) Log the user in, send JWT
-  createSendToken(user, 200, req, res);
+  const token = Token.generateAccessToken(user._id, user.role);
+
+  res.json({ token });
 });
 
 export default authController;

@@ -1,18 +1,28 @@
-import { Schema, model } from "mongoose";
-
+import { Schema,model } from "mongoose";
 const projectSchema = new Schema({
   name: String,
   description: String,
   clientId: { type: ObjectId, ref: "User" },
   designerId: { type: ObjectId, ref: "User" },
+  location: {
+    address: String,
+    coordinates: {
+      latitude: Number,
+      longitude: Number,
+    },
+  },
   status: {
     type: String,
-    enum: ["draft", "pending", "in_progress", "review", "completed"],
+    enum: ["draft", "pending", "in_progress", "review", "completed"], 
   },
   startDate: Date,
   deadline: Date,
   completedDate: Date,
   budget: Number,
+  isPaid: {
+    type: Boolean,
+    default: false,
+  },
   files: [
     {
       name: String,
@@ -21,13 +31,19 @@ const projectSchema = new Schema({
       uploadedAt: Date,
     },
   ],
+  beforePricture: String,
+  afterPicture: String,
   milestones: [
     {
       title: String,
       description: String,
-      dueDate: Date,
       status: String,
-      completedAt: Date,
+      completedAt: Date, //milestone reached at
     },
   ],
 });
+
+
+const Project = model("Project", projectSchema);
+
+export default Project;

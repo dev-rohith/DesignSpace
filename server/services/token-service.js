@@ -1,23 +1,21 @@
 import jwt from "jsonwebtoken";
 
+const ACCESS_TOKEN_EXPIRE = process.env.ACCESS_TOKEN_EXPIRE;
+const REFRESH_TOKEN_EXPIRE = process.env.REFRESH_TOKEN_EXPIRE;
+
 export const Token = {
   generateAccessToken(userId, userRole) {
-    return jwt.sign(
-      { userId, userRole },
-      process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: 30,
-      }
-    );
+    return jwt.sign({ userId, userRole }, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: ACCESS_TOKEN_EXPIRE * 60,
+    });
   },
   generateRefreshToken(userId, userRole, deviceId) {
     return jwt.sign(
       { userId, userRole, deviceId },
       process.env.REFRESH_TOKEN_SECRET,
       {
-        expiresIn: 49,
+        expiresIn: REFRESH_TOKEN_EXPIRE * 24 * 60 * 60, // Expire in days
       }
     );
   },
-  
-}
+};

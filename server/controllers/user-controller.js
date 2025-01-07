@@ -10,6 +10,11 @@ userCtrl.getUser = catchAsync(async(req,res,next) => {
     // const user = User.find(req?.user.id)
 })
 
+userCtrl.updatePassword = catchAsync(async(req,res,next) => {
+    const user = await User.findById(req.user.id).select('+password')
+
+})
+
 
 
 export default userCtrl
