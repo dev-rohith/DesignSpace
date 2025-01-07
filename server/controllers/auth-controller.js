@@ -21,7 +21,9 @@ authController.signup = catchAsync(async (req, res, next) => {
 
 authController.login = catchAsync(async (req, res, next) => {
   const {email,passowrd} = req.body
-  const user = 
+  const user = await User.findOne({email})
+  if(!user) return next(new AppError('user not found try to signup',404))
+  
 });
 
 authController.forgotPassword = catchAsync(async (req, res, next) => {
