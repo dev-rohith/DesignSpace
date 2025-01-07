@@ -1,4 +1,8 @@
+import { UAParser } from "ua-parser-js";
+import { v4 as uuidv4 } from "uuid";
 import User from "../models/user-model.js";
+import { TokenManager } from "../services/redis-service.js";
+import { Token } from "../services/token-service.js";
 import AppError from "../utils/app-error-util.js";
 import catchAsync from "../utils/catch-async-util.js";
 
@@ -8,7 +12,7 @@ const authController = {};
 
 authController.signup = catchAsync(async (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
-  
+
   const user = await User.create({
     firstName,
     lastName,
@@ -16,14 +20,59 @@ authController.signup = catchAsync(async (req, res, next) => {
     password,
   });
   res.json(user);
-
 });
 
 authController.login = catchAsync(async (req, res, next) => {
-  const {email,passowrd} = req.body
-  const user = await User.findOne({email})
-  if(!user) return next(new AppError('user not found try to signup',404))
-  
+  const cookie = req.cookies;
+  const { email, password } = req.body;
+  const userAgent =
+    req.get["User-Agent"] ||
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/537.36";
+
+  const parser = new UAParser();
+  const { device, os, browser } = parser.setUA(userAgent).getResult();
+
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) return next(new AppError("user not found try to signup", 404));
+
+  if (!(await user.correctPassword(password, user.password))) {
+    return next(new AppError("invalid credentials", 403));
+  }
+
+  const deviceId = uuidv4();
+
+  if (user.devices.length >= user.maxDevices) {
+    return next(
+      new AppError("device limit remove logout a device to login", 400)
+    );
+  } else {
+    user.devices.push({
+      deviceId: deviceId, //this should be removed in logout
+      deviceName: device?.vendor || browser?.name || os?.name || "unkown",
+    });
+
+    if (user.lastActive.length >= 2) {
+      user.lastActive.shift();
+      user.lastActive.push(Date.now());
+    } else {
+      user.lastActive.push(Date.now());
+    }
+  }
+
+  const accessToken = Token.generateAccessToken(user._id, user.role);
+
+  const refreshToken = Token.generateRefreshToken(user._id,user.role, deviceId);
+
+  await TokenManager.storeRefreshToken(user._id, deviceId, refreshToken);
+
+  res.cookie("jwt", refreshToken, { httpOnly: true });
+
+  await user.save();
+
+  res.json({
+    accessToken: accessToken,
+  });
 });
 
 authController.forgotPassword = catchAsync(async (req, res, next) => {
@@ -90,17 +139,5 @@ authController.resetPassword = catchAsync(async (req, res, next) => {
   // 4) Log the user in, send JWT
   createSendToken(user, 200, req, res);
 });
-
-authController.protect = catchAsync(async (req, res, next) => {});
-
-authController.authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return next(
-        new AppError("You dont have permission to perform this action", 403)
-      );
-    }
-  };
-};
 
 export default authController;

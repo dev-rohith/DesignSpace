@@ -19,8 +19,8 @@ import connectRedis from "./config/redis-config.js";
   // database connection
 connectDB()
 
-// connectRedis()
 // redis connection
+connectRedis()
 
 
 const server = createServer(app)

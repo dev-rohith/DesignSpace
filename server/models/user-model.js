@@ -16,7 +16,7 @@ const userSchema = new Schema({
   firstName: String,
   lastName: String,
   profilePicture: String,
-  lastActive: Date,
+  lastActive: [Date],
   phoneNumber: String,
   isVerified: Boolean,
 
@@ -32,9 +32,7 @@ const userSchema = new Schema({
   devices: [
     {
       deviceId: String,
-      name: String,
-      lastLogin: Date,
-      refreshToken: String,
+      deviceName: String,
     },
   ],
   maxDevices: { type: Number, default: 3 },
