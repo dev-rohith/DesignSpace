@@ -94,8 +94,30 @@ authController.login = catchAsync(async (req, res, next) => {
     req.get["User-Agent"] ||
     "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/537.36";
 
+    const forwardedIps = req.headers['x-forwarded-for'];
+
+  const ipAddress = forwardedIps 
+    ? forwardedIps.split(',')[0].trim()  
+    : req.ip; 
+
   const parser = new UAParser();
   const { device, os, browser } = parser.setUA(userAgent).getResult();
+
+  var geoip = require('geoip-lite');
+
+var ip = "207.97.227.239";
+var geo = geoip.lookup(ip);
+
+console.log(geo);
+{ range: [ 3479298048, 3479300095 ],
+  country: 'US',
+  region: 'TX',
+  eu: '0',
+  timezone: 'America/Chicago',
+  city: 'San Antonio',
+  ll: [ 29.4969, -98.4032 ],
+  metro: 641,
+  area: 1000 }
 
   const user = await User.findOne({ email }).select("+password");
 

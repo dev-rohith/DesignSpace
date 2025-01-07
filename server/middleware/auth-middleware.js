@@ -7,6 +7,8 @@ import { Token } from "../services/token-service.js";
 
 const authMiddleWare = {};
 
+
+//protect middleware
 authMiddleWare.protect = catchAsync(async (req, res, next) => {
   const accessToken = req.headers["authorization"];
   if (!accessToken) return next(new AppError("token is required", 400));
@@ -17,6 +19,7 @@ authMiddleWare.protect = catchAsync(async (req, res, next) => {
   });
 });
 
+//refresh token rotation
 authMiddleWare.refreshToken_rotation = catchAsync(async (req, res, next) => {
   const cookie = req.cookies;
   if (!cookie?.jwt) return next(new AppError("token is required", 400));
@@ -66,8 +69,7 @@ authMiddleWare.refreshToken_rotation = catchAsync(async (req, res, next) => {
   );
 });
 
-
-
+//authorize middleware
 authMiddleWare.authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -75,6 +77,7 @@ authMiddleWare.authorize = (...roles) => {
         new AppError("You dont have permission to perform this action", 403)
       );
     }
+    next();
   };
 };
 

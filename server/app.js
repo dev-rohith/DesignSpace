@@ -23,6 +23,8 @@ app.use(morgan("dev", { stream: logStream }));
 //routing api middleware
 app.use("/api/v1", userRouter);
 
+
+
 app.use(globalErrorHandler);
 
 export default app;
