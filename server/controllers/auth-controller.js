@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import crypto from "crypto";
-import geoip from "geoip-lite";
+import jwt from "jsonwebtoken";
 
 import User from "../models/user-model.js";
 import { TokenManager } from "../services/redis-service.js";
@@ -77,7 +77,7 @@ authController.googleLoginSuccess = catchAsync(async (req, res) => {
 
 //normal login flow
 authController.signup = catchAsync(async (req, res, next) => {
-  const { firstName, lastName, email, password, requestedRole } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
   const user = await User.create({
     firstName,
@@ -86,15 +86,8 @@ authController.signup = catchAsync(async (req, res, next) => {
     password,
   });
   user.save();
-  if (["designer", "client"].includes(requestedRole)) {
-    user.role = requestedRole;
-    user.save();
-    return res.json({
-      message: "application sent successfully, please wait for approval",
-    });
-  }
 
-  res.json({ message: "registration successful, please login" });
+  res.json({ message: "sucessfully registered" });
 });
 
 authController.login = catchAsync(async (req, res, next) => {
@@ -111,12 +104,11 @@ authController.login = catchAsync(async (req, res, next) => {
       cookie.jwt,
       process.env.REFRESH_TOKEN_SECRET,
       async (err, user) => {
-        if (!err)
-          await TokenManager.removeRefreshToken(
-            req.user._id,
-            req.user.deviceId
-          );
+        console.log(user);
         res.clearCookie("jwt");
+        if (!err) {
+          await TokenManager.removeRefreshToken(user._id, user.deviceId);
+        }
       }
     );
   }
@@ -237,6 +229,7 @@ authController.resetPassword = catchAsync(async (req, res, next) => {
   //reseting the functionality
   user.password = req.body.password;
   user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
   await user.save();
 
   // Login in the user and send accessToken

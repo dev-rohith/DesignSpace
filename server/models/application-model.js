@@ -21,7 +21,7 @@ const applicationSchema = new Schema({
   },
   approvalDate: Date,
 });
-
+  
 const Application = model("Application", applicationSchema);
 
 export default Application;
