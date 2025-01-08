@@ -1,4 +1,5 @@
 import { Schema,model } from "mongoose";
+
 const projectSchema = new Schema({
   name: String,
   description: String,
@@ -14,6 +15,10 @@ const projectSchema = new Schema({
   status: {
     type: String,
     enum: ["draft", "pending", "in_progress", "review", "completed"], 
+  },
+  minimumDays: {
+    type: Number,
+    select: false
   },
   startDate: Date,
   deadline: Date,

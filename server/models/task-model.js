@@ -1,12 +1,11 @@
 import { Schema, model } from "mongoose";
 
 const taskSchema = new Schema({
-    _id: ObjectId,
-    projectId: { type: ObjectId, ref: "Project" },
+    project: { type: ObjectId, ref: "Project" },
     title: String,
     description: String,
-    assignedTo: { type: ObjectId, ref: "User" },
-    assignedBy: { type: ObjectId, ref: "User" },
+    createdBy: { type: ObjectId, ref: "User" },
+    acceptedBy: { type: ObjectId, ref: "User" },
     status: {
       type: String,
       enum: ["pending", "in_progress", "completed", "blocked"],

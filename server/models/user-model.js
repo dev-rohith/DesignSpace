@@ -3,24 +3,16 @@ import bcryptjs from "bcryptjs";
 import crypto from "crypto";
 
 const userSchema = new Schema({
-  googleId: {
-    type: String,
-  },
-  email: {
-    type: String,
-    unique: true,
-  },
-  password: {
-    type: String,
-    select: false,
-  },
+  // Basic user information
+  googleId: String,
+  email: { type: String, unique: true },
+  password: { type: String, select: false },
   firstName: String,
   lastName: String,
   profilePicture: String,
-  lastActive: [Date],
-  phoneNumber: String,
   isVerified: Boolean,
-
+  
+  // Role and status
   role: {
     type: String,
     enum: ["admin", "designer", "associate", "client"],
@@ -29,25 +21,22 @@ const userSchema = new Schema({
   status: {
     type: String,
     enum: ["active", "inactive", "suspended"],
+    default: "active"
   },
-  recent_works: [String],
-  average_rating: Number,
-  subline: String,
+
+  // Basic profile info
   country: String,
-  laguages_known: [String],
-  proffesional_info: {
-    type: Schema.Types.ObjectId,
-    ref: "ProffesionalInfo",
-  },
-  location:{Number},
-  devices: [
-    {
-      deviceId: String,
-      deviceName: String,
-    },
-  ],
+  languages_known: [String],
+  lastActive: [Date],
+
+  // Device management
+  devices: [{
+    deviceId: String,
+    deviceName: String,
+  }],
   maxDevices: { type: Number, default: 3 },
 
+  // Subscription
   subscription: {
     plan: {
       type: String,
@@ -55,10 +44,11 @@ const userSchema = new Schema({
       default: "free",
     },
     active: { type: Boolean, default: false },
-    renewalDate: { type: Date, default: null },
-    lastPaymentDate: { type: Date, default: null },
+    renewalDate: Date,
+    lastPaymentDate: Date,
   },
 
+  // Security
   otp: Number,
   otp_chances: {
     type: Number,
@@ -68,7 +58,7 @@ const userSchema = new Schema({
   },
   passwordResetToken: String,
   passwordResetExpires: Date,
-});
+})
 
 //pre hooks
 
