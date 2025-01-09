@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import fs from "fs";
 
 import userRouter from "./routes/user-routes.js";
+import applicationRouter from "./routes/application-routes.js";
 import globalErrorHandler from "./controllers/error-controller.js";
 
 const app = express();
@@ -16,14 +17,12 @@ app.use(cors());
 
 app.use(cookieParser());
 
-
 const logStream = fs.createWriteStream("./access.log", { flags: "a" });
 app.use(morgan("dev", { stream: logStream }));
 
 //routing api middleware
 app.use("/api/v1", userRouter);
-
-
+app.use("/api/v1", applicationRouter);
 
 app.use(globalErrorHandler);
 

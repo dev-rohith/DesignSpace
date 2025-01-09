@@ -6,10 +6,11 @@ const applicationSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  requestId: String,  // Unique identifier for the application it was get by generated mail before application
+  requestId: String, // Unique identifier for the application it was get by generated mail before application
   status: {
-    type: String, 
+    type: String,
     enum: ["pending", "approved", "rejected"],
+    default: "pending",
   },
   requestedRole: {
     type: String,
@@ -19,9 +20,14 @@ const applicationSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  rejectedBy: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   approvalDate: Date,
+  rejectionDate: Date,
 });
-  
+
 const Application = model("Application", applicationSchema);
 
 export default Application;
