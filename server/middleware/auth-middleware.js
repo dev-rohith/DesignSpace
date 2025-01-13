@@ -7,9 +7,10 @@ import { Token } from "../services/token-service.js";
 
 const authMiddleWare = {};
 
-
 //protect middleware
 authMiddleWare.protect = catchAsync(async (req, res, next) => {
+  if (!req.headers["authorization"])
+    return next(new AppError("token is required", 400));
   const accessToken = req.headers["authorization"].split(" ")[1];
   if (!accessToken) return next(new AppError("token is required", 400));
   jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
@@ -37,7 +38,6 @@ authMiddleWare.refreshToken_rotation = catchAsync(async (req, res, next) => {
         decodedRefresh.deviceId,
         refreshToken
       );
-
 
       await TokenManager.removeRefreshToken(
         decodedRefresh.userId,
@@ -72,7 +72,7 @@ authMiddleWare.refreshToken_rotation = catchAsync(async (req, res, next) => {
 //authorize middleware
 authMiddleWare.authorize = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.user.userRole)) {
       return next(
         new AppError("You dont have permission to perform this action", 403)
       );

@@ -233,9 +233,9 @@ authController.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   // Login in the user and send accessToken
-  const token = Token.generateAccessToken(user._id, user.role);
+  const accessToken = Token.generateAccessToken(user._id, user.role);
 
-  res.json({ token });
+  res.json({ accessToken });
 });
 
 export default authController;

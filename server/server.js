@@ -12,10 +12,6 @@ import connectRedis from "./config/redis-config.js";
 
 
 
-
-
-
-
   // database connection
 connectDB()
 

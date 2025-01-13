@@ -1,16 +1,17 @@
 import { Router } from "express";
-import applicationController from "../controllers/application-controller.js";
+import applicationCtrl from "../controllers/application-controller.js";
 import authMiddleWare from "../middleware/auth-middleware.js";
 
 const router = Router();
 
-router.post("/applications", applicationController.createApplication);
+router.use(authMiddleWare.protect);
+
+router.post("/",authMiddleWare.authorize('client'), applicationCtrl.createApplication);
 
 router.use(authMiddleWare.authorize("admin"));
 
-router.get("/applications", applicationController.getApplications);
+router.get("/", applicationCtrl.getApplications);
 
-router.put("/applications/:id", applicationController.updateApplication);
-
+router.put("/:id", applicationCtrl.updateApplication);
 
 export default router;

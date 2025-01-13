@@ -39,6 +39,7 @@ router.post('/forgetPassword', authController.forgotPassword)
 
 router.put('/resetPassword/:token', authController.resetPassword)
 
+
 router.use(authMiddleWare.protect)
 
 router.put('/updatePassword',  userCtrl.updatePassword)  // currentPassword, newPassword

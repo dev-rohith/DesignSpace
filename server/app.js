@@ -21,8 +21,9 @@ const logStream = fs.createWriteStream("./access.log", { flags: "a" });
 app.use(morgan("dev", { stream: logStream }));
 
 //routing api middleware
-app.use("/api/v1", userRouter);
-app.use("/api/v1", applicationRouter);
+app.use("/api/v1/user", userRouter);
+
+app.use("/api/v1/application", applicationRouter);
 
 app.use(globalErrorHandler);
 

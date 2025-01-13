@@ -1,24 +1,27 @@
 import Application from "../models/application-model.js";
+import User from "../models/user-model.js";
+import AppError from "../utils/app-error-util.js";
 import catchAsync from "../utils/catch-async-util.js";
 
-const applicationController = {};
+const applicationCtrl = {};
 
-applicationController.createApplication = catchAsync(async (req, res, next) => {
-  const { requestedBy, requestId, requestedRole, approvedBy } = req.body;
+applicationCtrl.createApplication = catchAsync(async (req, res, next) => {
+  const { requestId, requestedRole } = req.body;
+  console.log(req.user);
   const application = await Application.create({
-    requestedBy: req.user._id,
+    requestedBy: req.user.userId,
     requestId,
     requestedRole,
   });
-  res.json({ message: "Application sent successfully", application });
+  res.json({ message: "Application sent successfully", application }); //here the email functionality will be added
 });
 
-applicationController.getApplications = catchAsync(async (req, res, next) => {
+applicationCtrl.getApplications = catchAsync(async (req, res, next) => {
   const applications = await Application.find();
   res.json({ applications });
 });
 
-applicationController.updateApplication = catchAsync(async (req, res, next) => {
+applicationCtrl.updateApplication = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const { status } = req.body;
 
@@ -30,18 +33,21 @@ applicationController.updateApplication = catchAsync(async (req, res, next) => {
   const requesetedUser = await User.findById(application.requestedBy);
 
   if (status === "approved") {
-    application.approvedBy = req.user._id;
+    application.approvedBy = req.user.userId;
     application.approvalDate = new Date();
+    console.log(requesetedUser)
+    console.log(application)
     requesetedUser.role = application.requestedRole;
-    await requesetedUser.save();
   } else if (status === "rejected") {
-    application.rejectedBy = req.user._id;
+    application.rejectedBy = req.user.userId;
     application.rejectionDate = new Date();
   }
+
+  await requesetedUser.save();
 
   await application.save();
 
   res.json({ message: "Application updated successfully", application });
 });
 
-export default applicationController;
+export default applicationCtrl;

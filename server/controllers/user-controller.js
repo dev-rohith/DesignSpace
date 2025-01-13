@@ -6,10 +6,8 @@ import catchAsync from "../utils/catch-async-util.js";
 const userCtrl = {};
 
 userCtrl.getUser = catchAsync(async (req, res, next) => {
-  console.log(req.user);
-  console.log("testing");
-  res.json("hello world");
-  // const user = User.find(req?.user.id)
+   const user = await User.findOne({ _id: req.user?.userId });
+   res.json({ user });
 });
 
 
