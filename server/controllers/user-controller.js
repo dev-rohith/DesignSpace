@@ -35,4 +35,6 @@ userCtrl.updatePassword = catchAsync(async (req, res, next) => {
   res.json({ message: "Password updated successfully" });
 });
 
+userCtrl.updateProfile
+
 export default userCtrl;
