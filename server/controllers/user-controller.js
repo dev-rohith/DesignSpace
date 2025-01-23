@@ -11,7 +11,6 @@ userCtrl.getUser = catchAsync(async (req, res, next) => {
 });
 
 
-
 userCtrl.updatePassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ _id: req.user?.userId }).select(
     "+password"
@@ -34,6 +33,13 @@ userCtrl.updatePassword = catchAsync(async (req, res, next) => {
 
   res.json({ message: "Password updated successfully" });
 });
+
+userCtrl.updateMe = catchAsync(async(req,res,next) => {
+  const inputData = req.body
+  // if(req.file)
+  
+
+})
 
 userCtrl.updateProfile
 

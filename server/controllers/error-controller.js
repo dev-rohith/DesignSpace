@@ -26,8 +26,6 @@ const sendProdError = (err,res) => {
 }
 
 
-
-
     //Error handler for all errors
 const globalErrorHandler = (err,req,res,next) => {
        if(process.env.NODE_ENV === 'development') {
@@ -36,5 +34,7 @@ const globalErrorHandler = (err,req,res,next) => {
         sendProdError(err,res)
        }
 }
+
+
 
 export default globalErrorHandler

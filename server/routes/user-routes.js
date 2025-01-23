@@ -26,10 +26,12 @@ router.post('/login', authController.login);
 router.post('/forgetPassword', authController.forgotPassword)
 router.put('/resetPassword/:token', authController.resetPassword);
 
-
 //refresh token rotation 
 
 router.get('/refreshToken', authMiddleWare.refreshToken_rotation)
+
+
+//////////////////////////////////////////////////////////////////////////////
 
 //user controller stuff here
 
@@ -43,5 +45,9 @@ router.put('/resetPassword/:token', authController.resetPassword)
 router.use(authMiddleWare.protect)
 
 router.put('/updatePassword',  userCtrl.updatePassword)  // currentPassword, newPassword
+
+router.put('/update')
+
+
 
 export default router
