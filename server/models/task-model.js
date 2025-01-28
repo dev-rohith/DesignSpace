@@ -1,19 +1,40 @@
 import { Schema, model } from "mongoose";
 
-const taskSchema = new Schema({
+const taskSchema = new Schema(
+  {
     project: { type: ObjectId, ref: "Project" },
-    title: String,
-    description: String,
-    createdBy: { type: ObjectId, ref: "User" },
-    acceptedBy: { type: ObjectId, ref: "User" },
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"], // GeoJSON format
+        required: true,
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        required: true,
+      },
+    },
+    associate: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Associate", // Assigned associate
+    },
     status: {
       type: String,
-      enum: ["pending", "in_progress", "completed", "blocked"],
+      enum: ["pending", "assigned", "in-progress", "completed"],
+      default: "pending",
     },
     priority: { type: String, enum: ["low", "medium", "high", "urgent"] },
     startDate: Date,
     dueDate: Date,
-    isVisibleToClient: Boolean, 
+    isVisibleToClient: Boolean,
     completedAt: Date,
     updateLocations: [
       {
@@ -23,14 +44,29 @@ const taskSchema = new Schema({
     workUpdates: [
       {
         description: String,
-        images: [String],
+        images: [
+          {
+            public_id: {
+              type: String,
+              required: true,
+            },
+            url: {
+              type: String,
+              required: true,
+            },
+          },
+        ],
         timestamp: Date,
-        updatedBy: { type: ObjectId, ref: "User" },
+        updatedBy: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
       },
     ],
-  });
+  },
+  { timestamps: true }
+);
 
+const Task = model("Task", taskSchema);
 
-  const Task = model("Task", taskSchema);
-
-  export default Task;
+export default Task;

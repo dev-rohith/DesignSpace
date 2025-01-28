@@ -22,7 +22,18 @@ const designerProfileSchema = new Schema({
     {
       title: String,
       description: String,
-      images: [String],
+      images: [                    //upload file -- images
+        {
+          public_id: {
+            type: String,
+            required: true,
+          },
+          url: {
+            type: String,
+            required: true,
+          }
+        },
+      ],
       category: String,
       tags: [String],
       date: { type: Date, default: Date.now },
@@ -50,14 +61,6 @@ const designerProfileSchema = new Schema({
     default: 0,
   },
 
-  // Projects
-  projects: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Project",
-    },
-  ],
-
   // Contact information
   address: {
     street: String,
@@ -66,7 +69,21 @@ const designerProfileSchema = new Schema({
     country: String,
     zip_code: String,
   },
+  location: {
+    type: {
+      type: String,
+      enum: ["Point"], // GeoJSON format for geospatial queries
+      required: true,
+    },
+    coordinates: {
+      type: [Number], // [longitude, latitude]
+      required: true,
+    },
+  },
 });
+
+// Add geospatial index for location
+designerProfileSchema.index({ location: "2dsphere" });
 
 const DesignerProfile = model("DesignerProfile", designerProfileSchema);
 

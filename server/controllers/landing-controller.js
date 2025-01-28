@@ -1,0 +1,4 @@
+
+const landingCtrl = {}
+
+landingCtrl.post

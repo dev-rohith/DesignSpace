@@ -1,7 +1,7 @@
 import { Schema,model } from "mongoose";
 
 
-const MessageSchema = new mongoose.Schema({ 
+const MessageSchema = new Schema({ 
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Reference to the sender (designer or client)

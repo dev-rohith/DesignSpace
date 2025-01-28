@@ -6,11 +6,11 @@ import catchAsync from "../utils/catch-async-util.js";
 const applicationCtrl = {};
 
 applicationCtrl.createApplication = catchAsync(async (req, res, next) => {
-  const { requestId, requestedRole } = req.body;
+  const {resume, introduction_video, description,  requestedRole } = req.body;
   console.log(req.user);
   const application = await Application.create({
     requestedBy: req.user.userId,
-    requestId,
+    //more stuff will goes here
     requestedRole,
   });
   res.json({ message: "Application sent successfully", application }); //here the email functionality will be added
@@ -33,14 +33,11 @@ applicationCtrl.updateApplication = catchAsync(async (req, res, next) => {
   const requesetedUser = await User.findById(application.requestedBy);
 
   if (status === "approved") {
-    application.approvedBy = req.user.userId;
-    application.approvalDate = new Date();
-    console.log(requesetedUser)
-    console.log(application)
+    application.actionMadeBy = req.user.userId;
+    application.isApproved = true;
     requesetedUser.role = application.requestedRole;
   } else if (status === "rejected") {
-    application.rejectedBy = req.user.userId;
-    application.rejectionDate = new Date();
+    application.actionMadeBy = req.user.userId;
   }
 
   await requesetedUser.save();

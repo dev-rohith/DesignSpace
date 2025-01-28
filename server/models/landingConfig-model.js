@@ -3,7 +3,7 @@ import { Schema, model } from "mongoose";
 const ladingConfig = new Schema({
   carosal: [
     {
-      type: String,
+      image: String,      //file upload -- image
     },
   ],
   designers: [
@@ -14,8 +14,9 @@ const ladingConfig = new Schema({
   ],
   customer_reviews: [
     {
-      type: Schema.types.ObjectId,
-      ref: "project",
+      name: String,
+      video: String,        //file upload -- video
+      review: String
     },
   ],
 });

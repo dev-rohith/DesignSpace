@@ -44,7 +44,7 @@ const userSchema = new Schema({
       default: "free",
     },
     active: { type: Boolean, default: false },
-    renewalDate: Date,
+    expiryDate: Date,
     lastPaymentDate: Date,
   },
 

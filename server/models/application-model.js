@@ -6,7 +6,27 @@ const applicationSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  requestId: String, // Unique identifier for the application it was get by generated mail before application
+  resume: {
+    public_id: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String, //file upload  -- pdf
+      required: true,
+    },
+  },
+  description: String,
+  introduction_video: {
+    public_id: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String, //file upload -- video
+      required: true,
+    },
+  },
   status: {
     type: String,
     enum: ["pending", "approved", "rejected"],
@@ -16,16 +36,18 @@ const applicationSchema = new Schema({
     type: String,
     enum: ["designer", "associate"],
   },
-  approvedBy: {
+  actionMadeBy: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  rejectedBy: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
+  isApproved: {
+    type: Boolean,
+    default: false,
   },
-  approvalDate: Date,
-  rejectionDate: Date,
+  actionPerformedOn: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const Application = model("Application", applicationSchema);
