@@ -8,6 +8,7 @@ import fs from "fs";
 import userRouter from "./routes/user-routes.js";
 import applicationRouter from "./routes/application-routes.js";
 import taskRouter from "./routes/task-routes.js";
+import landingRouter from "./routes/landing-routes.js";
 
 import globalErrorHandler from "./controllers/error-controller.js";
 
@@ -26,9 +27,11 @@ app.use(morgan("dev", { stream: logStream }));
 
 app.use("/api/v1/user", userRouter);
 
+app.use("/api/v1/landing", landingRouter);
+
 app.use("/api/v1/application", applicationRouter);
 
-app.use("api/v1/task", taskRouter);
+app.use("/api/v1/task", taskRouter);
 
 app.use(globalErrorHandler);
 

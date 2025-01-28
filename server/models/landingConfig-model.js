@@ -1,28 +1,42 @@
 import { Schema, model } from "mongoose";
 
-const ladingConfig = new Schema({
-  carosal: [
+const landingConfigSchema = new Schema({
+  carousel: [
     {
-      image: String,      //file upload -- image
+      public_id: {
+        type: String,
+        required: true,
+      },
+      url: {        //file upload -- image
+        type: String, 
+        required: true,
+      }, 
     },
   ],
   designers: [
     {
-      type: Schema.types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
     },
   ],
   customer_reviews: [
     {
       name: String,
-      video: String,        //file upload -- video
-      review: String
+      video: {
+        public_id: {
+          type: String,
+          required: true,
+        },
+        url: {
+          type: String, //file upload -- video
+          required: true,
+        },
+      }, 
+      review: String,
     },
   ],
 });
 
-
-const LandingConfig = model("LandingConfig", ladingConfig);
-
+const LandingConfig = model("LandingConfig", landingConfigSchema);
 
 export default LandingConfig;
