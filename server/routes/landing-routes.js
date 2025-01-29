@@ -9,11 +9,23 @@ router.get("/", landingCtrl.getLanding);
 router.post(
   "/carousel",
   uploadSingleFile(
-    ["image/jpeg", "image/png", "image/gif, video/mp3"],
-    "carousel",
-    1024 * 1024 * 5
+    ["image/jpeg", "image/png", "image/gif", "video/mp4"],
+    "carousel"
   ),
   landingCtrl.createCarouselItem
 );
+
+router.delete("/carousel/:public_id", landingCtrl.deleteCarouselItem);
+
+router.post("/designer", landingCtrl.addTopDesigner);
+router.delete("/desinger/:desinger_id", landingCtrl.deleteTopDesigner);
+
+router.post(
+  "/customer-review",
+  uploadSingleFile(["video/mp4"], "reviewVideo"),
+  landingCtrl.addCustomerReview
+);
+
+router.delete("/customer-review/:public_id", landingCtrl.deleteCustomerReview);
 
 export default router;

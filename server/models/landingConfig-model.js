@@ -7,10 +7,14 @@ const landingConfigSchema = new Schema({
         type: String,
         required: true,
       },
-      url: {        //file upload -- image
-        type: String, 
+      url: {
+        type: String,       //file upload -- image
         required: true,
-      }, 
+      },
+      resource_type: {
+        type: String,
+        required: true,
+      },
     },
   ],
   designers: [
@@ -31,7 +35,11 @@ const landingConfigSchema = new Schema({
           type: String, //file upload -- video
           required: true,
         },
-      }, 
+        resource_type: {
+          type: String,
+          required: true
+        }
+      },
       review: String,
     },
   ],
