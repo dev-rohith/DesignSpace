@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-
+import fs from "fs";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -10,29 +10,38 @@ cloudinary.config({
 export const CloudinaryService = {
   async uploadFile(file) {
     try {
+      // Check if the file path is valid and exists
+      if (!file || !file.path) {
+        throw new Error("Invalid file path");
+      }
+
+      if (!fs.existsSync(file.path)) {
+        throw new Error("File does not exist at path: " + file.path);
+      }
+
       const result = await cloudinary.uploader.upload(file.path, {
-        resource_type: "auto", // Automatically determine file type
+        resource_type: "auto",
       });
+
       return result;
     } catch (error) {
+      console.error("Cloudinary upload failed:", error);
       throw new Error(error.message);
     }
   },
+
   async deleteFile(publicId) {
     try {
       const result = await cloudinary.uploader.destroy(publicId);
       return result;
     } catch (error) {
+      console.error("Cloudinary delete failed:", error);
       throw new Error(error.message);
     }
   },
 };
 
-
-
-export default CloudinaryService
-
-
+export default CloudinaryService;
 
 /*
 

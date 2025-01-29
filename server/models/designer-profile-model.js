@@ -1,3 +1,5 @@
+import { Schema, model } from "mongoose";
+
 // professionalProfile.model.js
 const designerProfileSchema = new Schema({
   user: {
@@ -12,7 +14,6 @@ const designerProfileSchema = new Schema({
   position: String,
   experience: Number,
   aboutMe: String,
-  license: String,
   specializations: [String],
   designStyle: [String],
   softwareExpertise: [String],
@@ -56,24 +57,36 @@ const designerProfileSchema = new Schema({
       date: { type: Date, default: Date.now },
     },
   ],
-  averageRating: {
-    type: Number,
-    default: 0,
-  },
+     //average rating is calculated on frontend
 
   // Contact information
   address: {
-    street: String,
-    city: String,
-    state: String,
-    country: String,
-    zip_code: String,
+    street: {
+      type: String,
+      required: true
+    },
+    house_number: {
+      type: String,
+    },
+    city: {
+      type: String,
+      required: true
+    },
+    state: {
+      type: String,
+      required: true
+    },
+    country: {
+      type: String,
+      required: true
+    },
+    postal_code: String,
   },
   location: {
     type: {
       type: String,
-      enum: ["Point"], // GeoJSON format for geospatial queries
-      required: true,
+      default: 'Point',
+      enum: ['Point']
     },
     coordinates: {
       type: [Number], // [longitude, latitude]

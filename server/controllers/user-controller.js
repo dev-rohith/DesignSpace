@@ -6,10 +6,9 @@ import catchAsync from "../utils/catch-async-util.js";
 const userCtrl = {};
 
 userCtrl.getUser = catchAsync(async (req, res, next) => {
-   const user = await User.findOne({ _id: req.user?.userId });
-   res.json({ user });
+  const user = await User.findOne({ _id: req.user?.userId });
+  res.json({ user });
 });
-
 
 userCtrl.updatePassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ _id: req.user?.userId }).select(
@@ -34,13 +33,26 @@ userCtrl.updatePassword = catchAsync(async (req, res, next) => {
   res.json({ message: "Password updated successfully" });
 });
 
-userCtrl.updateMe = catchAsync(async(req,res,next) => {
-  const inputData = req.body
+userCtrl.updateMe = catchAsync(async (req, res, next) => {
+  const inputData = req.body;
   // if(req.file)
-  
+});
 
-})
+userCtrl.getUsers = catchAsync(async (req, res, next) => {
+  const users = await User.find().select('firstName lastName role ')
+  res.json(users);
+});
 
-userCtrl.updateProfile
+userCtrl.deactivateUser = catchAsync(async (req, res, next) => {
+  const { user_id } = req.params;
+  const deactivatedUser = await User.findByIdAndUpdate(
+    user_id,
+    { status: "suspended" },
+    { new: true }
+  );
+  res
+    .status(200)
+    .json({ message: "user deactivated successfully", user: deactivatedUser });
+});
 
 export default userCtrl;

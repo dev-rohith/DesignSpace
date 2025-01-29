@@ -48,6 +48,10 @@ router.put('/updatePassword',  userCtrl.updatePassword)  // currentPassword, new
 
 router.put('/update')
 
+router.use(authMiddleWare.authorize('admin'))
+
+router.get('/', userCtrl.getUsers)
+
 
 
 export default router

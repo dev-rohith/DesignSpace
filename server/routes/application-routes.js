@@ -1,6 +1,8 @@
 import { Router } from "express";
+
 import applicationCtrl from "../controllers/application-controller.js";
 import authMiddleWare from "../middleware/auth-middleware.js";
+
 import { uploadMultipleFiles } from "../middleware/multer-middleware.js";
 
 const router = Router();
@@ -10,14 +12,21 @@ router.use(authMiddleWare.protect);
 router.post(
   "/",
   authMiddleWare.authorize("client"),
-  uploadMultipleFiles(["application/pdf", "video/mp4"], 1024*1024 * 1024 * 20, 2),
+  uploadMultipleFiles(
+    ["application/pdf", "video/mp4"],
+    1024 * 1024 * 1024 * 20,
+    2
+  ),
   applicationCtrl.createApplication
 );
 
 router.use(authMiddleWare.authorize("admin"));
 
-router.get("/", applicationCtrl.getApplications);
+router.get("/pending", applicationCtrl.getApplications); // then the filters need to applyed
 
-router.put("/:id", applicationCtrl.updateApplication);
+router
+  .route("/:id")
+  .put(applicationCtrl.updateApplication)
+  .get(applicationCtrl.getApplication);
 
 export default router;

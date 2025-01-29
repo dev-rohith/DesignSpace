@@ -238,5 +238,9 @@ authController.resetPassword = catchAsync(async (req, res, next) => {
   res.json({ accessToken });
 });
 
+authController.logout = catchAsync(async (req,res,next) => {
+     
+})
+
 
 export default authController;

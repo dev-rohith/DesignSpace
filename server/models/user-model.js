@@ -9,9 +9,13 @@ const userSchema = new Schema({
   password: { type: String, select: false },
   firstName: String,
   lastName: String,
-  profilePicture: String,
+  profilePicture: {
+    type: String,
+    default:
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+  },
   isVerified: Boolean,
-  
+
   // Role and status
   role: {
     type: String,
@@ -21,7 +25,7 @@ const userSchema = new Schema({
   status: {
     type: String,
     enum: ["active", "inactive", "suspended"],
-    default: "active"
+    default: "active",
   },
 
   // Basic profile info
@@ -30,10 +34,12 @@ const userSchema = new Schema({
   lastActive: [Date],
 
   // Device management
-  devices: [{
-    deviceId: String,
-    deviceName: String,
-  }],
+  devices: [
+    {
+      deviceId: String,
+      deviceName: String,
+    },
+  ],
   maxDevices: { type: Number, default: 3 },
 
   // Subscription
@@ -58,7 +64,7 @@ const userSchema = new Schema({
   },
   passwordResetToken: String,
   passwordResetExpires: Date,
-})
+});
 
 //pre hooks
 
@@ -93,6 +99,6 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-const User = model("user", userSchema);
+const User = model("User", userSchema);
 
 export default User;

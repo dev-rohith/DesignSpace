@@ -36,6 +36,9 @@ const applicationSchema = new Schema({
     type: String,
     enum: ["designer", "associate"],
   },
+  requestedDate: {
+    type: Date,
+  },
   actionMadeBy: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -46,7 +49,6 @@ const applicationSchema = new Schema({
   },
   actionPerformedOn: {
     type: Date,
-    default: Date.now,
   },
 });
 
