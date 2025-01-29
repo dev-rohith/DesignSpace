@@ -50,14 +50,24 @@ export const uploadSingleFile = (allowedTypes, fileName, maxFileSize) => {
 };
 
 // Upload multiple files with custom filter
-export const uploadMultipleFiles = (allowedTypes, maxFiles, maxFileSize) => {
+export const uploadMultipleFiles = (allowedTypes, maxFileSize, maxFiles ) => {
+   //defaults
+   const fileSizeLimits = {
+    "image/png": 5 * 1024 * 1024, // 5MB for PNG
+    "image/jpeg": 5 * 1024 * 1024, // 5MB for JPEG
+    "image/jpg": 5 * 1024 * 1024, // 5MB for JPG
+    "application/pdf": 10 * 1024 * 1024, // 10MB for PDFs
+    "video/mp4": 50 * 1024 * 1024, // 50MB for MP4 videos
+    "default": 2 * 1024 * 1024, // 2MB for others
+  };
+
   return multer({
-    storage, // using closure
+    storage: multerStorage, // using closure
     fileFilter: customFileFilter(allowedTypes),
     limits: {
       fileSize: maxFileSize, // 10MB limit
       files: maxFiles, // Maximum files
-    },
+    }, 
   }).array("files", maxFiles);
 };
 

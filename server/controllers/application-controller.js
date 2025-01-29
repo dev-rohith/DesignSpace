@@ -7,13 +7,14 @@ const applicationCtrl = {};
 
 applicationCtrl.createApplication = catchAsync(async (req, res, next) => {
   const {resume, introduction_video, description,  requestedRole } = req.body;
-  console.log(req.user);
+   if(!req.files) return next(new AppError('files are required', 400))
+  req.files
   const application = await Application.create({
     requestedBy: req.user.userId,
     //more stuff will goes here
     requestedRole,
   });
-  res.json({ message: "Application sent successfully", application }); //here the email functionality will be added
+  res.json({ message: "Application sent successfully", application ,data: req.files}); //here the email functionality will be added
 });
 
 applicationCtrl.getApplications = catchAsync(async (req, res, next) => {
