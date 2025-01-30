@@ -30,7 +30,6 @@ const userSchema = new Schema({
 
   // Basic profile info
   country: String,
-  languages_known: [String],
   lastLoginOn: [Date],
 
   // Device management

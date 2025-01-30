@@ -36,7 +36,6 @@ const designerProfileSchema = new Schema({
         },
       ],
       category: String,
-      tags: [String],
       date: { type: Date, default: Date.now },
     },
   ],

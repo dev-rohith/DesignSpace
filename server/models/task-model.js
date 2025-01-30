@@ -33,7 +33,7 @@ const taskSchema = new Schema(
     },
     priority: { type: String, enum: ["low", "medium", "high", "urgent"] },
     startDate: Date,
-    dueDate: Date,
+    dueDate: Date,  
     isVisibleToClient: Boolean,
     completedAt: Date,
     updateLocations: [

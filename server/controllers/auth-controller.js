@@ -75,7 +75,8 @@ authController.googleLoginSuccess = catchAsync(async (req, res) => {
   );
 });
 
-//normal login flow
+/////////////////////////////////////////////--------Normal-login-flow--------///////////////////////////////////////////////////////////
+
 authController.signup = catchAsync(async (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
 
@@ -305,5 +306,6 @@ authController.logoutUser = catchAsync(async (req, res, next) => {
 
   return res.json({ message: "Logout successful" });
 });
+
 
 export default authController;

@@ -71,15 +71,3 @@ export const uploadMultipleFiles = (allowedTypes, maxFileSize, maxFiles ) => {
   }).array("files", maxFiles);
 };
 
-// // Usage of custom filter in the route
-// app.post("/upload-image", (req, res) => {
-//   const allowedImageTypes = ["image/jpeg", "image/png", "image/gif"]; // Dynamic MIME types
-//   const uploadImage = createImageUpload(allowedImageTypes);
-
-//   uploadImage(req, res, (err) => {
-//     if (err) {
-//       return res.status(400).send(err.message);
-//     }
-//     res.send("Image uploaded successfully!");
-//   });
-// });

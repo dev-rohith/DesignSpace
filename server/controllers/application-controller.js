@@ -36,7 +36,7 @@ applicationCtrl.createApplication = async (req, res, next) => {
       Object.keys(introduction_video).length === 0 ||
       Object.keys(resume) === 0
     ) {
-      throw new Error("sdfhksdhflkjh");
+      throw new Error("error while uploading to cloudinary");
     }
 
     await Application.create({
