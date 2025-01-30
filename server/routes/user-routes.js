@@ -26,6 +26,9 @@ router.post('/login', authController.login);
 router.post('/forgetPassword', authController.forgotPassword)
 router.put('/resetPassword/:token', authController.resetPassword);
 
+
+router.post('/logout/:deviceId', authController.logoutDevice);
+
 //refresh token rotation 
 
 router.get('/refreshToken', authMiddleWare.refreshToken_rotation)
@@ -44,6 +47,8 @@ router.put('/resetPassword/:token', authController.resetPassword)
 
 router.use(authMiddleWare.protect)
 
+router.post('/logout', authController.logoutUser);
+
 router.put('/updatePassword',  userCtrl.updatePassword)  // currentPassword, newPassword
 
 router.put('/update')
@@ -53,6 +58,7 @@ router.put('/update')
 router.use(authMiddleWare.authorize('admin'))
 
 router.get('/', userCtrl.getUsers)
+router.get('/:id', userCtrl.UserStatusController)
 
 
 

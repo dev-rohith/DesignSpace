@@ -1,5 +1,6 @@
 import User from "../models/user-model.js";
 import { TokenManager } from "../services/redis-service.js";
+import APIFeatures from "../utils/api-features.js";
 import AppError from "../utils/app-error-util.js";
 import catchAsync from "../utils/catch-async-util.js";
 
@@ -39,20 +40,33 @@ userCtrl.updateMe = catchAsync(async (req, res, next) => {
 });
 
 userCtrl.getUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find().select('firstName lastName role ')
+  const features = new APIFeatures(User.find(), req.query)
+    .filter()
+    .sort()
+    .paginate();
+  const finalQuery = features.query
+    .select(
+      "-lastActive -maxDevices -subscription -devices -otp_chances -languages_known -__v"
+    )
+    .lean();
+  const users = await finalQuery;
   res.json(users);
 });
 
-userCtrl.deactivateUser = catchAsync(async (req, res, next) => {
-  const { user_id } = req.params;
+userCtrl.UserStatusController = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { status } = req.body;
   const deactivatedUser = await User.findByIdAndUpdate(
-    user_id,
-    { status: "suspended" },
-    { new: true }
-  );
+    id,
+    { status },{
+      new: true,
+      runValidators: true
+    }
+  ).select("-lastActive -maxDevices -subscription -devices -otp_chances -languages_known -__v")
+  if(!deactivatedUser) throw next(new AppError('user not found', 404))
   res
     .status(200)
-    .json({ message: "user deactivated successfully", user: deactivatedUser });
+    .json({ message: "user account status changed successfully", user: deactivatedUser });
 });
 
 export default userCtrl;

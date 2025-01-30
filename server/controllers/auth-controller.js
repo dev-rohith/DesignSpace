@@ -124,25 +124,6 @@ authController.login = catchAsync(async (req, res, next) => {
   const deviceId = uuidv4(); //may be later changed with device ip
   const deviceName = device?.vendor || browser?.name || os?.name || "unkown";
 
-  if (user.devices.length >= user.maxDevices) {
-    return next(
-      new AppError("device limit remove logout a device to login", 400)
-    );
-  } else if (user.lastActive.length >= 2) {
-    user.devices.push({
-      deviceId, //this should be removed in logout
-      deviceName,
-    });
-    user.lastActive.shift();
-    user.lastActive.push(Date.now());
-  } else {
-    user.devices.push({
-      deviceId, //this should be removed in logout
-      deviceName,
-    });
-    user.lastActive.push(Date.now());
-  }
-
   const accessToken = Token.generateAccessToken(user._id, user.role);
 
   const refreshToken = Token.generateRefreshToken(
@@ -151,9 +132,22 @@ authController.login = catchAsync(async (req, res, next) => {
     deviceId
   );
 
-  await TokenManager.storeRefreshToken(user._id, deviceId, refreshToken);
-
   res.cookie("jwt", refreshToken, { httpOnly: true });
+
+  // Initialize arrays only if undefined (no need for separate initialization)
+  if (user.devices.length >= user.maxDevices) {
+    return res.status(400).json({
+      message: "Device limit reached. Please log out of a device to log in.",
+      data: user.devices,
+    });
+  }
+
+  // Push the new device directly and manage the last login array in one step
+  user.devices.push({ deviceId, deviceName });
+  user.lastLoginOn.length >= 2 && user.lastLoginOn.shift(); // Remove oldest if over limit
+  user.lastLoginOn.push(Date.now()); // Update the last login timestamp
+
+  await TokenManager.storeRefreshToken(user._id, deviceId, refreshToken);
 
   await user.save();
 
@@ -238,9 +232,78 @@ authController.resetPassword = catchAsync(async (req, res, next) => {
   res.json({ accessToken });
 });
 
-authController.logout = catchAsync(async (req,res,next) => {
-     
-})
+authController.logoutDevice = catchAsync(async (req, res, next) => {
+  //must remove the token on frontend after each successfull response
+  const refreshToken = req.cookies.jwt;
+  const { deviceId } = req.params;
 
+  if (!refreshToken) {
+    return next(
+      new AppError("unethical Access you will be logouted automatically", 403)
+    );
+  }
+
+  jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET,
+    async (err, decodedRefresh) => {
+      if (err)
+        return next(
+          new AppError(
+            "first login with correct credentials to logout other device",
+            403
+          )
+        );
+
+      const user = await User.findOne({ "devices.deviceId": deviceId });
+      if (!user) return next(new AppError("device is not found in db", 404));
+      user.devices = user.devices.filter(
+        (device) => device.deviceId !== deviceId
+      );
+      await TokenManager.removeRefreshToken(user._id, deviceId);
+
+      user.save();
+      // ---------         if we clear cookie here then user can only logout one device at a time
+      res.status(200).json({
+        message: "user device logouted successfully go back and login again",
+      });
+    }
+  );
+});
+
+authController.logoutUser = catchAsync(async (req, res, next) => {
+  const refreshToken = req.cookies.jwt;
+
+  res.clearCookie("jwt");
+
+  if (!refreshToken) {
+    return next(
+      new AppError(
+        "Unethical access detected. Soon You will be logged out automatically .",
+        403
+      )
+    );
+  }
+
+  const decodedRefresh = jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET
+  );
+
+  const user = await User.findById(req.user.userId);
+  if (!user) {
+    return next(new AppError("User not found. Try logging in again.", 403));
+  }
+
+  user.devices = user.devices.filter(
+    (device) => device.deviceId !== decodedRefresh.deviceId
+  );
+
+  await TokenManager.removeRefreshToken(user._id, decodedRefresh.deviceId);
+
+  await user.save();
+
+  return res.json({ message: "Logout successful" });
+});
 
 export default authController;
