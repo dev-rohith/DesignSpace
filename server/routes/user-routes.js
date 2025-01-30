@@ -48,6 +48,8 @@ router.put('/updatePassword',  userCtrl.updatePassword)  // currentPassword, new
 
 router.put('/update')
 
+//admin power ////////////////////////////////////////////////////////
+
 router.use(authMiddleWare.authorize('admin'))
 
 router.get('/', userCtrl.getUsers)

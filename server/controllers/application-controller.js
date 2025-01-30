@@ -5,10 +5,11 @@ import User from "../models/user-model.js";
 import CloudinaryService from "../services/cloudinary-service.js";
 import AppError from "../utils/app-error-util.js";
 import catchAsync from "../utils/catch-async-util.js";
+import APIFeatures from "../utils/api-features.js";
 
 const applicationCtrl = {};
 
-applicationCtrl.createApplication = catchAsync(async (req, res, next) => {
+applicationCtrl.createApplication = async (req, res, next) => {
   const { description, requestedRole } = req.body;
 
   if (!req.files) return next(new AppError("Files are required", 400));
@@ -31,6 +32,12 @@ applicationCtrl.createApplication = catchAsync(async (req, res, next) => {
         introduction_video.public_id = upload.public_id;
       }
     });
+    if (
+      Object.keys(introduction_video).length === 0 ||
+      Object.keys(resume) === 0
+    ) {
+      throw new Error("sdfhksdhflkjh");
+    }
 
     await Application.create({
       requestedBy: req.user.userId,
@@ -40,6 +47,7 @@ applicationCtrl.createApplication = catchAsync(async (req, res, next) => {
       requestedRole,
       requestedDate: Date.now(),
     });
+
     try {
       await Promise.all(req.files.map((file) => fs.promises.unlink(file.path)));
     } catch (unlinkError) {
@@ -51,25 +59,41 @@ applicationCtrl.createApplication = catchAsync(async (req, res, next) => {
     } catch (unlinkError) {
       console.error("Error while deleting the file:", unlinkError.message);
     }
+    return res.json({ message: error.message, error: error });
   }
   res.json({ message: "Application sent successfully" });
-});
+};
 
-applicationCtrl.getApplications = catchAsync(async (req, res, next) => {
-  const applications = await Application.find()
-    .select("-resume -introduction_video -__v ")
+applicationCtrl.getPendingApplications = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(
+    Application.find({ status: "pending" }),
+    req.query
+  )
+    .sort()
+    .paginate();
+
+  const finalQuery = features.query
     .populate("requestedBy", "firstName lastName profilePicture status")
     .lean();
+  const applications = await finalQuery;
   res.json({ applications });
 });
 
-applicationCtrl.getApplication = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const applicantDetails = await Application.findById(id)
-    .populate("requestedBy", "firstName lastName profilePicture status")
-    .lean();
+applicationCtrl.getExistingApplication = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(
+    Application.find({ $or: [{ status: "approved" }, { status: "rejected" }] }),
+    req.query
+  )
+    .filter()
+    .sort()
+    .paginate();
 
-  res.json(applicantDetails);
+  const finalQuery = features.query
+    .populate("requestedBy", "firstName lastName profilePicture status")
+    .select("-resume -description -introduction_video -isApproved -__v")
+    .lean();
+  const applications = await finalQuery;
+  res.json({ applications });
 });
 
 applicationCtrl.updateApplication = catchAsync(async (req, res, next) => {
@@ -98,6 +122,36 @@ applicationCtrl.updateApplication = catchAsync(async (req, res, next) => {
   await application.save();
 
   res.json({ message: "Application updated successfully", application });
+});
+
+applicationCtrl.deleteApplication = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  
+  const deletedApplication = await Application.findByIdAndDelete(id);
+
+  try {
+    if (
+      deletedApplication.resume.public_id &&
+      deletedApplication.introduction_video.public_id
+    ) {
+      await Promise.allSettled([
+        CloudinaryService.deleteFile(
+          deletedApplication.introduction_video.public_id,
+          "video"
+        ),
+        CloudinaryService.deleteFile(deletedApplication.resume.public_id),
+      ]);
+    } else {
+      console.log("No valid public IDs found to delete.");
+    }
+  } catch (error) {
+    console.log("Error deleting files from Cloudinary:", error.message);
+  }
+
+  res.json({
+    message: "application deleted successfully",
+    data: deletedApplication,
+  });
 });
 
 export default applicationCtrl;

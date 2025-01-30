@@ -41,4 +41,6 @@ designerProfileCtrl.createProfile = catchAsync(async (req, res, next) => {
 
 designerProfileCtrl.getAllDesingersProfiles = catchAsync()
 
+
+
 export default designerProfileCtrl;

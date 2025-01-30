@@ -6,7 +6,7 @@ import authMiddleWare from "../middleware/auth-middleware.js";
 
 const router = Router()
 
-router.get('/', designerProfileCtrl.get)
+// router.get('/', designerProfileCtrl.get)
 router.post('/', designerProfileCtrl.createProfile)
 
 

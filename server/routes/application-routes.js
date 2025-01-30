@@ -22,11 +22,11 @@ router.post(
 
 router.use(authMiddleWare.authorize("admin"));
 
-router.get("/pending", applicationCtrl.getApplications); // then the filters need to applyed
+router.get("/pending", applicationCtrl.getPendingApplications); // then the filters need to applyed
+router.get("/manage", applicationCtrl.getExistingApplication); // then the filters need to applyed
 
 router
   .route("/:id")
-  .put(applicationCtrl.updateApplication)
-  .get(applicationCtrl.getApplication);
+  .put(applicationCtrl.updateApplication).delete(applicationCtrl.deleteApplication)
 
 export default router;
