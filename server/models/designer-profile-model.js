@@ -14,6 +14,8 @@ const designerProfileSchema = new Schema({
   position: String,
   experience: Number,
   aboutMe: String,
+  languages_know: [String],
+  starting_price: Number,
   specializations: [String],
   designStyle: [String],
   softwareExpertise: [String],
@@ -23,7 +25,7 @@ const designerProfileSchema = new Schema({
     {
       title: String,
       description: String,
-      images: [                    //upload file -- images
+      images: [                    
         {
           public_id: {
             type: String,

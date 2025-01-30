@@ -32,7 +32,9 @@ export const CloudinaryService = {
 
   async deleteFile(publicId, type) {
     try {
-      const result = await cloudinary.uploader.destroy(publicId, {resource_type: type || 'raw'});
+      const result = await cloudinary.uploader.destroy(publicId, {
+        resource_type: type || "raw",
+      });
       return result;
     } catch (error) {
       console.error("Cloudinary delete failed:", error);

@@ -7,18 +7,30 @@ import { uploadMultipleFiles } from "../middleware/multer-middleware.js";
 const router = Router();
 
 // router.get('/', designerProfileCtrl.get)
-router.get('/portfolios', designerProfileCtrl.getAllPortfolios)
+router.get("/portfolios", designerProfileCtrl.getAllPortfolios);
 
-router.get('s', designerProfileCtrl.getAllDesingers)
+router.get("/all", designerProfileCtrl.getAllDesingers);
 
-router.use(authMiddleWare.protect)
+router.get("/:designer_id", designerProfileCtrl.getDesingerProfile);
+
+
+/////////////////////////////--auth-needed--///////////////////////////////////////////////////////////////////////////
+
+router.use(authMiddleWare.protect);
 router.use(authMiddleWare.authorize("designer"));
 
-router.post("/", designerProfileCtrl.createProfile)
-router.route("/portfolio").post(
-  uploadMultipleFiles(["image/png", "image/jpeg"], 1024 * 1024 * 10, 5),
-  designerProfileCtrl.addItemToPortfolio
-).get(designerProfileCtrl.getMyPortfolio)
+router
+  .route("/")
+  .post(designerProfileCtrl.createProfile)
+  .get(designerProfileCtrl.getMyProfile);
+router
+  .route("/portfolio")
+  .post(
+    uploadMultipleFiles(["image/png", "image/jpeg"], 1024 * 1024 * 10, 5),
+    designerProfileCtrl.addItemToPortfolio
+  )
+  .get(designerProfileCtrl.getMyPortfolio);
 
+router.delete('/portfolio/:item_id', designerProfileCtrl.deleteItemFromPortfolio)
 
 export default router;
