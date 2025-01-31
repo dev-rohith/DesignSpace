@@ -25,7 +25,7 @@ const designerProfileSchema = new Schema({
     {
       title: String,
       description: String,
-      images: [                    
+      images: [
         {
           public_id: {
             type: String,
@@ -34,11 +34,11 @@ const designerProfileSchema = new Schema({
           url: {
             type: String,
             required: true,
-          }
+          },
         },
       ],
       category: String,
-      date: { type: Date, default: Date.now },
+      date: Date,
     },
   ],
 
@@ -58,36 +58,36 @@ const designerProfileSchema = new Schema({
       date: { type: Date, default: Date.now },
     },
   ],
-     //average rating is calculated on frontend
+  //average rating is calculated on frontend
 
   // Contact information
   address: {
     street: {
       type: String,
-      required: true
+      required: true,
     },
     house_number: {
       type: String,
     },
     city: {
       type: String,
-      required: true
+      required: true,
     },
     state: {
       type: String,
-      required: true
+      required: true,
     },
     country: {
       type: String,
-      required: true
+      required: true,
     },
     postal_code: String,
   },
   location: {
     type: {
       type: String,
-      default: 'Point',
-      enum: ['Point']
+      default: "Point",
+      enum: ["Point"],
     },
     coordinates: {
       type: [Number], // [longitude, latitude]

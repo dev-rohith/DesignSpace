@@ -27,6 +27,7 @@ router.get("/manage", applicationCtrl.getExistingApplication); // then the filte
 
 router
   .route("/:id")
-  .put(applicationCtrl.updateApplication).delete(applicationCtrl.deleteApplication)
+  .put(applicationCtrl.updateApplication)
+  .delete(applicationCtrl.deleteApplication);
 
 export default router;
