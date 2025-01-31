@@ -53,12 +53,16 @@ router.put('/updatePassword',  userCtrl.updatePassword)  // currentPassword, new
 
 router.put('/update')
 
+//designer power /////////////////////////////////////////////////////
+
+router.get('/clients', authMiddleWare.authorize('designer'), userCtrl.getClients)
+
 //admin power ////////////////////////////////////////////////////////
 
 router.use(authMiddleWare.authorize('admin'))
 
 router.get('/', userCtrl.getUsers)
-router.get('/:id', userCtrl.UserStatusController)
+router.put('/:id', userCtrl.UserStatusController)
 
 
 

@@ -126,8 +126,8 @@ applicationCtrl.updateApplication = catchAsync(async (req, res, next) => {
 
 applicationCtrl.deleteApplication = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  
-  const deletedApplication = await Application.findByIdAndDelete(id);
+
+  const deletedApplication = await Application.findByIdAndDelete(id).lean();
 
   try {
     if (
@@ -139,7 +139,10 @@ applicationCtrl.deleteApplication = catchAsync(async (req, res, next) => {
           deletedApplication.introduction_video.public_id,
           "video"
         ),
-        CloudinaryService.deleteFile(deletedApplication.resume.public_id),
+        CloudinaryService.deleteFile(
+          deletedApplication.resume.public_id,
+          "image"
+        ),
       ]);
     } else {
       console.log("No valid public IDs found to delete.");

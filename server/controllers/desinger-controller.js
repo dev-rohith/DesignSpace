@@ -79,7 +79,7 @@ designerProfileCtrl.createMyProfile = catchAsync(async (req, res, next) => {
     address,
     location: {
       type: "Point",
-      coordinates: [lng, lat],
+      coordinates: [lat, lng],
     },
   });
 
@@ -134,7 +134,6 @@ designerProfileCtrl.editMyProfile = catchAsync(async (req, res, next) => {
     { new: true }
   ).select("-portfolio -user -ratings -location");
 
-  console.log(updatedProfile);
 
   if (!updatedProfile) {
     return next(

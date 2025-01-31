@@ -4,7 +4,6 @@ import path from "path";
 
 const multerStorage = multer.diskStorage({
   destination: async (req, file, cb) => {
-    console.log("testing");
     const destinationDir = path.join(process.cwd(), 'uploads', 'temporary');
      if (!fs.existsSync(destinationDir)) {
       fs.mkdirSync(destinationDir, { recursive: true });

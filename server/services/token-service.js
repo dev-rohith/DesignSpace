@@ -4,8 +4,8 @@ const ACCESS_TOKEN_EXPIRE = process.env.ACCESS_TOKEN_EXPIRE;
 const REFRESH_TOKEN_EXPIRE = process.env.REFRESH_TOKEN_EXPIRE;
 
 export const Token = {
-  generateAccessToken(userId, userRole) {
-    return jwt.sign({ userId, userRole }, process.env.ACCESS_TOKEN_SECRET, {
+  generateAccessToken(userId, userRole, userStatus) {
+    return jwt.sign({ userId, userRole, userStatus }, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: ACCESS_TOKEN_EXPIRE * 60,
     });
   },

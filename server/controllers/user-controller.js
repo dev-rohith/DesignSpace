@@ -40,8 +40,8 @@ userCtrl.updateMe = catchAsync(async (req, res, next) => {
 });
 
 userCtrl.getUsers = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(User.find(), req.query)
-    .filter()
+  const features = new APIFeatures(User, req.query)
+    .filterAndSearch()
     .sort()
     .paginate();
   const finalQuery = features.query
@@ -52,6 +52,19 @@ userCtrl.getUsers = catchAsync(async (req, res, next) => {
   const users = await finalQuery;
   res.json(users);
 });
+
+userCtrl.getClients = catchAsync(async (req,res,next) => {
+  const features = new APIFeatures(User.find({role: 'client' }), req.query)
+  .filterAndSearch('firstName')
+  .paginate();
+const finalQuery = features.query
+  .select(
+    "profilePicture lastName firstName"
+  )
+  .lean();
+const users = await finalQuery;
+res.json(users);
+})
 
 userCtrl.UserStatusController = catchAsync(async (req, res, next) => {
   const { id } = req.params;

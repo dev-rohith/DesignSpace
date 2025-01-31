@@ -1,34 +1,47 @@
-import { Schema,model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const projectSchema = new Schema({
   name: String,
   description: String,
-  clientId: { type: ObjectId, ref: "User" },
-  designerId: { type: ObjectId, ref: "User" },
-  location: {
-    address: String,
-    coordinates: {
-      latitude: Number,
-      longitude: Number,
+  clientId: { type: Schema.Types.ObjectId, ref: "User" },
+  designerId: { type: Schema.Types.ObjectId, ref: "User" },
+  address: {
+    street: {
+      type: String,
+      required: true,
     },
+    house_number: {
+      type: String,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      required: true,
+    },
+    country: {
+      type: String,
+      required: true,
+    },
+    postal_code: String,
   },
+  location: {lat:Number, lng: Number},
   status: {
     type: String,
-    enum: ["draft", "pending", "in_progress", "review", "completed"], 
+    enum: ["pending", "in_progress", "review", "completed"],
+    default: "pending",
   },
-  minimumDays: {
-    type: Number,
-    select: false
-  },
-  startDate: Date,
-  deadline: Date,
+  minimumDays: Number,
   completedDate: Date,
   budget: Number,
   isPaid: {
     type: Boolean,
     default: false,
   },
-  files: [
+  completion_percentage: Number,
+  beforePricture: [
     {
       public_id: {
         type: String,
@@ -38,22 +51,29 @@ const projectSchema = new Schema({
         type: String,
         required: true,
       },
-      uploadedBy: { type: ObjectId, ref: "User" },
-      uploadedAt: Date,
     },
   ],
-  beforePricture: String,
-  afterPicture: String,
+  afterPicture: [
+    {
+      public_id: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   milestones: [
     {
       title: String,
       description: String,
       status: String,
-      completedAt: Date, //milestone reached at
+      reachedOn: Date,
     },
   ],
 });
-
 
 const Project = model("Project", projectSchema);
 

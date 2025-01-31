@@ -12,23 +12,17 @@ const associateProfileSchema = new Schema(
         type: String,
         enum: ["Point"], // GeoJSON format for geospatial queries
         required: true,
-      },
+      }, 
       coordinates: {
         type: [Number], // [longitude, latitude]
         required: true,
       },
     },
-    tasks: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Task", // Tasks assigned to this associate
-      },
-    ],
     completedTasksCount: {
       type: Number,
       default: 0, // Track completed tasks
     },
-    bio: {
+    bio: { 
       type: String,
       default: "", // Optional bio or description about the associate
     },

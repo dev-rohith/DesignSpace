@@ -105,7 +105,6 @@ authController.login = catchAsync(async (req, res, next) => {
       cookie.jwt,
       process.env.REFRESH_TOKEN_SECRET,
       async (err, user) => {
-        console.log(user);
         res.clearCookie("jwt");
         if (!err) {
           await TokenManager.removeRefreshToken(user._id, user.deviceId);
@@ -116,16 +115,25 @@ authController.login = catchAsync(async (req, res, next) => {
 
   const user = await User.findOne({ email }).select("+password");
 
+
   if (!user) return next(new AppError("user not found try to signup", 404));
 
   if (!(await user.correctPassword(password, user.password))) {
     return next(new AppError("invalid credentials", 403));
   }
 
+  if (user.status === "suspended") {
+    return next(new AppError("Your Account has been suspended", 403));
+  }
+
   const deviceId = uuidv4(); //may be later changed with device ip
   const deviceName = device?.vendor || browser?.name || os?.name || "unkown";
 
-  const accessToken = Token.generateAccessToken(user._id, user.role);
+  const accessToken = Token.generateAccessToken(
+    user._id,
+    user.role,
+    user.status
+  );
 
   const refreshToken = Token.generateRefreshToken(
     user._id,
@@ -306,6 +314,5 @@ authController.logoutUser = catchAsync(async (req, res, next) => {
 
   return res.json({ message: "Logout successful" });
 });
-
 
 export default authController;
