@@ -5,7 +5,11 @@ import { uploadSingleFile } from "../middleware/multer-middleware.js";
 
 const router = Router();
 
+
 router.use(authMiddleWare.protect);
+
+router.get('/my-pending', authMiddleWare.authorize('client'), projectCtrl.getClientPendingPortifolios)
+
 router.use(authMiddleWare.authorize("designer"));
 
 router.post("/", projectCtrl.createProject);
@@ -40,5 +44,7 @@ router.delete(
     "/after/:project_id/:Item_id",
     projectCtrl.deleteAfterProjectToPortifolio
 );
+
+router.put('/:project_id/complete', projectCtrl.complete)
 
 export default router;

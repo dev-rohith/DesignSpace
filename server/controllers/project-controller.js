@@ -214,4 +214,30 @@ projectCtrl.deleteAfterProjectToPortifolio = catchAsync(
   }
 );
 
+projectCtrl.complete = catchAsync(async (req, res, next) => {
+  const { project_id } = req.params;
+
+  const project = await Project.findById(project_id);
+
+  if (!project) return next(new AppError("project is not found", 404));
+  if (project.status !== "review")
+    return next(new AppError("You can only upload in review state", 400));
+  if (
+    project.beforePrictures.length === 0 &&
+    project.afterPictures.length === 0
+  )
+    next(
+      new AppError(
+        "Add atleast one image on before and after project to complete",
+        400
+      )
+    );
+
+  project.status = "completed";
+  project.save();
+  res.json({ message: "project is successfully completed" });
+});
+
+
+
 export default projectCtrl;

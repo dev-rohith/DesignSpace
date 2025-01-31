@@ -1,19 +1,11 @@
-import catchAsync from "../utils/catch-async-util.js"
+import catchAsync from "../utils/catch-async-util.js";
 
+const associateProfileCtrl = {};
 
-const designerProfileCtrl = {}
+associateProfileCtrl.createProfile = catchAsync(async (req, res, next) => {});
 
+associateProfileCtrl.updateProfile = catchAsync(async (req, res, next) => {});
 
-designerProfileCtrl.createProfile = catchAsync(async (req,res,next) => {
-    
-})
+associateProfileCtrl.updateProfile = catchAsync(async (req, res, next) => {});
 
-designerProfileCtrl.updateProfile = catchAsync(async (req,res,next) => {
-    
-})
-
-designerProfileCtrl.updateProfile = catchAsync(async (req,res,next) => {
-    
-})
-
-export default designerProfileCtrl
+export default associateProfileCtrl;
