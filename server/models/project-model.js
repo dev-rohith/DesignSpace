@@ -27,7 +27,7 @@ const projectSchema = new Schema({
     },
     postal_code: String,
   },
-  location: {lat:Number, lng: Number},
+  location: { lat: Number, lng: Number },
   status: {
     type: String,
     enum: ["pending", "in_progress", "review", "completed"],
@@ -41,7 +41,7 @@ const projectSchema = new Schema({
     default: false,
   },
   completion_percentage: Number,
-  beforePricture: [
+  beforePrictures: [
     {
       public_id: {
         type: String,
@@ -53,7 +53,7 @@ const projectSchema = new Schema({
       },
     },
   ],
-  afterPicture: [
+  afterPictures: [
     {
       public_id: {
         type: String,
@@ -65,14 +65,7 @@ const projectSchema = new Schema({
       },
     },
   ],
-  milestones: [
-    {
-      title: String,
-      description: String,
-      status: String,
-      reachedOn: Date,
-    },
-  ],
+  milestones: [String],
 });
 
 const Project = model("Project", projectSchema);
