@@ -7,22 +7,48 @@ const associateProfileSchema = new Schema(
       ref: "User",
       required: true,
     },
+    address: {
+      street: {
+        type: String,
+        required: true,
+      },
+      house_number: {
+        type: String,
+      },
+      city: {
+        type: String,
+        required: true,
+      },
+      state: {
+        type: String,
+        required: true,
+      },
+      country: {
+        type: String,
+        required: true,
+      },
+      postal_code: String,
+    },
     location: {
       type: {
         type: String,
         enum: ["Point"], // GeoJSON format for geospatial queries
-        required: true,
-      }, 
+        default: 'Point'
+      },
       coordinates: {
         type: [Number], // [longitude, latitude]
         required: true,
       },
     },
+    recent_completed_tasks: {
+      type: Schema.Types.ObjectId,
+      unique: true,
+    },
     completedTasksCount: {
       type: Number,
       default: 0, // Track completed tasks
     },
-    bio: { 
+    bio: {
       type: String,
       default: "", // Optional bio or description about the associate
     },
@@ -42,4 +68,15 @@ const associateProfileSchema = new Schema(
 
 const AssociateProfile = model("AssociateProfile", associateProfileSchema);
 
+AssociateProfile.createIndexes({ location: "2dsphere" });
+
 export default AssociateProfile;
+
+// db.associates.find({
+//   location: {
+//     $near: {
+//       $geometry: { type: "Point", coordinates: [77.5946, 12.9716] }, // Example coordinates (Bangalore)
+//       $maxDistance: 10000 // 10 km radius
+//     }
+//   }
+// });

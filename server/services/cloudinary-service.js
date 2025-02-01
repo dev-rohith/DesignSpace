@@ -18,6 +18,8 @@ export const CloudinaryService = {
       if (!fs.existsSync(file.path)) {
         throw new Error("File does not exist at path: " + file.path);
       }
+      
+      console.log('cloudianry hit')
 
       const result = await cloudinary.uploader.upload(file.path, {
         resource_type: "auto",

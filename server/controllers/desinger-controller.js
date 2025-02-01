@@ -21,8 +21,8 @@ designerProfileCtrl.getDesingerProfile = catchAsync(async (req, res, next) => {
 });
 
 designerProfileCtrl.getAllDesingers = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(DesignerProfile.find(), req.query)
-    .filter()
+  const features = new APIFeatures(DesignerProfile, req.query)
+    .filterAndSearch()
     .sort()
     .paginate();
 
@@ -65,6 +65,9 @@ designerProfileCtrl.createMyProfile = catchAsync(async (req, res, next) => {
 
   const { lat, lng } = await getCoordinates(address);
 
+  if (!lat || !lng)
+    return next(new AppError("please provide valid address", 400));
+
   const designer = new DesignerProfile({
     user: req.user.userId,
     company,
@@ -78,7 +81,6 @@ designerProfileCtrl.createMyProfile = catchAsync(async (req, res, next) => {
     softwareExpertise,
     address,
     location: {
-      type: "Point",
       coordinates: [lat, lng],
     },
   });
@@ -133,7 +135,6 @@ designerProfileCtrl.editMyProfile = catchAsync(async (req, res, next) => {
     updatedProfileData,
     { new: true }
   ).select("-portfolio -user -ratings -location");
-
 
   if (!updatedProfile) {
     return next(
@@ -209,11 +210,11 @@ designerProfileCtrl.deleteItemFromPortfolio = catchAsync(
       (item) => `${item._id}` === item_id
     );
 
-    const removeItemsFromCloudinary = deletedItem.images.map((image) => {
+    const removeItemsPromises = map((image) => {
       return CloudinaryService.deleteFile(image.public_id, "image");
     });
 
-    const resu = await Promise.all(removeItemsFromCloudinary);
+    const removeItemsFromCloudinary = await Promise.all(removeItemsPromises);
 
     res.json({
       message: "item deleted successfully",

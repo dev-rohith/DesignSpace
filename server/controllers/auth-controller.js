@@ -280,6 +280,8 @@ authController.logoutDevice = catchAsync(async (req, res, next) => {
   );
 });
 
+
+
 authController.logoutUser = catchAsync(async (req, res, next) => {
   const refreshToken = req.cookies.jwt;
 
