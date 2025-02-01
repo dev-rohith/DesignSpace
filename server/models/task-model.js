@@ -2,8 +2,8 @@ import { Schema, model } from "mongoose";
 
 const taskSchema = new Schema(
   {
-    project: { type: ObjectId, ref: "Project" },
-    title: {
+    project: { type: Schema.Types.ObjectId, ref: "Project" },
+    name: {
       type: String,
       required: true,
     },
@@ -11,38 +11,60 @@ const taskSchema = new Schema(
       type: String,
       required: true,
     },
+    associate: {
+      type: Schema.Types.ObjectId,
+      ref: "User", // Assigned associate
+    },
+    designer: {
+      type: Schema.Types.ObjectId,
+      ref: "User", // designer associate
+    },
+    status: {
+      type: String,
+      enum: ["pending", "in_progress", "completed"],
+      default: "pending",
+    },
+    address: {
+      street: {
+        type: String,
+        required: true,
+      },
+      house_number: {
+        type: String,
+      },
+      city: {
+        type: String,
+        required: true,
+      },
+      state: {
+        type: String,
+        required: true,
+      },
+      country: {
+        type: String,
+        required: true,
+      },
+      postal_code: String,
+    },
     location: {
       type: {
         type: String,
-        enum: ["Point"], // GeoJSON format
-        required: true,
+        default: "Point",
+        enum: ["Point"],
       },
       coordinates: {
         type: [Number], // [longitude, latitude]
         required: true,
       },
     },
-    associate: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Associate", // Assigned associate
-    },
-    status: {
-      type: String,
-      enum: ["pending", "assigned", "in-progress", "completed"],
-      default: "pending",
-    },
     priority: { type: String, enum: ["low", "medium", "high", "urgent"] },
     startDate: Date,
-    dueDate: Date,  
+    dueDate: Date,
     isVisibleToClient: Boolean,
-    completedAt: Date,
-    updateLocations: [
-      {
-        co_ordinates: { Number },
-      },
-    ],
+
     workUpdates: [
       {
+        updateLocation: Object,
         description: String,
         images: [
           {
@@ -56,10 +78,9 @@ const taskSchema = new Schema(
             },
           },
         ],
-        timestamp: Date,
-        updatedBy: {
-          type: Schema.Types.ObjectId,
-          ref: "User",
+        timestamp: {
+          type: Date,
+          default: Date.now,
         },
       },
     ],

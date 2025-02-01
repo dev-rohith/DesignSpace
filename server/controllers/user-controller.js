@@ -53,33 +53,50 @@ userCtrl.getUsers = catchAsync(async (req, res, next) => {
   res.json(users);
 });
 
-userCtrl.getClients = catchAsync(async (req,res,next) => {
-  const features = new APIFeatures(User.find({role: 'client' }), req.query)
-  .filterAndSearch('firstName')
-  .paginate();
-const finalQuery = features.query
-  .select(
-    "profilePicture lastName firstName"
-  )
-  .lean();
-const users = await finalQuery;
-res.json(users);
-})
+userCtrl.getClients = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(User.find({ role: "client" }), req.query)
+    .filterAndSearch("firstName")
+    .paginate();
+  const finalQuery = features.query
+    .select("profilePicture lastName firstName")
+    .lean();
+  const users = await finalQuery;
+  res.json(users);
+});
 
 userCtrl.UserStatusController = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const { status } = req.body;
   const deactivatedUser = await User.findByIdAndUpdate(
     id,
-    { status },{
+    { status },
+    {
       new: true,
-      runValidators: true
+      runValidators: true,
     }
-  ).select("-lastActive -maxDevices -subscription -devices -otp_chances -languages_known -__v")
-  if(!deactivatedUser) throw next(new AppError('user not found', 404))
+  ).select(
+    "-lastActive -maxDevices -subscription -devices -otp_chances -languages_known -__v"
+  );
+  if (!deactivatedUser) throw next(new AppError("user not found", 404));
   res
     .status(200)
-    .json({ message: "user account status changed successfully", user: deactivatedUser });
+    .json({
+      message: "user account status changed successfully",
+      user: deactivatedUser,
+    });
+});
+
+userCtrl.logoutAllUsers = catchAsync(async (req, res, next) => {
+  const userId = req.user.userId;
+  const user = await User.findById(userId);
+  if(!user) return next(new AppError('user is not found in db', 404))
+  const tokenClearPromises = user.devices.map((device) => {
+    TokenManager.removeRefreshToken(userId, device.deviceId);
+  });
+  await Promise.allSettled(tokenClearPromises)
+  user.devices = []
+  user.save()
+  res.json({message: 'successfully logouted from all the devices'})
 });
 
 export default userCtrl;

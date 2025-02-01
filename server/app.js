@@ -11,6 +11,7 @@ import taskRouter from "./routes/task-routes.js";
 import landingRouter from "./routes/landing-routes.js";
 import desingerRouter from "./routes/desinger-routes.js";
 import projectRouter from './routes/project-routes.js'
+import associateRouter from './routes/associate-routes.js'
 
 import globalErrorHandler from "./controllers/error-controller.js";
 
@@ -37,7 +38,10 @@ app.use("/api/v1/task", taskRouter);
 
 app.use("/api/v1/designer", desingerRouter);
 
+app.use("/api/v1/associate", associateRouter);
+
 app.use("/api/v1/project", projectRouter);
+
 
 app.use(globalErrorHandler);
 
