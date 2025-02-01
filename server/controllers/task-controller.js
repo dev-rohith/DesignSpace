@@ -129,7 +129,7 @@ taskCtrl.getMyPendingTasks = catchAsync(async (req, res, next) => {
   res.json(myPendingTasks);
 });
 
-////////////////////associate-actions//////////////////////////
+////////////////////---associate-actions------/////////////////////////////////////////////////////////
 
 taskCtrl.getMyTask = catchAsync(async (req, res, next) => {
   const { task_id } = req.params;
@@ -162,7 +162,7 @@ taskCtrl.getAllPendingTasks = catchAsync(async (req, res, next) => {
   res.json(myPendingTasks);
 });
 
-////update the progress ////////////////////
+//////////////////////////////-----update the progress-----////////////////////////////////////////////
 
 taskCtrl.getMyProgressTasks = catchAsync(async (req, res, next) => {
   const MyProgressTasks = await Task.find({ status: "in_progress" });

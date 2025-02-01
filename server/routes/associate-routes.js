@@ -17,3 +17,5 @@ router
   .get(associateProfileCtrl.getMyProfile);
 
 export default router;
+
+
