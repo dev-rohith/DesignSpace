@@ -6,7 +6,7 @@ import { uploadMultipleFiles } from "../middleware/multer-middleware.js";
 
 const router = Router();
 
-router.get("/all", designerProfileCtrl.getAllDesingers); //only designers basic fro page
+router.get("/all", designerProfileCtrl.getAllDesingers); //only designers basic for landing page
 
 router.get("/portfolios", designerProfileCtrl.getAllPortfolios); //only portfolios
 
