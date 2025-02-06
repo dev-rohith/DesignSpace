@@ -31,6 +31,7 @@ app.use(morgan("dev", { stream: logStream }));
 
 //routing api middleware
 
+
 app.use("/api/v1/user", userRouter);
 
 app.use("/api/v1/landing", landingRouter);

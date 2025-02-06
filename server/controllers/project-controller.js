@@ -5,6 +5,7 @@ import catchAsync from "../utils/catch-async-util.js";
 
 const projectCtrl = {};
 
+
 projectCtrl.createProject = catchAsync(async (req, res, next) => {
   const { title, description, clientId, address, minimumDays, budget } =
     req.body;

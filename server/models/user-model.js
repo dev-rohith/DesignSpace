@@ -28,7 +28,6 @@ const userSchema = new Schema({
     default: "active",
   },
 
-  // Basic profile info
   lastLoginOn: [Date],
 
   // Device management
@@ -54,12 +53,17 @@ const userSchema = new Schema({
 
   // Security
   otp: Number,
+  resend_limit: {
+    type: Number,
+    default: 5,
+  },
   otp_chances: {
     type: Number,
     default: 3,
     max: 3,
-    min: 1,
+    min: 0,
   },
+  otpExpiresIn: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
 });
