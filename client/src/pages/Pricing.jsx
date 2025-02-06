@@ -1,10 +1,13 @@
-import LandingLayout from "../layout/LandingLayout"
+import { PricingCard } from "../components";
+import LandingLayout from "../layout/LandingLayout";
 
 const Pricing = () => {
   return (
     <LandingLayout>
-        <Pricing
+      <div className="container">
+        <PricingCard />
+      </div>
     </LandingLayout>
-  )
-}
-export default Pricing
+  );
+};
+export default Pricing;

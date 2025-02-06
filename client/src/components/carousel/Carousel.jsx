@@ -10,7 +10,7 @@ const Carousel = ({ data, isLoading }) => {
 
   return (
     <div>
-      <h4 className="absolute top-70 left-20 z-50 uppercase font-bold text-black border-2  bg-white opacity-70 text-3xl px-3 animate-in">
+      <h4 className=" font-(--font-display) slide-in-from-left-72 delay-500 absolute top-70 left-20 z-50 uppercase font-bold text-black border-2  bg-white opacity-70 text-3xl px-3 animate-in">
         Designs Meet Reality
       </h4>
       <div className="overflow-hidden" ref={emblaRef}>

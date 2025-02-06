@@ -1,6 +1,16 @@
 const PricingCard = () => {
   return (
-    <div>PricingCard</div>
+    <div>
+      {/* headig */}
+      <div>
+          <div>Free</div>
+          <div>$0</div>
+      </div>
+      {/* features */}
+      <div>
+
+      </div>
+    </div>
   )
 }
 export default PricingCard
