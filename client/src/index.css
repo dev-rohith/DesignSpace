@@ -1,1 +1,15 @@
-@import "tailwindcss"
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@theme {
+  --font-display: "Alata", "sans-serif";
+  --primary: #5c3e94;
+  --secondary: #c4d9ff;
+  --accent: #c5baff;
+  --background: #fbfbfb;
+  --dark: #222831;
+
+  --gradient-light: linear-gradient(to bottom, #fbfbfb, #e8f9ff, #c4d9ff);
+  --gradient-dark: linear-gradient(to bottom, #222831, #30475e, #c5dff8);
+  --test: linearGradient();
+}

@@ -10,6 +10,7 @@ import { TokenManager } from "../services/redis-service.js";
 import { Token } from "../services/token-service.js";
 import AppError from "../utils/app-error-util.js";
 import catchAsync from "../utils/catch-async-util.js";
+import Email from "../utils/send-email.js";
 
 const authController = {};
 
@@ -80,15 +81,119 @@ authController.googleLoginSuccess = catchAsync(async (req, res) => {
 authController.signup = catchAsync(async (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
 
+  // Validate input data
+  if (!firstName || !lastName || !email || !password) {
+    return next(new AppError("Please provide all required fields", 400));
+  }
+
+  // Generate OTP
+  const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+
+  // Create user
   const user = await User.create({
     firstName,
     lastName,
     email,
     password,
+    otp: generatedOtp,
+    otpExpiresIn: Date.now() + 5 * 60 * 1000, // OTP expires in 5 minutes
   });
-  user.save();
 
-  res.json({ message: "sucessfully registered" });
+  if (!user) {
+    return next(new AppError("Error while creating user account", 500));
+  }
+
+  try {
+    await new Email(user.firstName, user.email).sendOtp(user.otp);
+
+    res.status(200).json({
+      status: "success",
+      message: "Verify the OTP to create your account",
+      token: user._id,
+    });
+  } catch (error) {
+    await User.findByIdAndDelete(user._id, { new: true });
+    return next(
+      new AppError(
+        "Error while sending verification email. Please try again later.",
+        500
+      )
+    );
+  }
+});
+
+authController.verifyUser = catchAsync(async (req, res, next) => {
+  const { user_id } = req.params;
+  const { otp } = req.body;
+
+  if (isNaN(otp)) return next(new AppError("otp must be an number", 400));
+
+  const user = await User.findById(user_id).select(
+    "otp otp_chances otpExpiresIn isVerified"
+  );
+
+  if (!user)
+    return next(new AppError("user not found try to sign up again", 400));
+
+  // Check OTP chances BEFORE any modifications
+  if (user.otp_chances <= 0) {
+    return next(
+      new AppError(
+        "otp chances has been over, misuse of otp may cause deactivation of account",
+        400
+      )
+    );
+  }
+
+  if (new Date(user.otpExpiresIn) < new Date()) {
+    return next(new AppError("Otp has been expired. try resend again.", 400));
+  }
+
+  if (Number(otp) === user.otp) {
+    user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpiresIn = undefined;
+    user.otp_chances = 3;
+    await user.save();
+
+    return res.status(201).json({
+      message: "your account has be created successfully",
+    });
+  } else {
+    // Decrement chances
+    user.otp_chances = user.otp_chances - 1;
+    await user.save();
+
+    return res.status(400).json({
+      message: `Incorrect Otp you have ${user.otp_chances} chances left`,
+    });
+  }
+});
+
+authController.resendVerification = catchAsync(async (req, res, next) => {
+  const { user_id } = req.params;
+  const user = await User.findById(user_id);
+  if (!user)
+    next(
+      new AppError(
+        "user not found try to signup first to send verification",
+        404
+      )
+    );
+  if (user.resend_limit < 1)
+    throw new AppError("Resend request limit over try again after 24h", 400);
+
+  const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+  (user.otp = generatedOtp),
+    (user.resend_limit = user.resend_limit - 1),
+    (user.otpExpiresIn = Date.now() + 5 * 60 * 1000), // OTP expiry 5 minutes
+    await user.save();
+
+  await new Email(user.firstName, user.email).sendOtp(user.otp);
+  res.status(200).json({
+    status: "success",
+    message: "A new OTP has been sent to your registered email.",
+  });
 });
 
 authController.login = catchAsync(async (req, res, next) => {
@@ -113,10 +218,14 @@ authController.login = catchAsync(async (req, res, next) => {
     );
   }
 
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ email, isVerified: true }).select(
+    "+password"
+  );
 
-
-  if (!user) return next(new AppError("user not found try to signup", 404));
+  if (!user)
+    return next(
+      new AppError("user not found or not verified try to signup again", 404)
+    );
 
   if (!(await user.correctPassword(password, user.password))) {
     return next(new AppError("invalid credentials", 403));
@@ -279,8 +388,6 @@ authController.logoutDevice = catchAsync(async (req, res, next) => {
     }
   );
 });
-
-
 
 authController.logoutUser = catchAsync(async (req, res, next) => {
   const refreshToken = req.cookies.jwt;

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { About, Carousel } from "../components";
+import { About, Carousel, Faq, WhyChooseUs } from "../components";
 import LandingLayout from "../layout/LandingLayout";
 import axiosInstance from "../apis/axiosIntance.js";
 const hello = import.meta.env.VITE_TEST;
@@ -33,12 +32,19 @@ const Landing = () => {
     <LandingLayout>
       <div>
         <header>
-        <Carousel data={config.carousel} isLoading={isLoading}/>
+          <Carousel data={config.carousel} isLoading={isLoading} />
         </header>
-        <main>
-          <About />
+        <main className="bg-gradient-to-b bg-(--background)">
+          <section>
+            <About />
+          </section>
+          <section>
+              <WhyChooseUs />
+          </section>
+          <section>
+            <Faq />
+          </section>
         </main>
-        
       </div>
     </LandingLayout>
   );

@@ -1,9 +1,11 @@
-import { Router } from "express";
+import { Router, text } from "express";
 import passport from "passport";
+import nodemailer from "nodemailer";
 
 import authController from "../controllers/auth-controller.js";
 import userCtrl from "../controllers/user-controller.js";
 import authMiddleWare from "../middleware/auth-middleware.js";
+import Email from "../utils/send-email.js";
 
 const router = Router();
 
@@ -21,6 +23,8 @@ router.get(
 
 //auth router
 router.post("/signup", authController.signup);
+router.post("/verify/:user_id", authController.verifyUser);
+router.post("/resend-verify/:user_id", authController.resendVerification);
 
 router.post("/login", authController.login);
 
@@ -28,7 +32,6 @@ router.post("/forgetPassword", authController.forgotPassword);
 router.put("/resetPassword/:token", authController.resetPassword);
 
 router.post("/logout/:deviceId", authController.logoutDevice);
-
 
 //refresh token rotation
 
@@ -68,7 +71,5 @@ router.use(authMiddleWare.authorize("admin"));
 
 router.get("/", userCtrl.getUsers);
 router.put("/:id", userCtrl.UserStatusController);
-
-
 
 export default router;

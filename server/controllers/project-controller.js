@@ -8,6 +8,7 @@ import fs from "fs";
 
 const projectCtrl = {};
 
+
 projectCtrl.createProject = catchAsync(async (req, res, next) => {
   const { title, description, clientId, address, minimumDays, budget } =
     req.body;

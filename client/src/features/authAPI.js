@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL; // Load API URL from .env
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL; 
 
 // User login API call
 export const loginUser = async (email, password) => {
