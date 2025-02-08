@@ -66,9 +66,12 @@ const associateProfileSchema = new Schema(
   { timestamps: true }
 );
 
+associateProfileSchema.index({ location: "2dsphere" });
+
+
 const AssociateProfile = model("AssociateProfile", associateProfileSchema);
 
-AssociateProfile.createIndexes({ location: "2dsphere" });
+// AssociateProfile.createIndexes({ location: "2dsphere" });
 
 export default AssociateProfile;
 

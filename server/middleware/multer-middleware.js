@@ -30,8 +30,8 @@ const customFileFilter = (allowedTypes) => {
 //uploading profile picture
 export const uploadAvatar = (allowedTypes) => {
   return multer({
-    storage,
-    fileFilter: customFileFilter(allowedTypes), // Apply custom filter here
+    storage: multerStorage,
+    fileFilter: customFileFilter(allowedTypes), 
     limits: 1024 * 1024 * 5,
     files: 1,
   }).single("image");

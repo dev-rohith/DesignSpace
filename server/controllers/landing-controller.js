@@ -5,6 +5,8 @@ import CloudinaryService from "../services/cloudinary-service.js";
 import fs from "fs";
 import AppError from "../utils/app-error-util.js";
 import { RedisDataManager } from "../services/redis-service.js";
+import designerProfileCtrl from "./desinger-controller.js";
+import DesignerProfile from "../models/designer-profile-model.js";
 
 const landingCtrl = {};
 
@@ -24,6 +26,12 @@ landingCtrl.getLanding = catchAsync(async (req, res, next) => {
         )
       );
     }
+
+    const designerLocations = await DesignerProfile.find()
+      .select("location.coordinates address.city -_id")
+      .lean();
+    config.designers_locations =
+      designerLocations.length >= 1 ? designerLocations : [];
 
     // Store config in Redis (ensure JSON format)
     await RedisDataManager.addItemToRedis(
@@ -59,7 +67,7 @@ landingCtrl.createCarouselItem = async (req, res, next) => {
 
     res.status(201).json({
       message: "carousel uploaded successfully",
-      newConfig,
+      data: newConfig,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -73,16 +81,26 @@ landingCtrl.createCarouselItem = async (req, res, next) => {
 };
 
 landingCtrl.addTopDesigner = catchAsync(async (req, res, next) => {
-  const { designerId } = req.body;
-  if (!designerId) return next(new AppError("designerId is needed", 400));
+  const { name, profilePicture, aboutMe } = req.body;
+  if (!name || !profilePicture || !aboutMe)
+    return next(new AppError("desinger details is needed", 400));
+
+  const newTopDesinger = {
+    name,
+    profilePicture,
+    aboutMe,
+  };
 
   const newConfig = await LandingConfig.findOneAndUpdate(
     {},
-    { $push: { designers: designerId } },
+    { $push: { designers: newTopDesinger } },
     { upsert: true, new: true }
   );
   await RedisDataManager.removeItemToRedis("landingConfig");
-  res.json(newConfig);
+  res.json({
+    message: "review uploaded successfully",
+    data: newConfig,
+  });
 });
 
 landingCtrl.addCustomerReview = catchAsync(async (req, res, next) => {
@@ -116,7 +134,7 @@ landingCtrl.addCustomerReview = catchAsync(async (req, res, next) => {
 
     res.status(201).json({
       message: "review uploaded successfully",
-      newCustomerReviews,
+      data: newCustomerReviews,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -155,37 +173,38 @@ landingCtrl.deleteCarouselItem = catchAsync(async (req, res, next) => {
   await CloudinaryService.deleteFile(public_id);
   await RedisDataManager.removeItemToRedis("landingConfig");
 
-  res.json(deletedItem);
+  res.json({
+    message: "carousel item deleted successfully",
+    data: deletedItem,
+  });
   // await CloudinaryService.deleteFile()
 });
 
 landingCtrl.deleteTopDesigner = catchAsync(async (req, res, next) => {
   const { desinger_id } = req.params;
 
-  const config = await LandingConfig.findOne({ designers: desinger_id });
+  const config = await LandingConfig.findOne({ "designers._id": desinger_id });
 
   if (!config) {
     return next(new AppError("Designer not found in configuration", 404));
   }
-
   const deletedItem = config.designers.find(
-    (item) => item.desinger_id === desinger_id
+    (item) => `${item._id}` === desinger_id
   );
 
   // Remove the designer ID from the designers array using $pull
-  config.designers = config.designers.filter((id) => `${id}` !== desinger_id);
+  config.designers = config.designers.filter(
+    (item) => `${item._id}` !== desinger_id
+  );
 
   // Save the updated document
   await config.save();
 
-  await CloudinaryService.deleteFile(desinger_id);
-
   await RedisDataManager.removeItemToRedis("landingConfig");
 
   res.status(200).json({
-    status: "success",
     message: "Designer removed from the landing configuration successfully.",
-    deletedItem, // Optionally return the updated designers array
+    data: deletedItem,
   });
 });
 
@@ -214,10 +233,9 @@ landingCtrl.deleteCustomerReview = catchAsync(async (req, res, next) => {
   await RedisDataManager.removeItemToRedis("landingConfig");
 
   res.status(200).json({
-    status: "success",
     message:
       "customer review removed from the landing configuration successfully.",
-    deletedItem,
+    data: deletedItem,
   });
 });
 

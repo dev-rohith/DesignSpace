@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
-import { About, Carousel, Faq, WhyChooseUs } from "../components";
+import { About, Carousel, Faq, TopDesingers, WhyChooseUs } from "../components";
 import LandingLayout from "../layout/LandingLayout";
 import axiosInstance from "../apis/axiosIntance.js";
+import toast from "react-hot-toast";
 const hello = import.meta.env.VITE_TEST;
-console.log(hello);
+
 const Landing = () => {
   const [config, setConfig] = useState({
     carousel: [],
     customer_reviews: [],
     designers: [],
+    designers_locations: [],
   });
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -19,9 +21,9 @@ const Landing = () => {
         setIsLoading(true);
         const response = await axiosInstance.get("/landing");
         setConfig(response.data);
-        console.log(response.data);
       } catch (error) {
-        console.log(error);
+        setIsError(true);
+        toast.error(error.response?.data?.message || "Failed to fetch data"); 
       } finally {
         setIsLoading(false);
       }
@@ -32,7 +34,7 @@ const Landing = () => {
     <LandingLayout>
       <div>
         <header>
-          <Carousel data={config.carousel} isLoading={isLoading} />
+          <Carousel data={config.carousel} isLoading={isLoading} isError={isError} />
         </header>
         <main className="bg-gradient-to-b bg-(--background)">
           <section>
@@ -40,6 +42,9 @@ const Landing = () => {
           </section>
           <section>
               <WhyChooseUs />
+          </section>
+          <section>
+          <TopDesingers  data={config.designers} isLoading={isLoading} isError={isError} />
           </section>
           <section>
             <Faq />

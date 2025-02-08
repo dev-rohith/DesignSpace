@@ -8,7 +8,7 @@ const router = Router();
 
 router.use(authMiddleWare.protect);
 
-router.get('/my-pending', authMiddleWare.authorize('client'), projectCtrl.getClientPendingPortifolios)
+// router.get('/my-pending', authMiddleWare.authorize('client'), projectCtrl.getClientPendingPortifolios)
 
 router.use(authMiddleWare.authorize("designer"));
 

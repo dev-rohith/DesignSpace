@@ -7,10 +7,19 @@ import AppError from "../utils/app-error-util.js";
 import catchAsync from "../utils/catch-async-util.js";
 import APIFeatures from "../utils/api-features.js";
 
+import {
+  applicationIdValidator,
+  applicationValidator,
+  updateApplicationValidator,
+} from "../validators/application-validation.js";
+
+
 const applicationCtrl = {};
 
 applicationCtrl.createApplication = async (req, res, next) => {
-  const { description, requestedRole } = req.body;
+  const { value, error } = applicationValidator.validate(req.body);
+  if (error) return next(new AppError(error.message, 422));
+  const { description, requestedRole } = value;
 
   if (!req.files) return next(new AppError("Files are required", 400));
 
@@ -74,31 +83,39 @@ applicationCtrl.getPendingApplications = catchAsync(async (req, res, next) => {
 
   const finalQuery = features.query
     .populate("requestedBy", "firstName lastName profilePicture status")
+    .select(
+      "-resume -description -actionPerformedOn -actionMadeBy -introduction_video -isApproved -__v"
+    )
     .lean();
   const applications = await finalQuery;
   res.json({ applications });
 });
 
-applicationCtrl.getExistingApplication = catchAsync(async (req, res, next) => {
+applicationCtrl.getAllApplications = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(
     Application.find({ $or: [{ status: "approved" }, { status: "rejected" }] }),
     req.query
   )
-    .filter()
+    .filterAndSearch()
     .sort()
     .paginate();
 
   const finalQuery = features.query
     .populate("requestedBy", "firstName lastName profilePicture status")
     .select("-resume -description -introduction_video -isApproved -__v")
+    .populate("actionMadeBy", "profilePicture firstName lastName")
     .lean();
   const applications = await finalQuery;
   res.json({ applications });
 });
 
 applicationCtrl.updateApplication = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const { status } = req.body;
+  const { value, error } = updateApplicationValidator.validate({
+    ...req.body,
+    ...req.params,
+  });
+  if (error) return next(new AppError(error.message, 422));
+  const { id, status } = value;
 
   const application = await Application.findById(id);
   if (!application) return next(new AppError("Application not found", 404));
@@ -125,7 +142,9 @@ applicationCtrl.updateApplication = catchAsync(async (req, res, next) => {
 });
 
 applicationCtrl.deleteApplication = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
+  const { value, error } = applicationIdValidator.validate(req.params);
+  if (error) return next(new AppError(error.message, 422));
+  const { id } = value;
 
   const deletedApplication = await Application.findByIdAndDelete(id).lean();
 
@@ -155,6 +174,19 @@ applicationCtrl.deleteApplication = catchAsync(async (req, res, next) => {
     message: "application deleted successfully",
     data: deletedApplication,
   });
+});
+
+applicationCtrl.getApplicationDetails = catchAsync(async (req, res, next) => {
+  const { value, error } = applicationIdValidator.validate(req.params);
+  if (error) return next(new AppError(error.message, 422));
+  const { id } = value;
+
+  const application = await Application.findById(id)
+    .select("-actionPerformedOn -actionMadeBy")
+    .populate("requestedBy", "firstName lastName profilePicture status")
+    .lean();
+  if (!application) return next(new AppError("application not found", 404));
+  res.status(200).json({ data: application });
 });
 
 export default applicationCtrl;

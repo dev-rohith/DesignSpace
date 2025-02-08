@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 
 import fs from "fs";
 
+import authRouter from "./routes/auth-routes.js";
 import userRouter from "./routes/user-routes.js";
 import applicationRouter from "./routes/application-routes.js";
 import taskRouter from "./routes/task-routes.js";
@@ -31,6 +32,8 @@ app.use(morgan("dev", { stream: logStream }));
 
 //routing api middleware
 
+
+app.use("/api/v1/auth", authRouter);
 
 app.use("/api/v1/user", userRouter);
 

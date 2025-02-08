@@ -1,14 +1,45 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
+import { useSelector } from "react-redux";
 
-const LoginComponent = ({handleLogin}) => {
+const LoginComponent = ({ handleLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [clientErrors, setClientErrors] = useState({});
+  const { isLoading } = useSelector((store) => store.auth);
+
+  function runValidations() {
+    const error = {};
+    if (!formData.email) {
+      error.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      error.email = "Invalid email format";
+    }
+    if (!formData.password) {
+      error.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      error.password = "Password must be at least 8 characters long";
+    } else if (!/[A-Z]/.test(formData.password)) {
+      error.password = "Password must contain at least one uppercase letter";
+    } else if (!/[a-z]/.test(formData.password)) {
+      error.password = "Password must contain at least one lowercase letter";
+    } else if (!/[0-9]/.test(formData.password)) {
+      error.password = "Password must contain at least one number";
+    } else if (!/[^A-Za-z0-9]/.test(formData.password)) {
+      error.password = "Password must contain at least one special character";
+    }
+    return error;
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
-    handleLogin(formData)
+    const Errors = runValidations();
+    if (Object.keys(Errors).length !== 0) {
+      setClientErrors(Errors);
+    } else {
+      handleLogin(formData);
+    }
   }
 
   return (
@@ -28,38 +59,63 @@ const LoginComponent = ({handleLogin}) => {
 
           {/* <!-- form --> */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <input
-              className="p-2 mt-8 rounded-xl border"
-              type="email"
-              value={formData.email}
-              placeholder="Email"
-              onChange={(e) => {
-                setFormData({ ...formData, email: e.target.value });
-              }}
-            />
-            <div className="relative">
+            <div>
               <input
-                className="p-2 rounded-xl border w-full"
-                type={showPassword ? "text" : "password"}
-                value={formData.password}
-                placeholder="Password"
+                className="p-2 mt-6 rounded-xl border w-full"
+                type="email"
+                value={formData.email}
+                placeholder="Email"
                 onChange={(e) => {
-                  setFormData({ ...formData, password: e.target.value });
+                  setFormData({ ...formData, email: e.target.value });
                 }}
               />
-              <button
-                className="absolute top-1/2 right-3 -translate-y-1/2 hover:cursor-pointer"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <Eye className="h-4 w-4" />
-                ) : (
-                  <EyeOff className="h-4 w-4" />
-                )}
-              </button>
+              {clientErrors.email && (
+                <p className=" ml-2 text-red-500 text-xs">
+                  {clientErrors.email}
+                </p>
+              )}
             </div>
-            <button className="bg-(--primary) rounded-xl text-white py-2 hover:scale-105 duration-300 cursor-pointer">
-              Login
+            <div>
+              <div className="relative">
+                <input
+                  className="p-2 rounded-xl border w-full"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  placeholder="Password"
+                  onChange={(e) => {
+                    setFormData({ ...formData, password: e.target.value });
+                  }}
+                />
+                <span
+                  className="absolute top-1/2 right-3 -translate-y-1/2 hover:cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <Eye className="h-4 w-4" />
+                  ) : (
+                    <EyeOff className="h-4 w-4" />
+                  )}
+                </span>
+              </div>
+              {clientErrors.password && (
+                <p className="ml-2 text-red-500 text-xs">
+                  {clientErrors.password}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="bg-(--primary) rounded-xl text-white py-2 hover:scale-105 duration-300 cursor-pointer"
+            >
+              {isLoading ? (
+                <span className="flex items-center text-sm justify-center space-x-2">
+                  <Loader className="w-4 h-6 animate-spin" />
+                  <span>Login...</span>
+                </span>
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
 
@@ -69,33 +125,6 @@ const LoginComponent = ({handleLogin}) => {
             <hr className="border-gray-400" />
           </div>
 
-          <button className="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300 text-(--primary) cursor-pointer">
-            <svg
-              className="mr-3"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 48 48"
-              width="25px"
-            >
-              <path
-                fill="#FFC107"
-                d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
-              />
-              <path
-                fill="#FF3D00"
-                d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
-              />
-              <path
-                fill="#4CAF50"
-                d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
-              />
-              <path
-                fill="#1976D2"
-                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
-              />
-            </svg>
-            Login with Google
-          </button>
-
           <div className="mt-5 text-xs border-b border-(--primary) py-4 text-(--primary)">
             <Link to="">Forgot your password?</Link>
           </div>
@@ -103,7 +132,7 @@ const LoginComponent = ({handleLogin}) => {
           <div className="mt-3 text-xs flex justify-between items-center text-(--primary)">
             <p>Don&apos;t have an account?</p>
             <Link to="/signup">
-              <button className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300 hover:cursor-pointer">
+              <button className="py-2 mb-3 px-5 bg-white border rounded-xl hover:scale-110 duration-300 hover:cursor-pointer">
                 Register
               </button>
             </Link>

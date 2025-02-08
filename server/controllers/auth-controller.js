@@ -11,105 +11,67 @@ import { Token } from "../services/token-service.js";
 import AppError from "../utils/app-error-util.js";
 import catchAsync from "../utils/catch-async-util.js";
 import Email from "../utils/send-email.js";
+import {
+  deviceIdValidator,
+  forgotPasswordValidator,
+  loginValidator,
+  otpValidator,
+  resetPasswordValidator,
+  signupValidator,
+  userIdValidator,
+} from "../validators/auth-validation.js";
+import Otp from "../models/otp-model.js";
 
 const authController = {};
 
-//passport middileware
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "auth/google/callback",
-    },
-    async (_, __, profile, done) => {
-      try {
-        let user = await User.find({ googleId: profile.id });
 
-        if (!user) {
-          user = await User.create({
-            email: profile.emails[0].value,
-            googleId: profile.id,
-          });
-        }
-
-        return done(null, user);
-      } catch (error) {
-        return done(error, null);
-      }
-    }
-  )
-);
-
-//need to work on this
-authController.googleLoginSuccess = catchAsync(async (req, res) => {
-  // Handle successful authentication
-  const deviceId = uuidv4();
-  const accessToken = jwt.sign(
-    { userId: req.user._id, deviceId },
-    process.env.JWT_SECRET,
-    { expiresIn: "15m" }
-  );
-
-  const refreshToken = jwt.sign(
-    { userId: req.user._id, deviceId },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "30d" }
-  );
-
-  // Store device info
-  req.user.devices.push({
-    deviceId,
-    name: "Google OAuth Login",
-    lastLogin: new Date(),
-    refreshToken,
-  });
-  await req.user.save();
-
-  // Store refresh token in Redis
-  await TokenManager.storeRefreshToken(req.user._id, deviceId, refreshToken);
-
-  // Redirect to frontend with tokens
-  res.redirect(
-    `${process.env.FRONTEND_URL}/auth/callback?` +
-      `accessToken=${accessToken}&refreshToken=${refreshToken}&deviceId=${deviceId}`
-  );
-});
-
-/////////////////////////////////////////////--------Normal-login-flow--------///////////////////////////////////////////////////////////
+//---------------------------------------------------Normal-login-flow----------------------------------------------------//
 
 authController.signup = catchAsync(async (req, res, next) => {
-  const { firstName, lastName, email, password } = req.body;
-
-  // Validate input data
-  if (!firstName || !lastName || !email || !password) {
-    return next(new AppError("Please provide all required fields", 400));
-  }
-
+  const { value, error } = signupValidator.validate(req.body);
+  if (error) return next(new AppError(error.details[0].message, 422));
   // Generate OTP
-  const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
-
+  const userAlreadyExists = await User.findOne({ email: value.email });
+  if (userAlreadyExists && userAlreadyExists.isVerified)
+    return next(new AppError("User already exists", 400));
+  if (userAlreadyExists && !userAlreadyExists.isVerified) {
+    req.params.user_id = userAlreadyExists._id;
+    return next();
+  }
   // Create user
   const user = await User.create({
-    firstName,
-    lastName,
-    email,
-    password,
-    otp: generatedOtp,
-    otpExpiresIn: Date.now() + 5 * 60 * 1000, // OTP expires in 5 minutes
+    firstName: value.firstName,
+    lastName: value.lastName,
+    email: value.email,
+    password: value.password,
   });
 
   if (!user) {
     return next(new AppError("Error while creating user account", 500));
   }
+  req.params.user_id = user._id;
+  next();
+});
 
+authController.sendOtpVerfication = catchAsync(async (req, res, next) => {
+  const { user_id } = req.params;    //user_id is coming from previous middleware
+  const user = await User.findById(user_id);
+  if (!user) return next(new AppError("user not found", 404));
+
+  const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+
+  const newOtp = await Otp.create({
+    user: `${user._id}`,
+    otp: generatedOtp,
+    otpExpiresIn: Date.now() + 5 * 60 * 1000,
+  });
+  if (!newOtp) return next(new AppError("Error while generating otp", 500));
   try {
-    await new Email(user.firstName, user.email).sendOtp(user.otp);
+    await new Email(user.firstName, user.email).sendOtp(newOtp.otp);
 
     res.status(200).json({
       status: "success",
       message: "Verify the OTP to create your account",
-      token: user._id,
     });
   } catch (error) {
     await User.findByIdAndDelete(user._id, { new: true });
@@ -122,21 +84,21 @@ authController.signup = catchAsync(async (req, res, next) => {
   }
 });
 
-authController.verifyUser = catchAsync(async (req, res, next) => {
-  const { user_id } = req.params;
-  const { otp } = req.body;
-
+authController.verifyAccount = catchAsync(async (req, res, next) => {
+  const { error, value } = otpValidator.validate({
+    ...req.params,
+    ...req.body,
+  });
+  if (error) return next(new AppError(error.details[0].message, 422));
+  const { otp, user_id } = value;
   if (isNaN(otp)) return next(new AppError("otp must be an number", 400));
-
-  const user = await User.findById(user_id).select(
-    "otp otp_chances otpExpiresIn isVerified"
-  );
-
-  if (!user)
-    return next(new AppError("user not found try to sign up again", 400));
+  console.log(user_id);
+  const userOtp = await Otp.findOne({ user: `${user_id}` });
+  console.log(userOtp);
+  if (!userOtp) return next(new AppError("otp not found try resend otp", 400));
 
   // Check OTP chances BEFORE any modifications
-  if (user.otp_chances <= 0) {
+  if (userOtp.otp_chances <= 0) {
     return next(
       new AppError(
         "otp chances has been over, misuse of otp may cause deactivation of account",
@@ -145,51 +107,52 @@ authController.verifyUser = catchAsync(async (req, res, next) => {
     );
   }
 
-  if (new Date(user.otpExpiresIn) < new Date()) {
+  if (new Date(userOtp.otpExpiresIn) < new Date()) {
     return next(new AppError("Otp has been expired. try resend again.", 400));
   }
 
-  if (Number(otp) === user.otp) {
-    user.isVerified = true;
-    user.otp = undefined;
-    user.otpExpiresIn = undefined;
-    user.otp_chances = 3;
-    await user.save();
+  if (Number(otp) === userOtp.otp) {
+    await User.findByIdAndUpdate(`${user_id}`, { isVerified: true });
+    userOtp.otp = undefined;
+    userOtp.otpExpiresIn = undefined;
+    userOtp.otp_chances = 3;
+    await userOtp.save();
 
     return res.status(201).json({
       message: "your account has be created successfully",
     });
   } else {
-    // Decrement chances
-    user.otp_chances = user.otp_chances - 1;
-    await user.save();
+    userOtp.otp_chances = userOtp.otp_chances - 1;
+    await userOtp.save();
 
     return res.status(400).json({
-      message: `Incorrect Otp you have ${user.otp_chances} chances left`,
+      message: `Incorrect Otp you have ${userOtp.otp_chances} chances left`,
     });
   }
 });
 
 authController.resendVerification = catchAsync(async (req, res, next) => {
-  const { user_id } = req.params;
-  const user = await User.findById(user_id);
-  if (!user)
+  const {value, error} = userIdValidator.validate(req.params);
+  if(error) return next(new AppError(error.details[0].message, 422));
+  const userOtp = await Otp.findOne({ user:  value.user_id });
+  if (!userOtp)
     next(
       new AppError(
         "user not found try to signup first to send verification",
         404
       )
     );
-  if (user.resend_limit < 1)
+  if (userOtp.resend_limit < 1)
     throw new AppError("Resend request limit over try again after 24h", 400);
-
+  const user = await User.findById(userOtp.user);
+  if (!user) return next(new AppError("user not found", 404));
   const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
-  (user.otp = generatedOtp),
-    (user.resend_limit = user.resend_limit - 1),
-    (user.otpExpiresIn = Date.now() + 5 * 60 * 1000), // OTP expiry 5 minutes
-    await user.save();
+  (userOtp.otp = generatedOtp),
+    (userOtp.resend_limit = userOtp.resend_limit - 1),
+    (userOtp.otpExpiresIn = Date.now() + 5 * 60 * 1000), // OTP expiry 5 minutes
+    await userOtp.save();
 
-  await new Email(user.firstName, user.email).sendOtp(user.otp);
+  await new Email(user.firstName, user.email).sendOtp(userOtp.otp);
   res.status(200).json({
     status: "success",
     message: "A new OTP has been sent to your registered email.",
@@ -197,8 +160,11 @@ authController.resendVerification = catchAsync(async (req, res, next) => {
 });
 
 authController.login = catchAsync(async (req, res, next) => {
+  const {value, error} = loginValidator.validate(req.body);
+  if(error) return next(new AppError(error.details[0].message, 422));
+  const {email, password} = value;
   const cookie = req.cookies;
-  const { email, password } = req.body;
+
   const userAgent =
     req.get["User-Agent"] ||
     "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/537.36";
@@ -254,7 +220,7 @@ authController.login = catchAsync(async (req, res, next) => {
 
   // Initialize arrays only if undefined (no need for separate initialization)
   if (user.devices.length >= user.maxDevices) {
-    return res.status(400).json({
+    return res.status(429).json({
       message: "Device limit reached. Please log out of a device to log in.",
       data: user.devices,
     });
@@ -275,6 +241,9 @@ authController.login = catchAsync(async (req, res, next) => {
 });
 
 authController.forgotPassword = catchAsync(async (req, res, next) => {
+  const {value, error} = forgotPasswordValidator.validate(req.body);
+  if(error) return next(new AppError(error.details[0].message, 422));
+  const {email} = value;
   // 1) Get user based on POSTed email
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
@@ -291,7 +260,7 @@ authController.forgotPassword = catchAsync(async (req, res, next) => {
       "host"
     )}/api/v1/users/resetPassword/${resetToken}`;
 
-    //email logic here
+    //email logic here                                      //---------------------------- sending email with front end link
 
     // await new Email(user, resetURL).sendPasswordReset();
 
@@ -299,7 +268,7 @@ authController.forgotPassword = catchAsync(async (req, res, next) => {
     //   status: "success",
     //   message: "Token sent to email!",
     // });
-    res.json({ resetToken });
+    res.json({ message: 'password Reset link sent to email',  resetToken });
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
@@ -314,47 +283,42 @@ authController.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 authController.resetPassword = catchAsync(async (req, res, next) => {
-  //if possible on email to the user
-  // Get user based on the token
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(req.params.token)
-    .digest("hex");
+  const {value, error} = resetPasswordValidator.validate({...req.params,...req.body});
+  if(error) return next(new AppError(error.details[0].message, 422));
+  const {password, token} = value;
+
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
   });
 
-  // If token has not expired, and there is user, set the new password
   if (!user) {
     return next(new AppError("Token is invalid or has expired", 400));
   }
 
-  // Removing all the refresh tokens from the redis
   user.devices.forEach(async (device) => {
     await TokenManager.removeRefreshToken(user._id, device.deviceId);
   });
 
-  // Removing all the devices from the database
   user.devices = [];
 
-  //reseting the functionality
-  user.password = req.body.password;
+  user.password = password;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
   await user.save();
 
-  // Login in the user and send accessToken
   const accessToken = Token.generateAccessToken(user._id, user.role);
 
   res.json({ accessToken });
 });
 
 authController.logoutDevice = catchAsync(async (req, res, next) => {
-  //must remove the token on frontend after each successfull response
+  const {value, error} = deviceIdValidator.validate(req.params);
+  if(error) return next(new AppError(error.details[0].message, 422));
+  const {deviceId} = value;
+  
   const refreshToken = req.cookies.jwt;
-  const { deviceId } = req.params;
-
   if (!refreshToken) {
     return next(
       new AppError("unethical Access you will be logouted automatically", 403)

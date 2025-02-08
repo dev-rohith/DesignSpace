@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const SignupComponent = () => {
+const SignupComponent = ({ handleSignup }) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -10,8 +10,72 @@ const SignupComponent = () => {
     confirmPassword: "",
   });
 
+  const [clientErrors, setClientErrors] = useState({});
+
+  function runValidations() {
+    const errors = {};
+
+    if (!formData.firstName) {
+      errors.firstName = "First name is required";
+    } else if (formData.firstName.length < 2) {
+      errors.firstName = "First name must be at least 2 characters";
+    } else if (!/^[A-Za-z]+$/.test(formData.firstName)) {
+      errors.firstName = "First name must contain only letters";
+    }
+
+    if (!formData.lastName) {
+      errors.lastName = "Last name is required";
+    } else if (formData.lastName.length < 2) {
+      errors.lastName = "Last name must be at least 2 characters";
+    } else if (!/^[A-Za-z]+$/.test(formData.lastName)) {
+      errors.lastName = "Last name must contain only letters";
+    }
+
+    if (!formData.email) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = "Invalid email format";
+    }
+
+    if (!formData.password) {
+      errors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      errors.password = "Password must be at least 8 characters long";
+    } else if (!/[A-Z]/.test(formData.password)) {
+      errors.password = "Password must contain at least one uppercase letter";
+    } else if (!/[a-z]/.test(formData.password)) {
+      errors.password = "Password must contain at least one lowercase letter";
+    } else if (!/[0-9]/.test(formData.password)) {
+      errors.password = "Password must contain at least one number";
+    } else if (!/[^A-Za-z0-9]/.test(formData.password)) {
+      errors.password = "Password must contain at least one special character";
+    }
+
+    if (!formData.confirmPassword) {
+      errors.confirmPassword = "Confirm password is required";
+    } else if (formData.confirmPassword !== formData.password) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
+    return errors;
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
+    const Errors = runValidations();
+    if (Object.keys(Errors).length !== 0) {
+      setClientErrors(Errors);
+    } else {
+      const { firstName, lastName, email, password } = formData;
+      handleSignup({ firstName, lastName, email, password });
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+    }
   }
 
   return (
@@ -25,54 +89,91 @@ const SignupComponent = () => {
         {/* <!-- form --> */}
         <div className="md:w-1/2 px-8 md:px-15">
           <h2 className="font-bold text-2xl text-(--primary)">Signup Now</h2>
-          <p className="text-xs mt-2 text-(--primary)">Become a new member now</p>
+          <p className="text-xs mt-2 text-(--primary)">
+            Become a new member now
+          </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <input
-              className="p-2 mt-4 rounded-xl border"
-              type="text"
-              placeholder="First Name"
-              value={formData.firstName}
-              onChange={(e) => {
-                setFormData({ ...formData, firstName: e.target.value });
-              }}
-            />
-            <input
-              className="p-2 rounded-xl border"
-              type="text"
-              placeholder="Last Name"
-              value={formData.lastName}
-              onChange={(e) => {
-                setFormData({ ...formData, lastName: e.target.value });
-              }}
-            />
-            <input
-              className="p-2 rounded-xl border"
-              type="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={(e) => {
-                setFormData({ ...formData, email: e.target.value });
-              }}
-            />
-            <input
-              className="p-2 rounded-xl border w-full"
-              type="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={(e) => {
-                setFormData({ ...formData, password: e.target.value });
-              }}
-            />
-            <input
-              className="p-2 rounded-xl border w-full"
-              type="password"
-              placeholder="Confirm Pasword"
-              value={formData.confirmPassword}
-              onChange={(e) => {
-                setFormData({ ...formData, confirmPassword: e.target.value });
-              }}
-            />
+            <div>
+              <input
+                className="p-2 mt-4 rounded-xl border w-full"
+                type="text"
+                placeholder="First Name"
+                value={formData.firstName}
+                onChange={(e) => {
+                  setFormData({ ...formData, firstName: e.target.value });
+                }}
+              />
+              {clientErrors.firstName && (
+                <p className=" ml-2 text-red-500 text-xs">
+                  {clientErrors.firstName}
+                </p>
+              )}
+            </div>
+            <div>
+              <input
+                className="p-2 rounded-xl border w-full"
+                type="text"
+                placeholder="Last Name"
+                value={formData.lastName}
+                onChange={(e) => {
+                  setFormData({ ...formData, lastName: e.target.value });
+                }}
+              />
+              {clientErrors.lastName && (
+                <p className=" ml-2 text-red-500 text-xs">
+                  {clientErrors.lastName}
+                </p>
+              )}
+            </div>
+            <div>
+              <input
+                className="p-2 rounded-xl border w-full"
+                type="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                }}
+              />
+              {clientErrors.email && (
+                <p className=" ml-2 text-red-500 text-xs">
+                  {clientErrors.email}
+                </p>
+              )}
+            </div>
+            <div>
+              <input
+                className="p-2 rounded-xl border w-full"
+                type="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={(e) => {
+                  setFormData({ ...formData, password: e.target.value });
+                }}
+              />
+              {clientErrors.password && (
+                <p className="ml-2 text-red-500 text-xs">
+                  {clientErrors.password}
+                </p>
+              )}
+            </div>
+            <div>
+              <input
+                className="p-2 rounded-xl border w-full"
+                type="password"
+                placeholder="Confirm Pasword"
+                value={formData.confirmPassword}
+                onChange={(e) => {
+                  setFormData({ ...formData, confirmPassword: e.target.value });
+                }}
+              />
+              {clientErrors.confirmPassword && (
+                <p className="ml-2 text-red-500 text-xs">
+                  {clientErrors.confirmPassword}
+                </p>
+              )}
+            </div>
             <button className="bg-(--primary) rounded-xl text-white py-2 hover:scale-105 duration-300">
               Register
             </button>
@@ -84,39 +185,10 @@ const SignupComponent = () => {
             <hr className="border-gray-400" />
           </div>
 
-          <button className="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300 text-(--primary)">
-            <svg
-              width="25px"
-              className="mr-3"
-              viewBox="0 0 48 48"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="m43.611 20.083h-1.611v-0.083h-18v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657c-3.572-3.329-8.35-5.382-13.618-5.382-11.045 0-20 8.955-20 20s8.955 20 20 20 20-8.955 20-20c0-1.341-0.138-2.65-0.389-3.917z"
-                fill="#FFC107"
-              />
-              <path
-                d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
-                fill="#FF3D00"
-              />
-              <path
-                d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
-                fill="#4CAF50"
-              />
-              <path
-                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
-                fill="#1976D2"
-              />
-            </svg>
-            Continue with Google
-          </button>
-
-          <div className="mt-5 border-b border-(--primary) py-4]"></div>
-
-          <div className="mt-3 text-xs flex justify-between items-center text-(--primary)">
+          <div className="mt-3 text-xs flex justify-between items-center text-(--primary) pb-3">
             <p>Already have an account?</p>
             <Link to="/login">
-              <button className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300 hover:cursor-pointer">
+              <button className="py-2 px-3 md:px-3 lg:px-6 bg-white border rounded-xl hover:scale-110 duration-300 hover:cursor-pointer">
                 Login
               </button>
             </Link>

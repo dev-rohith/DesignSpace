@@ -1,4 +1,5 @@
 import User from "../models/user-model.js";
+import CloudinaryService from "../services/cloudinary-service.js";
 import { TokenManager } from "../services/redis-service.js";
 import APIFeatures from "../utils/api-features.js";
 import AppError from "../utils/app-error-util.js";
@@ -7,8 +8,13 @@ import catchAsync from "../utils/catch-async-util.js";
 const userCtrl = {};
 
 userCtrl.getUser = catchAsync(async (req, res, next) => {
-  const user = await User.findOne({ _id: req.user?.userId });
-  res.json({ user });
+  let filterSting =
+    "email lastLoginOn status role profilePicture lastName firstName";
+  if (req.user.userRole === "client") filterSting += " subscription";
+  const user = await User.findOne({ _id: req.user?.userId })
+    .select(filterSting)
+    .lean();
+  res.json(user);
 });
 
 userCtrl.updatePassword = catchAsync(async (req, res, next) => {
@@ -34,9 +40,33 @@ userCtrl.updatePassword = catchAsync(async (req, res, next) => {
   res.json({ message: "Password updated successfully" });
 });
 
+userCtrl.updateProfilePic = catchAsync(async (req, res, next) => {
+  if (!req.file) return next(new AppError("image must needed to update", 400));
+  const upload = await CloudinaryService.uploadFile(req.file);
+  console.log(upload);
+  const profilePicture = upload.secure_url;
+  const user = await User.findByIdAndUpdate(
+    req.user.userId,
+    { profilePicture },
+    { new: true }
+  ).lean();
+  res.json({
+    message: "your profile picture has been updated successfully",
+    data: user.profilePicture,
+  });
+});
+
 userCtrl.updateMe = catchAsync(async (req, res, next) => {
-  const inputData = req.body;
-  // if(req.file)
+  const { firstName, lastName } = req.body;
+  const user = await User.findByIdAndUpdate(
+    req.user.userId,
+    { firstName, lastName },
+    { new: true }
+  ).lean();
+  res.json({
+    message: "name has been changed successfully",
+    data: { firstName, lastName },
+  });
 });
 
 userCtrl.getUsers = catchAsync(async (req, res, next) => {
@@ -45,9 +75,7 @@ userCtrl.getUsers = catchAsync(async (req, res, next) => {
     .sort()
     .paginate();
   const finalQuery = features.query
-    .select(
-      "-lastActive -maxDevices -subscription -devices -otp_chances -languages_known -__v"
-    )
+    .select("status role profilePicture lastName firstName email lastLoginOn")
     .lean();
   const users = await finalQuery;
   res.json(users);
@@ -78,25 +106,23 @@ userCtrl.UserStatusController = catchAsync(async (req, res, next) => {
     "-lastActive -maxDevices -subscription -devices -otp_chances -languages_known -__v"
   );
   if (!deactivatedUser) throw next(new AppError("user not found", 404));
-  res
-    .status(200)
-    .json({
-      message: "user account status changed successfully",
-      user: deactivatedUser,
-    });
+  res.status(200).json({
+    message: "user account status changed successfully",
+    user: deactivatedUser,
+  });
 });
 
 userCtrl.logoutAllUsers = catchAsync(async (req, res, next) => {
   const userId = req.user.userId;
   const user = await User.findById(userId);
-  if(!user) return next(new AppError('user is not found in db', 404))
+  if (!user) return next(new AppError("user is not found in db", 404));
   const tokenClearPromises = user.devices.map((device) => {
     TokenManager.removeRefreshToken(userId, device.deviceId);
   });
-  await Promise.allSettled(tokenClearPromises)
-  user.devices = []
-  user.save()
-  res.json({message: 'successfully logouted from all the devices'})
+  await Promise.allSettled(tokenClearPromises);
+  user.devices = [];
+  user.save();
+  res.json({ message: "successfully logouted from all the devices" });
 });
 
 export default userCtrl;

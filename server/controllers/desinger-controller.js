@@ -47,6 +47,8 @@ designerProfileCtrl.getAllPortfolios = catchAsync(async (req, res, next) => {
   res.json(portifolios);
 });
 
+
+
 //////////////////////////--private--/////////////////////////////////
 
 designerProfileCtrl.createMyProfile = catchAsync(async (req, res, next) => {
@@ -94,6 +96,7 @@ designerProfileCtrl.getMyProfile = catchAsync(async (req, res, next) => {
   const myProfile = await DesignerProfile.findOne({
     user: req.user.userId,
   }).select("-user -ratings -location");
+  if(!myProfile) return next(new AppError("Profile not found", 404));
   res.json(myProfile);
 });
 

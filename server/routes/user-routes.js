@@ -1,75 +1,42 @@
-import { Router, text } from "express";
-import passport from "passport";
-import nodemailer from "nodemailer";
-
-import authController from "../controllers/auth-controller.js";
+import { Router } from "express";
 import userCtrl from "../controllers/user-controller.js";
 import authMiddleWare from "../middleware/auth-middleware.js";
-import Email from "../utils/send-email.js";
+import { uploadAvatar } from "../middleware/multer-middleware.js";
 
 const router = Router();
 
-//authentication stuff here
-router.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-router.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  authController.googleLoginSuccess
-);
-
-//auth router
-router.post("/signup", authController.signup);
-router.post("/verify/:user_id", authController.verifyUser);
-router.post("/resend-verify/:user_id", authController.resendVerification);
-
-router.post("/login", authController.login);
-
-router.post("/forgetPassword", authController.forgotPassword);
-router.put("/resetPassword/:token", authController.resetPassword);
-
-router.post("/logout/:deviceId", authController.logoutDevice);
-
-//refresh token rotation
-
-router.get("/refreshToken", authMiddleWare.refreshToken_rotation);
-
-//////////////////////////////////////////////////////////////////////////////
-
-//user controller stuff here
+//--------------------- get me protected for login --------------------//
 
 router.get("/me", authMiddleWare.protect, userCtrl.getUser);
 
-router.post("/forgetPassword", authController.forgotPassword);
 
-router.put("/resetPassword/:token", authController.resetPassword);
+//-------------------------- user power ------------------------//
 
-router.use(authMiddleWare.protect);
+router.put("/update", userCtrl.updateMe);
 
-router.post("/logout", authController.logoutUser);
+router.put("/updatePassword", userCtrl.updatePassword); 
 
-router.post("/logoutall", userCtrl.logoutAllUsers);
+router.put(
+  "/update-profile-pic",
+  uploadAvatar(["image/png", "image/jpeg"]),
+  userCtrl.updateProfilePic
+);
 
-router.put("/updatePassword", userCtrl.updatePassword); // currentPassword, newPassword
 
-router.put("/update");
 
-//designer power /////////////////////////////////////////////////////
-
+//-------------------------- designer power ------------------------//
 router.get(
   "/clients",
   authMiddleWare.authorize("designer"),
   userCtrl.getClients
 );
 
-//admin power ////////////////////////////////////////////////////////
+//-------------------------- admin power ------------------------//  
 
 router.use(authMiddleWare.authorize("admin"));
 
 router.get("/", userCtrl.getUsers);
 router.put("/:id", userCtrl.UserStatusController);
 
-export default router;
+
+export default router

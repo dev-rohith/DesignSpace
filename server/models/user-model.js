@@ -5,7 +5,7 @@ import crypto from "crypto";
 const userSchema = new Schema({
   // Basic user information
   googleId: String,
-  email: { type: String, unique: true },
+  email: String,
   password: { type: String, select: false },
   firstName: String,
   lastName: String,
@@ -14,7 +14,10 @@ const userSchema = new Schema({
     default:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
   },
-  isVerified: Boolean,
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
 
   // Role and status
   role: {
@@ -24,7 +27,7 @@ const userSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ["active", "inactive", "suspended"],
+    enum: ["active", "suspended"],
     default: "active",
   },
 
@@ -52,18 +55,6 @@ const userSchema = new Schema({
   },
 
   // Security
-  otp: Number,
-  resend_limit: {
-    type: Number,
-    default: 5,
-  },
-  otp_chances: {
-    type: Number,
-    default: 3,
-    max: 3,
-    min: 0,
-  },
-  otpExpiresIn: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
 });

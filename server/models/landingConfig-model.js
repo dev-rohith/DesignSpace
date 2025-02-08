@@ -8,7 +8,7 @@ const landingConfigSchema = new Schema({
         required: true,
       },
       url: {
-        type: String,       //file upload -- image
+        type: String, //file upload -- image
         required: true,
       },
       resource_type: {
@@ -19,8 +19,9 @@ const landingConfigSchema = new Schema({
   ],
   designers: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      name: String,
+      profilePicture: String,
+      aboutMe: String,
     },
   ],
   customer_reviews: [
@@ -37,8 +38,8 @@ const landingConfigSchema = new Schema({
         },
         resource_type: {
           type: String,
-          required: true
-        }
+          required: true,
+        },
       },
       review: String,
     },

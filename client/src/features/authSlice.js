@@ -1,66 +1,73 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "../apis/axiosIntance";
-
-// Login action
-export const login = createAsyncThunk(
-  "auth/login",
-  async ({ email, password }, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post("/auth/login", {
-        email,
-        password,
-      });
-      localStorage.setItem("accessToken", response.data.accessToken); // Store token
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Login failed");
-    }
-  }
-);
-
-// Refresh token action
-export const refreshToken = createAsyncThunk(
-  "auth/refreshToken",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post("/auth/refresh-token");
-      localStorage.setItem("accessToken", response.data.accessToken); // Update token
-      return response.data.accessToken;
-    } catch (error) {
-      return rejectWithValue("Token refresh failed");
-    }
-  }
-);
-
-// Logout action
-export const logout = createAsyncThunk("auth/logout", async () => {
-  await axiosInstance.post("/auth/logout");
-  localStorage.removeItem("accessToken");
-});
+import { createSlice } from "@reduxjs/toolkit";
+import { signup, refreshToken, login, logoutDevice } from "./authApi";
 
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    account: null,
-    isAuthenticated: false,
-    status: "idle",
+    otpSnded: false,
+    user: null,
+    isLoggedIn: false,
+    isLoading: false,
     error: null,
+    deviceLimitError: false,
+    devices: [],
   },
-  reducers: {},
+  reducers: {
+    setDeviceLimitError: (state, action) => {
+      state.deviceLimitError = true;
+      state.devices = action.payload;
+    },
+  },
   extraReducers: (builder) => {
-    builder
-      .addCase(login.fulfilled, (state, action) => {
-        state.account = action.payload;
-      })
-      .addCase(refreshToken.fulfilled, (state, action) => {
-        if (state.account) {
-          state.account.accessToken = action.payload;
-        }
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.account = null;
+    //signup logic here
+    builder.addCase(signup.fulfilled, (state, action) => {
+
+    }),
+      builder.addCase(signup.pending, (state, action) => {
+        state.status = "loading";
+      }),
+      builder.addCase(signup.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      }),
+
+      /////refresh logic here
+      builder.addCase(refreshToken.fulfilled, (state, action) => {
+        state.isLoggedIn = true;
+      }),
+      builder.addCase(refreshToken.rejected, (state, action) => {
+        state.isLoggedIn = false;
+        state.user = null;
       });
+
+    ///login logic here
+    builder.addCase(login.fulfilled, (state, action) => {
+      state.isLoading = false
+      state.user = action.payload
+      state.isLoggedIn = true
+      state.error = null
+    });
+    builder.addCase(login.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(login.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    });
+
+    // dealing with device limit
+    builder.addCase(logoutDevice.fulfilled, (state, action) => {
+      state.devices = [];
+      state.deviceLimitError = false;
+      state.error = null;
+    });
+    builder.addCase(logoutDevice.rejected, (state, action) => {
+      console.log(action.payload)
+      state.error = action.payload;
+    });
   },
 });
+
+export const { setDeviceLimitError } = authSlice.actions;
 
 export default authSlice.reducer;
