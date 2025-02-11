@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 
-const OtpVerification = ({ length = 5, onOtpSubmit = () => {} }) => {
+const OtpVerification = ({ length = 4, handleOtpSubmit, handleResendOtp }) => {
   const [otp, setOtp] = useState(new Array(length).fill(""));
   const inputRefs = useRef({});
+  const { isLoading } = useSelector((store) => store.auth);
 
   useEffect(() => {
     if (inputRefs.current[0]) {
@@ -19,13 +21,6 @@ const OtpVerification = ({ length = 5, onOtpSubmit = () => {} }) => {
     newOtp[index] = value.substring(value.length - 1);
     setOtp(newOtp);
 
-    // Submit trigger
-    const combinedOtp = newOtp.join("");
-    if (combinedOtp.length === length) {
-      onOtpSubmit(combinedOtp);
-    }
-
-    // Move to next input if current field is filled
     if (value && index < length - 1 && inputRefs.current[index + 1]) {
       inputRefs.current[index + 1].focus();
     }
@@ -74,8 +69,16 @@ const OtpVerification = ({ length = 5, onOtpSubmit = () => {} }) => {
           ))}
         </div>
         <button
-          onClick={() => onOtpSubmit(otp.join(""))}
-          className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 ease-in-out"
+          disabled={isLoading}
+          className="disabled:text-gray-600 block text-start pl-3 mt-2 lowercase font-semibold text-red-500 hover:cursor-pointer"
+          onClick={handleResendOtp}
+        >
+          Resend Otp
+        </button>
+        <button
+          disabled={isLoading}
+          onClick={() => handleOtpSubmit(otp.join(""))}
+          className=" mt-2 px-6 py-2 ml-40 bg-purple-600 text-white rounded-lg border border-violet-800 disabled:bg-gray-400 disabled:border-none  hover:bg-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-500 ftransition-all duration-200 ease-in-out hover:cursor-pointer "
         >
           Submit
         </button>

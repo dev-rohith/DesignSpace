@@ -85,7 +85,7 @@ designerProfileCtrl.createMyProfile = catchAsync(async (req, res, next) => {
     location: {
       coordinates: [lat, lng],
     },
-  });
+  }).select("-location -portfolio -ratings ")
 
   await designer.save();
 

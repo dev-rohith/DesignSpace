@@ -22,6 +22,7 @@ const Carousel = ({ data, isLoading, isError }) => {
         </div>
       </div>
     );
+    
   if (isError || data.length === 0)
     return (
       <div className="relative">

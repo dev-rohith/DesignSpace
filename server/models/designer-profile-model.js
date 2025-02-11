@@ -43,6 +43,7 @@ const designerProfileSchema = new Schema({
   ],
 
   // Ratings and Reviews
+  average_rating: Number,
   ratings: [
     {
       givenBy: {

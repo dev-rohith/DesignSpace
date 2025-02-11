@@ -1,7 +1,6 @@
 import axios from "axios";
-// import store from "../store/store";
-// import { refreshToken } from "../features/authApi";
-
+import store from "../store/store"
+import { refreshToken } from "../features/authApi";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:3000/api/v1",
@@ -33,7 +32,6 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        // store.dispatch(logout());
         localStorage.removeItem("accessToken");
         return Promise.reject(refreshError);
       }

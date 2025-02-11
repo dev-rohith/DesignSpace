@@ -1,19 +1,20 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../apis/axiosIntance";
-import { toast } from "react-hot-toast";
 import { setDeviceLimitError } from "./authSlice";
+//-------------------------------------------
 
 export const refreshToken = createAsyncThunk(
   "auth/refreshToken",
-  async ({ rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("/auth/refreshToken");
-      return response.data;
+      const response = await axiosInstance.get("auth/refreshToken");
+      return response.data.accessToken 
     } catch (error) {
-      console.log(error.response);
+      return rejectWithValue(error.response.data.message || "Unknown error");
     }
   }
 );
+
 
 export const signup = createAsyncThunk(
   "auth/signup",
@@ -21,10 +22,13 @@ export const signup = createAsyncThunk(
     try {
       const response = await axiosInstance.post("/auth/signup", data);
       console.log(response);
-      return response.data.message;
+      return {
+        message: response.data.message,
+        verifyId: response.data.verificationId,
+      };
     } catch (error) {
       console.log(error.response.data.message);
-     return rejectWithValue(error.response.data.message);
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
@@ -52,13 +56,13 @@ export const login = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   "auth/logout",
-  async (data, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/auth/logout");
-      console.log(response);
+      return response.data.message;
     } catch (error) {
       console.log(error.response.data.message);
-      rejectWithValue(error.response.data.message);
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
@@ -71,7 +75,51 @@ export const logoutDevice = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.log(error);
-      rejectWithValue(error.response.data.message);
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const verifyOtp = createAsyncThunk(
+  "auth/verifyOtp",
+  async ({ data, verifyId }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(`/auth/verify/${verifyId}`, {
+        otp: data,
+      });
+      console.log(response.data);
+      return response.data.message;
+    } catch (error) {
+      console.log(error.response.data);
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const resendOtp = createAsyncThunk(
+  "auth/resendOtp",
+  async (verifyId, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(
+        `/auth/resend-verify/${verifyId}`
+      );
+      console.log(response.data);
+      return response.data.message;
+    } catch (error) {
+      console.log(error.response.data);
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const getUser = createAsyncThunk(
+  "auth/getUser",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("user/me");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
     }
   }
 );

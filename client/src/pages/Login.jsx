@@ -11,7 +11,7 @@ import { useEffect } from "react";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { deviceLimitError, isLoading, error, devices } = useSelector(
+  const { deviceLimitError, error } = useSelector(
     (store) => store.auth
   );
 
@@ -26,7 +26,8 @@ const Login = () => {
     const actionResult = await dispatch(login(data));
     if (actionResult.type === login.fulfilled.type) {
       // navigation here have to think about it        ----------------------------------------------------
-      // navigate(redirectTo);  // Perform the navigation
+      // navigate(redirectTo);  // Perform the navigation 
+      navigate("/")
     } else if (actionResult.type === login.rejected.type) {
       toast.error(actionResult.payload);
     }

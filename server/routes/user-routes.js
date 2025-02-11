@@ -6,8 +6,9 @@ import { uploadAvatar } from "../middleware/multer-middleware.js";
 const router = Router();
 
 //--------------------- get me protected for login --------------------//
+router.use(authMiddleWare.protect)
 
-router.get("/me", authMiddleWare.protect, userCtrl.getUser);
+router.get("/me", userCtrl.getUser);
 
 
 //-------------------------- user power ------------------------//

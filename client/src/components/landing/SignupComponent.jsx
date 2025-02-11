@@ -1,4 +1,6 @@
+import { Loader } from "lucide-react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const SignupComponent = ({ handleSignup }) => {
@@ -11,6 +13,7 @@ const SignupComponent = ({ handleSignup }) => {
   });
 
   const [clientErrors, setClientErrors] = useState({});
+  const { isLoading } = useSelector((store) => store.auth);
 
   function runValidations() {
     const errors = {};
@@ -68,13 +71,6 @@ const SignupComponent = ({ handleSignup }) => {
     } else {
       const { firstName, lastName, email, password } = formData;
       handleSignup({ firstName, lastName, email, password });
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      });
     }
   }
 
@@ -175,7 +171,14 @@ const SignupComponent = ({ handleSignup }) => {
               )}
             </div>
             <button className="bg-(--primary) rounded-xl text-white py-2 hover:scale-105 duration-300">
-              Register
+            {isLoading ? (
+                <span className="flex items-center text-sm justify-center space-x-2">
+                  <Loader className="w-4 h-6 animate-spin" />
+                  <span>SignUping...</span>
+                </span>
+              ) : (
+                "SignUp"
+              )}
             </button>
           </form>
 

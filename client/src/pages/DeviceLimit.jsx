@@ -4,20 +4,19 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const DeviceLimit = ({}) => {
-  const { devices, error } = useSelector((store) => store.auth);
+  const { devices } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleDelete = async (deviceId) => {
     const actionResult = await dispatch(logoutDevice(deviceId));
-    console.log(actionResult.payload)
-    console.log(logoutDevice.rejected)
     if (actionResult.type === logoutDevice.fulfilled.type) {
       toast.success(actionResult.payload.message);
-    }else if (error) {
-      toast.error(error);
+      navigate("/login");
+    }else if (actionResult.type === logoutDevice.rejected.type) {
+      toast.error(actionResult.payload);
+      navigate("/login");
     }
-    navigate("/login");
   };
 
   return (

@@ -23,7 +23,7 @@ const Landing = () => {
         setConfig(response.data);
       } catch (error) {
         setIsError(true);
-        toast.error(error.response?.data?.message || "Failed to fetch data"); 
+        toast.error(error.response?.data?.message || "Failed to fetch data");
       } finally {
         setIsLoading(false);
       }
@@ -34,17 +34,25 @@ const Landing = () => {
     <LandingLayout>
       <div>
         <header>
-          <Carousel data={config.carousel} isLoading={isLoading} isError={isError} />
+          <Carousel
+            data={config.carousel}
+            isLoading={isLoading}
+            isError={isError}
+          />
         </header>
         <main className="bg-gradient-to-b bg-(--background)">
           <section>
             <About />
           </section>
           <section>
-              <WhyChooseUs />
+            <WhyChooseUs />
           </section>
           <section>
-          <TopDesingers  data={config.designers} isLoading={isLoading} isError={isError} />
+            <TopDesingers
+              data={config.designers}
+              isLoading={isLoading}
+              isError={isError}
+            />
           </section>
           <section>
             <Faq />

@@ -4,6 +4,8 @@ import { TokenManager } from "../services/redis-service.js";
 import APIFeatures from "../utils/api-features.js";
 import AppError from "../utils/app-error-util.js";
 import catchAsync from "../utils/catch-async-util.js";
+import fs from "fs";
+import { userPasswordValidator } from "../validators/user-validation.js";
 
 const userCtrl = {};
 
@@ -18,18 +20,20 @@ userCtrl.getUser = catchAsync(async (req, res, next) => {
 });
 
 userCtrl.updatePassword = catchAsync(async (req, res, next) => {
-  const user = await User.findOne({ _id: req.user?.userId }).select(
-    "+password"
-  );
 
+  const { value, error } = userPasswordValidator.validate(req.body);
+  if (error) return next(new AppError(error.details[0].message, 422));
+  const {currentPassword, newPassword} = value
+
+  const user = await User.findOne({ _id: req.user?.userId }).select("+password");
   if (
     !user ||
-    !(await user.correctPassword(req.body.currentPassword, user.password))
+    !(await user.correctPassword(currentPassword, user.password))
   ) {
     return next(new AppError("Incorrect password", 401));
   }
 
-  user.password = req.body.newPassword;
+  user.password = newPassword;
 
   user.devices.forEach(async (device) => {
     await TokenManager.removeRefreshToken(user._id, device.deviceId);
@@ -43,13 +47,17 @@ userCtrl.updatePassword = catchAsync(async (req, res, next) => {
 userCtrl.updateProfilePic = catchAsync(async (req, res, next) => {
   if (!req.file) return next(new AppError("image must needed to update", 400));
   const upload = await CloudinaryService.uploadFile(req.file);
-  console.log(upload);
   const profilePicture = upload.secure_url;
   const user = await User.findByIdAndUpdate(
     req.user.userId,
     { profilePicture },
     { new: true }
   ).lean();
+  try {
+    fs.promises.unlink(req.file?.path);
+  } catch (unlinkError) {
+    console.error("Error while deleting the file:", unlinkError.message);
+  }
   res.json({
     message: "your profile picture has been updated successfully",
     data: user.profilePicture,

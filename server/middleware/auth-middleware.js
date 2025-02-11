@@ -10,7 +10,7 @@ const authMiddleWare = {};
 //protect middleware
 authMiddleWare.protect = catchAsync(async (req, res, next) => {
   if (!req.headers["authorization"])
-    return next(new AppError("token is required", 400));
+    return next(new AppError("token is required", 401));
   const accessToken = req.headers["authorization"].split(" ")[1];
   if (!accessToken) return next(new AppError("token is required", 400));
   jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {

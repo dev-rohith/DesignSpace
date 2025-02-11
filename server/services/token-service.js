@@ -7,6 +7,7 @@ export const Token = {
   generateAccessToken(userId, userRole, userStatus) {
     return jwt.sign({ userId, userRole, userStatus }, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: ACCESS_TOKEN_EXPIRE * 60,
+      // expiresIn: 10,
     });
   },
   generateRefreshToken(userId, userRole, deviceId) {

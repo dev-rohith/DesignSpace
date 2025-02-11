@@ -2,7 +2,7 @@ import { UAParser } from "ua-parser-js";
 import { v4 as uuidv4 } from "uuid";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import crypto from "crypto";
+import crypto, { verify } from "crypto";
 import jwt from "jsonwebtoken";
 
 import User from "../models/user-model.js";
@@ -23,7 +23,6 @@ import {
 import Otp from "../models/otp-model.js";
 
 const authController = {};
-
 
 //---------------------------------------------------Normal-login-flow----------------------------------------------------//
 
@@ -54,7 +53,7 @@ authController.signup = catchAsync(async (req, res, next) => {
 });
 
 authController.sendOtpVerfication = catchAsync(async (req, res, next) => {
-  const { user_id } = req.params;    //user_id is coming from previous middleware
+  const { user_id } = req.params; //user_id is coming from previous middleware
   const user = await User.findById(user_id);
   if (!user) return next(new AppError("user not found", 404));
 
@@ -70,7 +69,7 @@ authController.sendOtpVerfication = catchAsync(async (req, res, next) => {
     await new Email(user.firstName, user.email).sendOtp(newOtp.otp);
 
     res.status(200).json({
-      status: "success",
+      verificationId: user._id,
       message: "Verify the OTP to create your account",
     });
   } catch (error) {
@@ -92,9 +91,7 @@ authController.verifyAccount = catchAsync(async (req, res, next) => {
   if (error) return next(new AppError(error.details[0].message, 422));
   const { otp, user_id } = value;
   if (isNaN(otp)) return next(new AppError("otp must be an number", 400));
-  console.log(user_id);
   const userOtp = await Otp.findOne({ user: `${user_id}` });
-  console.log(userOtp);
   if (!userOtp) return next(new AppError("otp not found try resend otp", 400));
 
   // Check OTP chances BEFORE any modifications
@@ -112,12 +109,8 @@ authController.verifyAccount = catchAsync(async (req, res, next) => {
   }
 
   if (Number(otp) === userOtp.otp) {
-    await User.findByIdAndUpdate(`${user_id}`, { isVerified: true });
-    userOtp.otp = undefined;
-    userOtp.otpExpiresIn = undefined;
-    userOtp.otp_chances = 3;
-    await userOtp.save();
-
+    await User.findByIdAndUpdate(userOtp.user, {isVerified: true})
+    await Otp.findByIdAndDelete(userOtp._id);
     return res.status(201).json({
       message: "your account has be created successfully",
     });
@@ -132,9 +125,9 @@ authController.verifyAccount = catchAsync(async (req, res, next) => {
 });
 
 authController.resendVerification = catchAsync(async (req, res, next) => {
-  const {value, error} = userIdValidator.validate(req.params);
-  if(error) return next(new AppError(error.details[0].message, 422));
-  const userOtp = await Otp.findOne({ user:  value.user_id });
+  const { value, error } = userIdValidator.validate(req.params);
+  if (error) return next(new AppError(error.details[0].message, 422));
+  const userOtp = await Otp.findOne({ user: value.user_id });
   if (!userOtp)
     next(
       new AppError(
@@ -147,10 +140,11 @@ authController.resendVerification = catchAsync(async (req, res, next) => {
   const user = await User.findById(userOtp.user);
   if (!user) return next(new AppError("user not found", 404));
   const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
-  (userOtp.otp = generatedOtp),
-    (userOtp.resend_limit = userOtp.resend_limit - 1),
-    (userOtp.otpExpiresIn = Date.now() + 5 * 60 * 1000), // OTP expiry 5 minutes
-    await userOtp.save();
+  userOtp.otp = generatedOtp;
+  userOtp.resend_limit = userOtp.resend_limit - 1;
+  userOtp.otp_chances = 3;
+  userOtp.otpExpiresIn = Date.now() + 5 * 60 * 1000; // OTP expiry 5 minutes
+  await userOtp.save();
 
   await new Email(user.firstName, user.email).sendOtp(userOtp.otp);
   res.status(200).json({
@@ -160,9 +154,9 @@ authController.resendVerification = catchAsync(async (req, res, next) => {
 });
 
 authController.login = catchAsync(async (req, res, next) => {
-  const {value, error} = loginValidator.validate(req.body);
-  if(error) return next(new AppError(error.details[0].message, 422));
-  const {email, password} = value;
+  const { value, error } = loginValidator.validate(req.body);
+  if (error) return next(new AppError(error.details[0].message, 422));
+  const { email, password } = value;
   const cookie = req.cookies;
 
   const userAgent =
@@ -241,9 +235,9 @@ authController.login = catchAsync(async (req, res, next) => {
 });
 
 authController.forgotPassword = catchAsync(async (req, res, next) => {
-  const {value, error} = forgotPasswordValidator.validate(req.body);
-  if(error) return next(new AppError(error.details[0].message, 422));
-  const {email} = value;
+  const { value, error } = forgotPasswordValidator.validate(req.body);
+  if (error) return next(new AppError(error.details[0].message, 422));
+  const { email } = value;
   // 1) Get user based on POSTed email
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
@@ -268,7 +262,7 @@ authController.forgotPassword = catchAsync(async (req, res, next) => {
     //   status: "success",
     //   message: "Token sent to email!",
     // });
-    res.json({ message: 'password Reset link sent to email',  resetToken });
+    res.json({ message: "password Reset link sent to email", resetToken });
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
@@ -283,9 +277,12 @@ authController.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 authController.resetPassword = catchAsync(async (req, res, next) => {
-  const {value, error} = resetPasswordValidator.validate({...req.params,...req.body});
-  if(error) return next(new AppError(error.details[0].message, 422));
-  const {password, token} = value;
+  const { value, error } = resetPasswordValidator.validate({
+    ...req.params,
+    ...req.body,
+  });
+  if (error) return next(new AppError(error.details[0].message, 422));
+  const { password, token } = value;
 
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
@@ -314,10 +311,10 @@ authController.resetPassword = catchAsync(async (req, res, next) => {
 });
 
 authController.logoutDevice = catchAsync(async (req, res, next) => {
-  const {value, error} = deviceIdValidator.validate(req.params);
-  if(error) return next(new AppError(error.details[0].message, 422));
-  const {deviceId} = value;
-  
+  const { value, error } = deviceIdValidator.validate(req.params);
+  if (error) return next(new AppError(error.details[0].message, 422));
+  const { deviceId } = value;
+
   const refreshToken = req.cookies.jwt;
   if (!refreshToken) {
     return next(
