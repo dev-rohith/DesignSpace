@@ -1,19 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
+import DesingersMap from './DesingersMap';
+import TopDesingerCard from '../ui/TopDesingerCard';
 
 const TopDesigners = ({ data = [] }) => {
-  const [emblaRef] = useEmblaCarousel({ loop: true }, [
-    AutoScroll({ playOnInit: true, stopOnInteraction: false })
+  const [items, setItems] = useState([]);
+  
+  useEffect(() => {
+    setItems([...data, ...data, ...data]);
+  }, [data]);
+
+  const [emblaRef] = useEmblaCarousel({ 
+    loop: true,
+    align: 'start',
+    containScroll: 'trimSnaps'
+  }, [
+    AutoScroll({ 
+      playOnInit: true, 
+      stopOnInteraction: false,
+      speed: 1 
+    })
   ]);
 
   return (
-    <div className="flex flex-col md:flex-row justify-center items-center mb-12">
-      <div className="w-full md:w-1/2 overflow-hidden" ref={emblaRef}>
+    <div className="flex flex-col md:flex-row justify-center bg-gray-300 py-24  items-center mb-12">
+      <div className="w-full md:max-w-xl  overflow-hidden" ref={emblaRef}>
         <div className="flex gap-4">
-          {data.map((item, index) => (
-            <Card 
-              key={item._id || index} 
+          {items.map((item, index) => (
+            <TopDesingerCard 
+              key={`${item._id || index}-${index}`} 
               {...item} 
               className="flex-shrink-0"
             />
@@ -21,33 +37,20 @@ const TopDesigners = ({ data = [] }) => {
         </div>
       </div>
 
-      <div className="w-full md:w-1/2 text-center">
+      <div className="w-full mt-10 md:mt-0 md:w-1/2 flex flex-col  justify-center items-center">
         <h3 className="text-2xl font-semibold uppercase mb-4">
           Meet our Top Designers
         </h3>
-        <p className="text-gray-500">
+        <p className="text-gray-500 mb-4">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates,
           quisquam.
         </p>
+        <DesingersMap />
       </div>
     </div>
   );
 };
 
-const Card = ({ profilePicture, name, aboutMe, className = '' }) => {
-  return (
-    <div className={`w-80 text-center flex-col h-60 bg-gray-50 rounded-xl overflow-hidden border ${className}`}>
-      <img
-        src={profilePicture}
-        alt="top-designer"
-        className="w-full h-40 object-cover"
-      />
-      <div>
-        <h4 className="uppercase font-bold text-gray-600">{name}</h4>
-        <p className="text-gray-500">{aboutMe}</p>
-      </div>
-    </div>
-  );
-};
+
 
 export default TopDesigners;

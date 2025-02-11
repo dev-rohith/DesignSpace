@@ -11,9 +11,7 @@ import { useEffect } from "react";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { deviceLimitError, error } = useSelector(
-    (store) => store.auth
-  );
+  const { deviceLimitError, error } = useSelector((store) => store.auth);
 
   useEffect(() => {
     if (deviceLimitError) {
@@ -24,11 +22,11 @@ const Login = () => {
 
   const handleLogin = async (data) => {
     const actionResult = await dispatch(login(data));
-    if (actionResult.type === login.fulfilled.type) {
-      // navigation here have to think about it        ----------------------------------------------------
-      // navigate(redirectTo);  // Perform the navigation 
-      navigate("/")
-    } else if (actionResult.type === login.rejected.type) {
+    if (login.fulfilled.match(actionResult)) {
+      // navigation here have to think about it        -----------------------------------------------------------------------
+      // navigate(redirectTo);  // Perform the navigation
+      navigate("/");
+    } else if (login.rejected.match(actionResult)) {
       toast.error(actionResult.payload);
     }
   };

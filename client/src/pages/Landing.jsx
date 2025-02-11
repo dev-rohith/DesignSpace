@@ -3,6 +3,7 @@ import { About, Carousel, Faq, TopDesingers, WhyChooseUs } from "../components";
 import LandingLayout from "../layout/LandingLayout";
 import axiosInstance from "../apis/axiosIntance.js";
 import toast from "react-hot-toast";
+import DesingersMap from "../components/landing/DesingersMap.jsx";
 const hello = import.meta.env.VITE_TEST;
 
 const Landing = () => {
@@ -54,6 +55,9 @@ const Landing = () => {
               isError={isError}
             />
           </section>
+           <section>
+
+           </section>
           <section>
             <Faq />
           </section>

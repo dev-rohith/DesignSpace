@@ -8,6 +8,7 @@ import {
   resendOtp,
   getUser,
   logout,
+  logoutAll,
 } from "./authApi";
 import { updateUser } from "./userApi";
 
@@ -35,16 +36,15 @@ const authSlice = createSlice({
       state.verifyId = action.payload.verifyId;
       state.isLoading = false;
     }),
-    builder.addCase(signup.pending, (state, action) => {
+      builder.addCase(signup.pending, (state, action) => {
         state.isLoading = true;
       }),
-    builder.addCase(signup.rejected, (state, action) => {
+      builder.addCase(signup.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
       }),
-
       //otp verifycation here
-    builder.addCase(verifyOtp.fulfilled, (state, action) => {
+      builder.addCase(verifyOtp.fulfilled, (state, action) => {
         state.verifyId = null;
         state.isLoading = false;
       });
@@ -103,7 +103,6 @@ const authSlice = createSlice({
       state.error = action.payload;
     });
 
-    //get user account logic
     builder.addCase(getUser.fulfilled, (state, action) => {
       state.user = action.payload;
       state.isLoggedIn = true;
@@ -115,20 +114,33 @@ const authSlice = createSlice({
       state.onPageLoad = false;
     });
 
-    builder.addCase(logout.fulfilled, (state, action)=>{
-      state.user = null
-      state.isLoggedIn = false
-    })
-    builder.addCase(logout.rejected, (state, action)=>{
-      state.user = null
-      state.isLoggedIn = false
-    })
+    //user logout fucntionality
+    builder.addCase(logout.fulfilled, (state, action) => {
+      state.user = null;
+      state.isLoggedIn = false;
+      localStorage.removeItem("accessToken");
+    });
+    builder.addCase(logout.rejected, (state, action) => {
+      state.user = null;
+      state.isLoggedIn = false;
+      localStorage.removeItem("accessToken");
+    });
 
-    builder.addCase(updateUser.fulfilled,(state,action)=>{
-      state.user.firstName = action.firstName
-      state.user.lastName = action.lastName
-    })
+    //get user account logic
+    builder.addCase(updateUser.fulfilled, (state, action) => {
+      state.user.firstName = action.firstName;
+      state.user.lastName = action.lastName;
+    });
+
     
+    //user logout from all logic
+    builder.addCase(logoutAll.fulfilled, (state, action) => {
+      state.user = null;
+      state.isLoggedIn = false;
+      localStorage.removeItem("accessToken");
+    });
+
+  
   },
 });
 

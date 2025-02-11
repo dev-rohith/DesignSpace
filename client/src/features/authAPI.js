@@ -8,13 +8,12 @@ export const refreshToken = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("auth/refreshToken");
-      return response.data.accessToken 
+      return response.data.accessToken;
     } catch (error) {
       return rejectWithValue(error.response.data.message || "Unknown error");
     }
   }
 );
-
 
 export const signup = createAsyncThunk(
   "auth/signup",
@@ -120,6 +119,19 @@ export const getUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const logoutAll = createAsyncThunk(
+  "/auth/logoutall",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("auth/logoutall");
+      return response.data.message
+    } catch (error) {
+      console.log(error);
+      rejectWithValue(error.response.data.message)
     }
   }
 );

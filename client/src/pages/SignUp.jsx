@@ -15,10 +15,10 @@ const SignUp = () => {
 
   const handleSignup = async (data) => {
     const actionResult = await dispatch(signup(data));
-    if (actionResult.type === signup.fulfilled.type) {
+    if (signup.fulfilled.match(actionResult)) {
       toast.success(actionResult.payload.message);
       setShowOtp(!showOtp);
-    } else if (actionResult.type === signup.rejected.type) {
+    } else if (signup.rejected.match(actionResult)) {
       toast.error(actionResult.payload);
     }
   };
@@ -26,10 +26,10 @@ const SignUp = () => {
   const handleOtpSubmit = async (data) => {
     if (verifyId) {
       const actionResult = await dispatch(verifyOtp({ data, verifyId }));
-      if (actionResult.type === verifyOtp.fulfilled.type) {
+      if (verifyOtp.fulfilled.match(actionResult)) {
         toast.success(actionResult.payload)
         navigate("/login")
-      } else if (actionResult.type === verifyOtp.rejected.type) {
+      } else if (verifyOtp.rejected.match(actionResult)) {
         toast.error(actionResult.payload)
       }
     }
@@ -38,10 +38,9 @@ const SignUp = () => {
   const handleResendOtp = async () => {
     if (verifyId) {
       const actionResult = await dispatch(resendOtp(verifyId));
-      if(actionResult.type === resendOtp.fulfilled.type){
+      if(resendOtp.fulfilled.match(actionResult)){
         toast.success(actionResult.payload)
-      }else if(actionResult.type === resendOtp.rejected.type){
-        console.log(actionResult.payload)
+      }else if(resendOtp.rejected.match(actionResult)){
         toast.error(actionResult.payload)
       }
     }
