@@ -7,3 +7,6 @@ export { default as ForgotPassword } from "./ForgotPassword";
 export { default as DeviceLimit } from "./DeviceLimit";
 export { default as Pricing } from "./Pricing";
 export { default as UnAuthorized } from "./UnAuthorized";
+export { default as DesingerApplication } from "./DesingerApplication";
+export { default as AssociateApplication } from "./AssociateApplication";
+export { default as Mychat } from "./Mychat";

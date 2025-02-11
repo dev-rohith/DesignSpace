@@ -1,28 +1,24 @@
-import { ChevronDown } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { ChevronDown, ChevronsRight } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { logout } from "../../features/authApi";
 import toast from "react-hot-toast";
+import usePopUp from "../../hooks/usePopUp";
 
 const Navbar = () => {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const {
+    isPopupOpen: isProfilePopUp,
+    setIsPopupOpen: setIsProfilePopUp,
+    dropdownRef: ProfileDrop,
+  } = usePopUp();
+  const {
+    isPopupOpen: isMorePopUp,
+    setIsPopupOpen: setIsMorePopUp,
+    dropdownRef: MoreDrop,
+  } = usePopUp();
 
   const { user, isLoggedIn } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsPopupOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const setIsMorePopUp = () => {};
 
   const handleLogout = async () => {
     const actionResult = await dispatch(logout());
@@ -63,20 +59,41 @@ const Navbar = () => {
 
         <li
           onClick={() => {
-            setIsMorePopUp;
+            setIsMorePopUp(!isMorePopUp);
           }}
-          className="group hover:cursor-pointer"
+          className="group hover:cursor-pointer relative flex"
         >
-          more
+          more<ChevronDown className="w-6 h-5 group-hover:translate-y-0.5" />
           <div className="mx-2 group-hover:border-b group-hover:border-black-100"></div>
+          {isMorePopUp && (
+            <div
+              ref={MoreDrop}
+              className="absolute top-8 right-[-1rem] text-center w-50 bg-white shadow-lg border border-gray-200 overflow-hidden z-50"
+            >
+              <Link
+                to="/application-designer"
+                className="block pr-5 py-2 tracking-tight text-gray-700 text-xs border-b hover:bg-violet-600 hover:text-white"
+              >
+                <ChevronsRight className="inline h-5 w-4 pb-1 " /> Become a
+                design partner
+              </Link>
+              <Link
+                to="/application-associate"
+                className="block px-1 py-2 tracking-tight text-gray-700 text-xs border-b hover:bg-violet-600 hover:text-white"
+              >
+                <ChevronsRight className="inline h-5 w-4 pb-1" /> Become a
+                Assoicate partner
+              </Link>
+            </div>
+          )}
         </li>
 
         {isLoggedIn ? (
           <div
             onClick={() => {
-              setIsPopupOpen(!isPopupOpen);
+              setIsProfilePopUp(!isProfilePopUp);
             }}
-            className="flex items-center hover:cursor-pointer relative"
+            className="flex items-center hover:cursor-pointer group relative"
           >
             <img
               className="h-9 w-9 rounded-full"
@@ -84,11 +101,11 @@ const Navbar = () => {
               alt="profile picture"
             />
             <span>
-              <ChevronDown className="w-6 h-5" />
+              <ChevronDown className="w-6 h-5 group-hover:translate-y-0.5" />
             </span>
-            {isPopupOpen && (
+            {isProfilePopUp && (
               <div
-                ref={dropdownRef}
+                ref={ProfileDrop}
                 className="absolute top-12 text-center right-0 w-35 bg-white shadow-lg  border border-gray-200 overflow-hidden z-50"
               >
                 <Link

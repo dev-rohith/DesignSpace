@@ -1,9 +1,12 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import {
+  AssociateApplication,
+  DesingerApplication,
   DeviceLimit,
   ForgotPassword,
   Landing,
   Login,
+  Mychat,
   NotFound,
   Pricing,
   SignUp,
@@ -31,6 +34,11 @@ const AppRoutes = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/device-limit" element={<DeviceLimit />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/application-designer" element={<DesingerApplication />} />
+        <Route
+          path="/application-associate"
+          element={<AssociateApplication />}
+        />
       </Route>
 
       <Route
@@ -46,7 +54,9 @@ const AppRoutes = () => {
         <Route index element={<Navigate to="designers" replace />} />
         <Route path="designers" element={<DesingersFeed />} />
         <Route path="pending-projects" element={<PendingProjects />} />
+        <Route path="chat" element={<Mychat />} />
       </Route>
+
       <Route path="/unauthorized" element={<UnAuthorized />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

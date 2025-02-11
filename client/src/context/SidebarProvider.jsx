@@ -1,11 +1,18 @@
-import { MoreVertical, ChevronLast, ChevronFirst } from "lucide-react";
+import {
+  MoreVertical,
+  ChevronLast,
+  ChevronFirst,
+  UserRoundCog,
+} from "lucide-react";
 import { createContext, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const SidebarContext = createContext();
 
 export function SidebarProvider({ children }) {
   const [expanded, setExpanded] = useState(false);
+  const { user } = useSelector((store) => store.auth);
 
   return (
     <aside className={expanded ? "h-screen w-3xs" : "h-screen w-18"}>
@@ -33,11 +40,19 @@ export function SidebarProvider({ children }) {
         </SidebarContext.Provider>
         <Link to="/my-account">
           <div className="border-t flex p-3">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Eo_circle_purple_letter-w.svg/768px-Eo_circle_purple_letter-w.svg.png?20200417171107"
-              alt=""
-              className="w-8 h-8 rounded-full"
-            />
+            {user ? (
+              <img
+                src={user.profilePicture}
+                alt=""
+                className="w-8 h-8 rounded-full"
+              />
+            ) : (
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Eo_circle_purple_letter-w.svg/768px-Eo_circle_purple_letter-w.svg.png?20200417171107"
+                alt=""
+                className="w-8 h-8 rounded-full"
+              />
+            )}
             <div
               className={`
               flex justify-between items-center
@@ -45,10 +60,14 @@ export function SidebarProvider({ children }) {
               `}
             >
               <div className="leading-4">
-                <h4 className="font-semibold">Welcome</h4>
-                {/* <span className="text-xs text-gray-600">johndoe@gmail.com</span> */}
+                <h4 className="font-semibold">
+                  {user ? user.firstName : "Welcome"}
+                </h4>
+                <span className="text-xs text-gray-600">
+                  {user ? user.email : "designspace@gmail.com"}
+                </span>
               </div>
-              <MoreVertical size={20} />
+              <UserRoundCog />
             </div>
           </div>
         </Link>

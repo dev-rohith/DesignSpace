@@ -25,6 +25,7 @@ const SidebarItem = ({ icon, text, to }) => {
             bg-indigo-100 text-indigo-800 text-sm
             invisible opacity-20 -translate-x-3 transition-all
             group-hover:visible group-hover:opacity-100 group-hover:translate-x-0
+            z-60
         "
           >
             {text}
