@@ -10,7 +10,7 @@ import {
   logout,
   logoutAll,
 } from "./authApi";
-import { updateUser } from "./userApi";
+import { updateUser, updateUserPic } from "./userApi";
 
 const authSlice = createSlice({
   name: "auth",
@@ -128,19 +128,21 @@ const authSlice = createSlice({
 
     //get user account logic
     builder.addCase(updateUser.fulfilled, (state, action) => {
-      state.user.firstName = action.firstName;
-      state.user.lastName = action.lastName;
+      console.log(action);
+      state.user.firstName = action.payload.data.firstName;
+      state.user.lastName = action.payload.data.lastName;
     });
 
-    
+    builder.addCase(updateUserPic.fulfilled, (state, action) => {
+      state.user.profilePicture = action.payload.new_pic;
+    });
+
     //user logout from all logic
     builder.addCase(logoutAll.fulfilled, (state, action) => {
       state.user = null;
       state.isLoggedIn = false;
       localStorage.removeItem("accessToken");
     });
-
-  
   },
 });
 

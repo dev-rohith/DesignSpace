@@ -23,9 +23,9 @@ const Login = () => {
   const handleLogin = async (data) => {
     const actionResult = await dispatch(login(data));
     if (login.fulfilled.match(actionResult)) {
-      // navigation here have to think about it        -----------------------------------------------------------------------
-      // navigate(redirectTo);  // Perform the navigation
-      navigate("/");
+      if (actionResult.payload.role === "client") navigate("/");
+      if (actionResult.payload.role === "admin") navigate("/admin");
+      if (actionResult.payload.role === "desinger") navigate("/designer");
     } else if (login.rejected.match(actionResult)) {
       toast.error(actionResult.payload);
     }

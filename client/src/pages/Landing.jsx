@@ -1,45 +1,43 @@
-import { useEffect, useState } from "react";
-import { About, Carousel, Faq, TopDesingers, WhyChooseUs } from "../components";
+import { useEffect } from "react";
+import {
+  About,
+  Carousel,
+  Faq,
+  Footer,
+  TopDesingers,
+  UserReviews,
+  WhyChooseUs,
+} from "../components";
 import LandingLayout from "../layout/LandingLayout";
-import axiosInstance from "../apis/axiosIntance.js";
 import toast from "react-hot-toast";
-import DesingersMap from "../components/landing/DesingersMap.jsx";
-const hello = import.meta.env.VITE_TEST;
+import { useDispatch, useSelector } from "react-redux";
+import { getLanding } from "../features/landingApi.js";
 
 const Landing = () => {
-  const [config, setConfig] = useState({
-    carousel: [],
-    customer_reviews: [],
-    designers: [],
-    designers_locations: [],
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const {
+    carousel,
+    customer_reviews,
+    designers,
+    designers_locations,
+    isLoading,
+    isError,
+  } = useSelector((store) => store.landing);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
-      try {
-        setIsLoading(true);
-        const response = await axiosInstance.get("/landing");
-        setConfig(response.data);
-      } catch (error) {
-        setIsError(true);
-        toast.error(error.response?.data?.message || "Failed to fetch data");
-      } finally {
-        setIsLoading(false);
+      const actionResult = await dispatch(getLanding());
+      if (getLanding.rejected.match(actionResult)) {
+        toast.error(actionResult.payload.message);
       }
     })();
   }, []);
 
   return (
     <LandingLayout>
-      <div>
+      <>
         <header>
-          <Carousel
-            data={config.carousel}
-            isLoading={isLoading}
-            isError={isError}
-          />
+          <Carousel data={carousel} isLoading={isLoading} isError={isError} />
         </header>
         <main className="bg-gradient-to-b bg-(--background)">
           <section>
@@ -50,19 +48,23 @@ const Landing = () => {
           </section>
           <section>
             <TopDesingers
-              data={config.designers}
+              data={designers}
               isLoading={isLoading}
               isError={isError}
+              designerLocations={designers_locations}
             />
           </section>
-           <section>
-
-           </section>
+          <section>
+            <UserReviews customerReviews={customer_reviews} />
+          </section>
           <section>
             <Faq />
           </section>
         </main>
-      </div>
+        <footer>
+          <Footer />
+        </footer>
+      </>
     </LandingLayout>
   );
 };

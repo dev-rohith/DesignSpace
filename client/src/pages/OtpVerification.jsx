@@ -17,7 +17,7 @@ const OtpVerification = ({ length = 4, handleOtpSubmit, handleResendOtp }) => {
     if (isNaN(value)) return;
 
     const newOtp = [...otp];
-    // Allow only one input
+
     newOtp[index] = value.substring(value.length - 1);
     setOtp(newOtp);
 
@@ -29,7 +29,6 @@ const OtpVerification = ({ length = 4, handleOtpSubmit, handleResendOtp }) => {
   const handleClick = (index) => {
     inputRefs.current[index].setSelectionRange(1, 1);
 
-    // Optional: Move to the first empty field if the current field is empty
     if (index > 0 && !otp[index - 1]) {
       inputRefs.current[otp.indexOf("")].focus();
     }
@@ -42,7 +41,6 @@ const OtpVerification = ({ length = 4, handleOtpSubmit, handleResendOtp }) => {
       index > 0 &&
       inputRefs.current[index - 1]
     ) {
-      // Move focus to the previous input field on backspace
       inputRefs.current[index - 1].focus();
     }
   };

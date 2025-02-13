@@ -37,7 +37,7 @@ const Navbar = () => {
         <img className="bg-balck w-30 ml-3" src="/logo.svg" alt="" />{" "}
       </Link>
       <ul className="flex space-x-2 md:flex items-center md:space-x-5 mr-6 uppercase text-sm font-medium text-(--dark)">
-        <Link>
+        <Link to="/our-work">
           <li className="group">
             our work
             <div className=" mx-2 group-hover:border-b group-hover:border-black-100"></div>

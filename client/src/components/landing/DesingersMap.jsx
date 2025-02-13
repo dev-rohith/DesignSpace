@@ -26,11 +26,13 @@ const markers = [
   { name: "Sydney", coordinates: [151.2093, -33.8688], country: "Australia" },
 ];
 
-const DesingersMap = () => {
+const DesingersMap = ({ locations }) => {
   const [zoom, setZoom] = useState(5);
   const highlightedCountries = useMemo(() => {
-    return new Set(markers.map((marker) => marker.country));
+    return new Set(locations.map((marker) => marker?.adress?.country));
   }, []);
+
+  console.log(locations);
 
   const handleZoomIn = () => {
     if (zoom < 8) setZoom(zoom + 1);
@@ -70,10 +72,10 @@ const DesingersMap = () => {
           height: "100%",
         }}
       >
-        <ZoomableGroup 
-          center={[0, 0]} 
-          zoom={zoom} 
-          minZoom={1} 
+        <ZoomableGroup
+          center={[0, 0]}
+          zoom={zoom}
+          minZoom={1}
           maxZoom={8}
           onMoveEnd={({ zoom }) => setZoom(zoom)}
         >
@@ -113,8 +115,8 @@ const DesingersMap = () => {
             }
           </Geographies>
 
-          {markers.map(({ name, coordinates }) => (
-            <Marker key={name} coordinates={coordinates}>
+          {locations.map((marker, index) => (
+            <Marker key={index} coordinates={marker.location.coordinates}>
               <circle
                 r={4}
                 fill="#3b82f6"
@@ -135,7 +137,7 @@ const DesingersMap = () => {
                   paintOrder: "stroke",
                 }}
               >
-                {name}
+                {location?.address?.city}
               </text>
             </Marker>
           ))}

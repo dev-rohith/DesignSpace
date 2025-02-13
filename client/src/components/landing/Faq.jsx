@@ -10,7 +10,7 @@ const Faq = () => {
         {/* <!-- Main Container --> */}
         <div className="container mx-auto px-6 mb-32">
           {/* <!-- Accordion Container --> */}
-          <div className="max-w-2xl m-8 mx-auto overflow-hidden">
+          <div className="max-w-6xl m-8 mx-auto overflow-hidden">
             {/* <!-- Tab 1 --> */}
             <div className="py-1 border-b outline-none group" tabIndex={1}>
               {/* <!-- Tab Flex Container --> */}

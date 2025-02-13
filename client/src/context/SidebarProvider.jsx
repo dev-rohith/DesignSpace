@@ -1,9 +1,4 @@
-import {
-  MoreVertical,
-  ChevronLast,
-  ChevronFirst,
-  UserRoundCog,
-} from "lucide-react";
+import { ChevronLast, ChevronFirst, UserRoundCog } from "lucide-react";
 import { createContext, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";

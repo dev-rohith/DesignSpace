@@ -4,9 +4,8 @@ import AutoScroll from 'embla-carousel-auto-scroll';
 import DesingersMap from './DesingersMap';
 import TopDesingerCard from '../ui/TopDesingerCard';
 
-const TopDesigners = ({ data = [] }) => {
+const TopDesigners = ({ data = [], designerLocations }) => {
   const [items, setItems] = useState([]);
-  
   useEffect(() => {
     setItems([...data, ...data, ...data]);
   }, [data]);
@@ -45,7 +44,7 @@ const TopDesigners = ({ data = [] }) => {
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates,
           quisquam.
         </p>
-        <DesingersMap />
+        <DesingersMap locations={designerLocations} />
       </div>
     </div>
   );

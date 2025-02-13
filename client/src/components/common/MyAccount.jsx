@@ -3,10 +3,11 @@ import Sidebar from "../layout/Sidebar";
 import { useState } from "react";
 import axiosInstance from "../../apis/axiosIntance";
 import toast from "react-hot-toast";
-import { Camera, KeyRound, Lock, Mail, Save, User } from "lucide-react";
-import { createPortal } from "react-dom";
-import { updateUser } from "../../features/userApi";
+import { KeyRound, Lock, Mail, Save, User } from "lucide-react";
+import { updateUser, updateUserPic } from "../../features/userApi";
 import { logout, logoutAll } from "../../features/authApi";
+import UserProfilePicture from "../ui/userProfilePicture";
+import SavingSpinner from "../ui/SavingSpinner";
 
 const MyAccount = () => {
   const { user } = useSelector((store) => store.auth);
@@ -17,25 +18,25 @@ const MyAccount = () => {
     newPassword: "",
     confirmNewPassword: "",
   });
-  const [file, setFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [onPicModal, setOnPickModal] = useState(false);
 
   const dispatch = useDispatch();
 
-  const handleProfileChange = async () => {
-    if (!file) return;
-    const actionResult = await dispatch(
-      updateUser({
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-      })
-    );
-    if (updateUser.fulfilled.match(actionResult)) {
-      toast.success(actionResult.payload.message);
-    } else if (updateUser.rejected.match(actionResult)) {
-      toast.error(actionResult.payload);
+  const handleProfileChange = async (file) => {
+    if (!file) {
+      toast.error("image not selected");
+      return;
     }
+    const Form = new FormData();
+    Form.append("image", file);
+    setIsSaving(true);
+    const actionResult = await dispatch(updateUserPic(Form));
+    if (updateUserPic.fulfilled.match(actionResult)) {
+      toast.success(actionResult.payload.message);
+    } else if (updateUserPic.rejected.match(actionResult)) {
+      toast.error(actionResult);
+    }
+    setIsSaving(false);
   };
 
   const handleNameChange = async () => {
@@ -75,7 +76,7 @@ const MyAccount = () => {
 
   const handleLogout = async () => {
     const actionResult = await dispatch(logout());
-    
+
     if (logout.fulfilled.match(actionResult)) {
       toast.success(actionResult.payload);
     } else if (logout.rejected.match(actionResult)) {
@@ -84,18 +85,19 @@ const MyAccount = () => {
   };
 
   const handleLogoutFromAllDevices = async () => {
-    const actionResult = await dispatch(logoutAll())
-    if(logoutAll.fulfilled.match(actionResult)){
-      toast.success(actionResult.payload)
-    }else if(logoutAll.rejected.match(actionResult)){
-      toast.error(actionResult.payload)
+    const actionResult = await dispatch(logoutAll());
+    if (logoutAll.fulfilled.match(actionResult)) {
+      toast.success(actionResult.payload);
+    } else if (logoutAll.rejected.match(actionResult)) {
+      toast.error(actionResult.payload);
     }
-  }
+  };
+
+  if (isSaving) return <SavingSpinner />;
 
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar />
-      {onPicModal && <PhotopicModal />}
       <div className="flex-1 overflow-y-auto">
         <div className="px-4 md:px-6 py-6 md:py-10 h-full">
           <div className="flex items-center justify-between max-w-3xl mx-auto mb-8">
@@ -108,29 +110,10 @@ const MyAccount = () => {
             </button>
           </div>
           {/* Profile Picture Section */}
-          <div className="flex items-center justify-between max-w-3xl mx-auto mb-8 gap-6">
-            <h2 className="text-xl uppercase font-medium tracking-wide text-gray-800 transform hover:scale-105 transition-transform">
-              Profile Picture
-            </h2>
-            <div className="relative group">
-              <div className="absolute inset-0 bg-violet-200 rounded-3xl blur opacity-25 group-hover:opacity-40 transition-opacity"></div>
-              <div className="relative bg-gray-100 rounded-3xl p-4 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
-                <img
-                  src={user.profilePicture}
-                  alt="my-profile"
-                  className="w-32 h-32 md:w-42 md:h-42 rounded-full border-2 border-gray-200 hover:border-violet-300 transition-colors"
-                />
-                <div className="absolute bottom-6 right-6 p-2 bg-white/80 backdrop-blur-sm rounded-full transform hover:scale-110 transition-transform cursor-pointer">
-                  <Camera
-                    className="w-5 h-5 text-gray-600"
-                    onClick={() => {
-                      setOnPickModal(!onPicModal);
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <UserProfilePicture
+            profilePicture={user.profilePicture}
+            handleProfileChange={handleProfileChange}
+          />
           {/* Update Profile Section */}
           <div className="flex flex-col md:flex-row items-start justify-between max-w-3xl mx-auto mb-8 gap-6">
             <h2 className="text-xl uppercase md:ml-2 font-medium tracking-wide text-gray-800 transform hover:scale-105 transition-transform">
@@ -189,11 +172,10 @@ const MyAccount = () => {
 
                 <button
                   onClick={handleNameChange}
-                  disabled={isSaving}
-                  className="w-full bg-violet-400 hover:bg-violet-500 disabled:bg-gray-400 text-white px-4 py-2.5  transition-all duration-300 hover:shadow-md disabled:hover:shadow-none flex items-center justify-center gap-2 mt-2 hover:cursor-pointer"
+                  className="w-full bg-violet-400 hover:bg-violet-500 text-white px-4 py-2.5  transition-all duration-300 hover:shadow-md  flex items-center justify-center gap-2 mt-2 hover:cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
-                  {isSaving ? "Saving..." : "Save Changes"}
+                  Save Changes
                 </button>
               </div>
             </div>
@@ -213,6 +195,7 @@ const MyAccount = () => {
                   <div className="relative">
                     <input
                       type="password"
+                      placeholder="xxxxxxxxxxx"
                       value={userData.currentPassword}
                       className="w-full p-2.5 border border-gray-200  outline-none focus:border-violet-400 transition-colors pl-9"
                       onChange={(e) =>
@@ -268,19 +251,25 @@ const MyAccount = () => {
 
                 <button
                   onClick={handlePasswordChange}
-                  disabled={isSaving}
-                  className="w-full bg-violet-400 hover:bg-violet-500 disabled:bg-gray-400 text-white px-4 py-2.5  transition-all duration-300 hover:shadow-md disabled:hover:shadow-none flex items-center justify-center gap-2 hover:cursor-pointer"
+                  className="w-full bg-violet-400 hover:bg-violet-500  text-white px-4 py-2.5  transition-all duration-300 hover:shadow-md  flex items-center justify-center gap-2 hover:cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
-                  {isSaving ? "Saving..." : "Update Password"}
+                  Update Password
                 </button>
               </div>
             </div>
           </div>
-              <div className="flex flex-col md:flex-row items-center justify-around gap-6 my-6 pb-6">
-                <h6 className="uppercase text-xl md:ml-18 font-semibold text-gray-700">Logout from all the devices: </h6>
-                <button onClick={handleLogoutFromAllDevices} className="py-4 px-10 bg-red-600 hover:bg-red-400 text-white hover:cursor-pointer">Logout From all the devices</button>
-              </div>
+          <div className="flex flex-col md:flex-row items-center justify-around gap-6 my-6 pb-6">
+            <h6 className="uppercase text-xl md:ml-18 font-semibold text-gray-700">
+              Logout from all the devices:
+            </h6>
+            <button
+              onClick={handleLogoutFromAllDevices}
+              className="py-4 px-10 bg-red-600 hover:bg-red-400 text-white hover:cursor-pointer"
+            >
+              Logout From all the devices
+            </button>
+          </div>
         </div>
       </div>
     </div>
