@@ -124,7 +124,7 @@ export const getUser = createAsyncThunk(
 );
 
 export const logoutAll = createAsyncThunk(
-  "/auth/logoutall",
+  "auth/logoutall",
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("auth/logoutall");

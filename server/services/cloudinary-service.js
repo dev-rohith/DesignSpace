@@ -8,7 +8,7 @@ cloudinary.config({
 });
 
 export const CloudinaryService = {
-  async uploadFile(file) {
+  async uploadFile(file, type) {
     try {
       // Check if the file path is valid and exists
       if (!file || !file.path) {
@@ -22,7 +22,7 @@ export const CloudinaryService = {
       console.log('cloudianry hit')
 
       const result = await cloudinary.uploader.upload(file.path, {
-        resource_type: "auto",
+        resource_type: type || "auto",
       });
 
       return result;
@@ -47,52 +47,3 @@ export const CloudinaryService = {
 
 export default CloudinaryService;
 
-/*
-
-app.post('/upload-multiple', upload.array('files', 10), async (req, res) => {
-    try {
-      const fileUploadPromises = req.files.map((file) => {
-        return cloudinary.uploader.upload(file.path, {
-          resource_type: 'auto', // Automatically determine file type
-        });
-      });
-  
-      // Wait for all files to upload
-      const uploadResults = await Promise.all(fileUploadPromises);
-  
-      // Delete the temporary files after uploading to Cloudinary
-      req.files.forEach((file) => fs.unlinkSync(file.path));
-  
-      res.status(200).json({
-        message: 'Files uploaded successfully',
-        uploadedFiles: uploadResults,
-      });
-    } catch (err) {
-      console.error('Error uploading files:', err);
-      res.status(500).json({ error: 'Failed to upload files' });
-    }
-  });
-
-
-  {
-    "message": "Files uploaded successfully",
-    "uploadedFiles": [
-      {
-        "asset_id": "abc123",
-        "public_id": "pdf-uploads/sample_file",
-        "version": 1674853200,
-        "resource_type": "raw",
-        "secure_url": "https://res.cloudinary.com/your-cloud-name/raw/upload/v1674853200/sample_file.pdf"
-      },
-      {
-        "asset_id": "def456",
-        "public_id": "pdf-uploads/sample_image",
-        "version": 1674853300,
-        "resource_type": "image",
-        "secure_url": "https://res.cloudinary.com/your-cloud-name/image/upload/v1674853300/sample_image.jpg"
-      }
-    ]
-  }
-  
-
-  */

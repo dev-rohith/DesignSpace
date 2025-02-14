@@ -1,8 +1,11 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+
+import DesignSpaceLayout from "../layout/DesignSpaceLayout";
+
 import {
-  AdminDashbord,
+  AdmindDashboard,
   AssociateApplication,
-  DesingerApplication,
+  DesignerApplication,
   DeviceLimit,
   ForgotPassword,
   Landing,
@@ -15,9 +18,7 @@ import {
   SignUp,
   UnAuthorized,
 } from "../pages";
-import DesignSpaceLayout from "../layout/DesignSpaceLayout";
-import DesingersFeed from "../components/designSpace/DesingersFeed";
-import { PendingProjects } from "../components";
+import { ApplicationSucess, DesingersFeed, PendingProjects } from "../components";
 import MyAccount from "../components/common/MyAccount";
 import PrivateRoute from "./PrivateRoute";
 import InternalSpaceLayout from "../layout/InternalSpaceLayout";
@@ -45,7 +46,7 @@ const AppRoutes = () => {
         path="/application-designer"
         element={
           <PrivateRoute>
-            <DesingerApplication />
+            <DesignerApplication />
           </PrivateRoute>
         }
       />
@@ -67,6 +68,15 @@ const AppRoutes = () => {
         }
       />
 
+      <Route
+        path="/application-success"
+        element={
+          <PrivateRoute>
+            <ApplicationSucess />
+          </PrivateRoute>
+        }
+      />
+
       <Route path="/design-space" element={<DesignSpaceLayout />}>
         <Route index element={<Navigate to="designers" replace />} />
         <Route path="designers" element={<DesingersFeed />} />
@@ -74,8 +84,10 @@ const AppRoutes = () => {
         <Route path="chat" element={<Mychat />} />
       </Route>
 
+      {/* Admin Routes */}
+
       <Route path="/admin" element={<InternalSpaceLayout />}>
-        <Route path="dashbord" element={<AdminDashbord />} />
+        <Route path="dashboard" element={<AdmindDashboard />} />
         <Route path="manage-users" element={<ManageUsers />} />
         <Route path="manage-applications" element={<ManageUsers />} />
       </Route>

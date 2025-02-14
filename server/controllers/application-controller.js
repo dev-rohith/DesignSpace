@@ -13,10 +13,20 @@ import {
   updateApplicationValidator,
 } from "../validators/application-validation.js";
 
-
 const applicationCtrl = {};
 
 applicationCtrl.createApplication = async (req, res, next) => {
+  const isExists = await Application.findOne({
+    requestedBy: req.user.userId,
+  });
+  if (isExists) {
+    return next(
+      new AppError(
+        "You have already submitted an application.Only one role you can apply at a time.",
+        400
+      )
+    );
+  }
   const { value, error } = applicationValidator.validate(req.body);
   if (error) return next(new AppError(error.message, 422));
   const { description, requestedRole } = value;
@@ -24,7 +34,10 @@ applicationCtrl.createApplication = async (req, res, next) => {
   if (!req.files) return next(new AppError("Files are required", 400));
 
   const fileUploadPromises = req.files.map((file) => {
-    return CloudinaryService.uploadFile(file); // Upload file to Cloudinary
+    return CloudinaryService.uploadFile(
+      file,
+      file.mimetype === "application/pdf" && "raw"
+    );
   });
   try {
     const uploadResults = await Promise.all(fileUploadPromises);
@@ -33,19 +46,20 @@ applicationCtrl.createApplication = async (req, res, next) => {
     const resume = {};
 
     uploadResults.forEach((upload) => {
-      if (upload.format === "pdf") {
-        resume.url = upload.secure_url;
-        resume.public_id = upload.public_id;
-      } else if (upload.format === "mp4") {
+      if (upload.resource_type === "video") {
         introduction_video.url = upload.secure_url;
         introduction_video.public_id = upload.public_id;
+      } else if (upload.resource_type === "raw") {
+        resume.url = upload.secure_url;
+        resume.public_id = upload.public_id;
       }
     });
+
     if (
       Object.keys(introduction_video).length === 0 ||
       Object.keys(resume).length === 0
     ) {
-      throw new Error("error while uploading to cloudinary");
+      return next(new AppError("error while uploading to cloudinary"));
     }
 
     await Application.create({
@@ -83,9 +97,7 @@ applicationCtrl.getPendingApplications = catchAsync(async (req, res, next) => {
 
   const finalQuery = features.query
     .populate("requestedBy", "firstName lastName profilePicture status")
-    .select(
-      "-resume -description -actionPerformedOn -actionMadeBy -introduction_video -isApproved -__v"
-    )
+    .select("requestedBy status requestedRole requestedDate")
     .lean();
   const applications = await finalQuery;
   res.json({ applications });
@@ -146,7 +158,9 @@ applicationCtrl.deleteApplication = catchAsync(async (req, res, next) => {
   if (error) return next(new AppError(error.message, 422));
   const { id } = value;
 
-  const deletedApplication = await Application.findByIdAndDelete(id).lean();
+  const deletedApplication = await Application.findByIdAndDelete(id)
+    .select("_id")
+    .lean();
 
   try {
     if (
@@ -160,7 +174,7 @@ applicationCtrl.deleteApplication = catchAsync(async (req, res, next) => {
         ),
         CloudinaryService.deleteFile(
           deletedApplication.resume.public_id,
-          "image"
+          "raw"
         ),
       ]);
     } else {

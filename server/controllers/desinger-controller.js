@@ -37,17 +37,18 @@ designerProfileCtrl.getAllDesingers = catchAsync(async (req, res, next) => {
 });
 
 designerProfileCtrl.getAllPortfolios = catchAsync(async (req, res, next) => {
-  const portifolios = await DesignerProfile.find()
+  const portifolios = await DesignerProfile.find({
+    $expr: { $gt: [{ $size: "$portfolio" }, 0] },
+  })
     .select("portfolio")
     .populate({
       path: "user",
       select: "firstName lastName profilePicture country",
-    });
+    })
+    .lean();
 
   res.json(portifolios);
 });
-
-
 
 //////////////////////////--private--/////////////////////////////////
 
@@ -85,7 +86,7 @@ designerProfileCtrl.createMyProfile = catchAsync(async (req, res, next) => {
     location: {
       coordinates: [lat, lng],
     },
-  }).select("-location -portfolio -ratings ")
+  });
 
   await designer.save();
 
@@ -96,7 +97,7 @@ designerProfileCtrl.getMyProfile = catchAsync(async (req, res, next) => {
   const myProfile = await DesignerProfile.findOne({
     user: req.user.userId,
   }).select("-user -ratings -location");
-  if(!myProfile) return next(new AppError("Profile not found", 404));
+  if (!myProfile) return next(new AppError("Profile not found", 404));
   res.json(myProfile);
 });
 

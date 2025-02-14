@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { useForm } from "../../context/MultiFormProvider";
+import { useForm } from "../../../context/MultiFormProvider";
 
 const DesignerAppStepTwo = () => {
   const { updateFormData } = useForm();

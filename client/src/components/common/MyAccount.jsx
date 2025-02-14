@@ -8,6 +8,7 @@ import { updateUser, updateUserPic } from "../../features/userApi";
 import { logout, logoutAll } from "../../features/authApi";
 import UserProfilePicture from "../ui/userProfilePicture";
 import SavingSpinner from "../ui/SavingSpinner";
+import InternalSidebar from "../layout/InternalSidebar";
 
 const MyAccount = () => {
   const { user } = useSelector((store) => store.auth);
@@ -97,7 +98,7 @@ const MyAccount = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar />
+      {user.role === "client" ? <Sidebar /> : <InternalSidebar />}
       <div className="flex-1 overflow-y-auto">
         <div className="px-4 md:px-6 py-6 md:py-10 h-full">
           <div className="flex items-center justify-between max-w-3xl mx-auto mb-8">

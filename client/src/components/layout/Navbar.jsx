@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronsRight } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { logout } from "../../features/authApi";
+import { logout, logoutAll } from "../../features/authApi";
 import toast from "react-hot-toast";
 import usePopUp from "../../hooks/usePopUp";
 
@@ -28,6 +28,14 @@ const Navbar = () => {
     } else if (actionResult.type === logout.rejected.type) {
       toast.error(actionResult.payload);
       localStorage.removeItem("accessToken");
+    }
+  };
+  const handleLogoutFromAllDevices = async () => {
+    const actionResult = await dispatch(logoutAll());
+    if (logoutAll.fulfilled.match(actionResult)) {
+      toast.success(actionResult.payload);
+    } else if (logoutAll.rejected.match(actionResult)) {
+      toast.error(actionResult.payload);
     }
   };
 
@@ -116,7 +124,7 @@ const Navbar = () => {
                 </Link>
                 <button
                   className="w-full hover:text-gray-100  pb-2  pt-1 hover:bg-orange-600 hover:cursor-pointer "
-                  onClick={handleLogout}
+                  onClick={handleLogoutFromAllDevices}
                 >
                   Logout from all
                 </button>

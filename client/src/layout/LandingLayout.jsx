@@ -1,12 +1,10 @@
 import { Navbar } from "../components";
 
-const LandingLayout = ({children}) => {
+const LandingLayout = ({ children }) => {
   return (
     <div>
       <Navbar />
-      <div>
-        {children}
-      </div>
+      <div>{children}</div>
     </div>
   );
 };

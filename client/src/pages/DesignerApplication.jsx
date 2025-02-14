@@ -2,50 +2,49 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import { requestRoleAssociate } from "../features/applicationApi.js";
+import { requestRoleDesigner } from "../features/applicationApi.js";
 
-import LandingLayout from "../layout/LandingLayout";
-import { MultiFormProvider } from "../context/MultiFormProvider";
+import { MultiFormProvider } from "../context/MultiFormProvider.jsx";
+import LandingLayout from "../layout/LandingLayout.jsx";
 
 import {
-  AssociateAppStepOne,
-  AssociateAppStepThree,
-  AssociateAppStepTwo,
+  DesignerAppStepOne,
+  DesignerAppStepTwo,
+  DesingerAppStepThree,
   FormContent,
   Stepper,
   StepperControl,
-} from "../components";
+} from "../components/index.js";
 
-const DesingerApplication = () => {
+const DesignerApplication = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const steps = ["Cover Letter", "Self Introduction", "Complete"];
+  const steps = ["Resume", "INtruduction", "Complete"];
   const formComponents = [
-    AssociateAppStepOne,
-    AssociateAppStepTwo,
-    AssociateAppStepThree,
+    DesignerAppStepOne,
+    DesignerAppStepTwo,
+    DesingerAppStepThree,
   ];
 
   const handleFormSubmit = async (data) => {
     if (Object.keys(data).length < 3)
       return toast.error("Please fill all the fields");
     const Form = new FormData();
-    Form.append("requestedRole", "associate");
+    Form.append("requestedRole", "designer");
     Object.keys(data).forEach((key) => {
-      if (key === "coverLetter" || key === "introduction") {
+      if (key === "resume" || key === "introduction") {
         Form.append("files", data[key]);
       } else {
         Form.append(key, data[key]);
       }
     });
 
-    const actionResult = await dispatch(requestRoleAssociate(Form));
-    console.log(actionResult)
-    if (requestRoleAssociate.fulfilled.match(actionResult)) {
+    const actionResult = await dispatch(requestRoleDesigner(Form));
+    if (requestRoleDesigner.fulfilled.match(actionResult)) {
       toast.success(actionResult.payload.message);
       navigate("/application-success");
-    } else if (requestRoleAssociate.rejected.match(actionResult)) {
+    } else if (requestRoleDesigner.rejected.match(actionResult)) {
       toast.error(actionResult.payload.message);
     }
   };
@@ -68,4 +67,4 @@ const DesingerApplication = () => {
     </LandingLayout>
   );
 };
-export default DesingerApplication;
+export default DesignerApplication;

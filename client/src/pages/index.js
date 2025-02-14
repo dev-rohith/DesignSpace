@@ -6,12 +6,10 @@ export { default as ForgotPassword } from "./ForgotPassword";
 export { default as DeviceLimit } from "./DeviceLimit";
 export { default as Pricing } from "./Pricing";
 export { default as UnAuthorized } from "./UnAuthorized";
-export { default as DesingerApplication } from "./DesingerApplication";
+export { default as DesignerApplication } from "./DesignerApplication";
 export { default as AssociateApplication } from "./AssociateApplication";
 export { default as Mychat } from "./Mychat";
 export { default as OurWork } from "./OurWork";
 
-
-
-export { default as AdminDashbord } from "./admin/AdminDashbord";
+export { default as AdmindDashboard } from "./admin/AdmindDashboard";
 export { default as ManageUsers } from "./admin/ManageUsers";

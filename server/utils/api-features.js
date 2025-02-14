@@ -20,9 +20,11 @@ class APIFeatures {
   sort() {
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(",").join(" ");
+      const order = this.queryString.order || 1;
+      this.query[sortBy] = order === "asc" ? 1 : -1;
       this.query = this.query.sort(sortBy);
     } else {
-      this.query = this.query.sort("-createdAt");
+      this.query = this.query.sort("createdAt");
     }
 
     return this;

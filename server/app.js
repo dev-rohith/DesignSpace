@@ -11,8 +11,9 @@ import applicationRouter from "./routes/application-routes.js";
 import taskRouter from "./routes/task-routes.js";
 import landingRouter from "./routes/landing-routes.js";
 import desingerRouter from "./routes/desinger-routes.js";
-import projectRouter from './routes/project-routes.js'
-import associateRouter from './routes/associate-routes.js'
+import projectRouter from "./routes/project-routes.js";
+import associateRouter from "./routes/associate-routes.js";
+import paymentRouter from "./routes/payment-routes.js";
 
 import globalErrorHandler from "./controllers/error-controller.js";
 
@@ -20,10 +21,14 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true
-}));
+// app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(cookieParser());
 
@@ -32,10 +37,11 @@ app.use(morgan("dev", { stream: logStream }));
 
 //routing api middleware
 
-
 app.use("/api/v1/auth", authRouter);
 
 app.use("/api/v1/user", userRouter);
+
+app.use("/api/v1/payment", paymentRouter);
 
 app.use("/api/v1/landing", landingRouter);
 
@@ -48,7 +54,6 @@ app.use("/api/v1/designer", desingerRouter);
 app.use("/api/v1/associate", associateRouter);
 
 app.use("/api/v1/project", projectRouter);
-
 
 app.use(globalErrorHandler);
 

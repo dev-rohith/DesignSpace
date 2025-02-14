@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { useForm } from "../../context/MultiFormProvider";
+import { useForm } from "../../../context/MultiFormProvider";
 
 const AssociateAppStepOne = () => {
   const { updateFormData } = useForm();
@@ -25,12 +25,12 @@ const AssociateAppStepOne = () => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'application/pdf': ['.pdf']
+      "application/pdf": [".pdf"],
     },
     maxFiles: 1,
     multiple: false,
   });
-
+  
   useEffect(() => {
     return () => {
       if (pdfPreview) {
@@ -43,7 +43,7 @@ const AssociateAppStepOne = () => {
     <div className="flex flex-col space-y-6 p-4">
       <div className="flex flex-col space-y-2">
         <label className="uppercase font-bold text-xl text-gray-700">
-          Upload Your Resume
+          Upload Cover Letter
         </label>
         <p className="text-sm text-gray-500">
           Drag and drop your PDF resume or click to browse
@@ -65,7 +65,9 @@ const AssociateAppStepOne = () => {
         <input {...getInputProps()} />
         <div className="flex flex-col items-center text-center space-y-2">
           <svg
-            className={`w-12 h-12 ${isDragActive ? "text-blue-500" : "text-gray-400"}`}
+            className={`w-12 h-12 ${
+              isDragActive ? "text-blue-500" : "text-gray-400"
+            }`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -83,7 +85,9 @@ const AssociateAppStepOne = () => {
                 ? "Drop your PDF here"
                 : "Drop your PDF here or click to browse"}
             </span>
-            <span className="text-sm text-gray-500">Supports PDF files only</span>
+            <span className="text-sm text-gray-500">
+              Supports PDF files only
+            </span>
           </div>
         </div>
       </div>
@@ -95,12 +99,12 @@ const AssociateAppStepOne = () => {
       {pdfPreview && (
         <div className="border rounded-lg overflow-hidden">
           <div className="bg-gray-100 p-3 border-b flex justify-between items-center">
-            <span className="font-medium">Resume Preview</span>
+            <span className="font-medium">Preview</span>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setPdfPreview(null);
-                updateFormData({ resume: null });
+                updateFormData({ coverLetter: null });
               }}
               className="text-gray-500 hover:text-red-500"
             >
@@ -119,10 +123,10 @@ const AssociateAppStepOne = () => {
               </svg>
             </button>
           </div>
-          <iframe 
-            src={pdfPreview} 
-            className="w-full h-[600px]" 
-            title="Resume Preview"
+          <iframe
+            src={pdfPreview}
+            className="w-full h-[600px]"
+            title="cover Letter Preview"
           />
         </div>
       )}

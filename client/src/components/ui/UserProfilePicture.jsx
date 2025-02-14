@@ -1,5 +1,5 @@
 import { Camera } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 const UserProfilePicture = ({ profilePicture, handleProfileChange }) => {

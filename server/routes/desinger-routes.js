@@ -15,6 +15,7 @@ router.get("/:designer_id", designerProfileCtrl.getDesingerProfile);
 //////////////////////////////////////////--auth-needed--///////////////////////////////////////////////////////////////////////////
 
 router.use(authMiddleWare.protect);
+
 router.use(authMiddleWare.authorize("designer"));
 
 router

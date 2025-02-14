@@ -1,22 +1,22 @@
 import { useEffect, useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { useForm } from "../../context/MultiFormProvider";
+import { useForm } from "../../../context/MultiFormProvider";
 
-const AssociateAppStepTwo = () => {
+const DesignerAppStepOne = () => {
   const { updateFormData } = useForm();
-  const [videoPreview, setVideoPreview] = useState(null);
+  const [pdfPreview, setPdfPreview] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
   const onDrop = useCallback(
     (acceptedFiles) => {
       const file = acceptedFiles[0];
-      if (file && file.type === "video/mp4") {
-        updateFormData({ introduction: file });
-        setVideoPreview(URL.createObjectURL(file));
+      if (file && file.type === "application/pdf") {
+        updateFormData({ resume: file });
+        setPdfPreview(URL.createObjectURL(file));
         setErrorMessage("");
       } else {
-        setErrorMessage("Please upload a valid MP4 video file.");
-        setVideoPreview(null);
+        setErrorMessage("Please upload a valid PDF file.");
+        setPdfPreview(null);
       }
     },
     [updateFormData]
@@ -25,33 +25,31 @@ const AssociateAppStepTwo = () => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'video/mp4': ['.mp4']
+      'application/pdf': ['.pdf']
     },
     maxFiles: 1,
     multiple: false,
-    maxSize: 100 * 1024 * 1024 
   });
 
   useEffect(() => {
     return () => {
-      if (videoPreview) {
-        URL.revokeObjectURL(videoPreview);
+      if (pdfPreview) {
+        URL.revokeObjectURL(pdfPreview);
       }
     };
-  }, [videoPreview]);
+  }, [pdfPreview]);
 
   return (
     <div className="flex flex-col space-y-6 p-4">
       <div className="flex flex-col space-y-2">
         <label className="uppercase font-bold text-xl text-gray-700">
-          Upload Your Introduction Video
+          Upload Your Resume
         </label>
         <p className="text-sm text-gray-500">
-          Drag and drop your MP4 video or click to browse
+          Drag and drop your PDF resume or click to browse
         </p>
       </div>
 
-      {/* Dropzone Area */}
       <div
         {...getRootProps()}
         className={`
@@ -64,7 +62,7 @@ const AssociateAppStepTwo = () => {
           }
         `}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} required/>
         <div className="flex flex-col items-center text-center space-y-2">
           <svg
             className={`w-12 h-12 ${isDragActive ? "text-blue-500" : "text-gray-400"}`}
@@ -76,18 +74,16 @@ const AssociateAppStepTwo = () => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
             />
           </svg>
           <div className="flex flex-col space-y-1">
             <span className="font-medium text-gray-600">
               {isDragActive
-                ? "Drop your video here"
-                : "Drop your video here or click to browse"}
+                ? "Drop your PDF here"
+                : "Drop your PDF here or click to browse"}
             </span>
-            <span className="text-sm text-gray-500">
-              Supports MP4 files only (max 100MB)
-            </span>
+            <span className="text-sm text-gray-500">Supports PDF files only</span>
           </div>
         </div>
       </div>
@@ -96,15 +92,15 @@ const AssociateAppStepTwo = () => {
         <div className="text-red-500 text-sm">{errorMessage}</div>
       )}
 
-      {videoPreview && (
+      {pdfPreview && (
         <div className="border rounded-lg overflow-hidden">
           <div className="bg-gray-100 p-3 border-b flex justify-between items-center">
-            <span className="font-medium">Video Preview</span>
+            <span className="font-medium">Resume Preview</span>
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setVideoPreview(null);
-                updateFormData({ introduction: null });
+                setPdfPreview(null);
+                updateFormData({ resume: null });
               }}
               className="text-gray-500 hover:text-red-500"
             >
@@ -123,18 +119,15 @@ const AssociateAppStepTwo = () => {
               </svg>
             </button>
           </div>
-          <video 
-            src={videoPreview} 
-            className="w-full max-h-[600px]" 
-            controls
-            controlsList="nodownload"
-          >
-            Your browser does not support the video tag.
-          </video>
+          <iframe 
+            src={pdfPreview} 
+            className="w-full h-[600px]" 
+            title="Resume Preview"
+          />
         </div>
       )}
     </div>
   );
 };
 
-export default AssociateAppStepTwo;
+export default DesignerAppStepOne;

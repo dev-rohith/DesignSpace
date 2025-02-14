@@ -1,4 +1,4 @@
-import { useForm } from "../../context/MultiFormProvider";
+import { useForm } from "../../../context/MultiFormProvider";
 
 const AssocaiteAppStepThree = () => {
   const { formData, updateFormData } = useForm();
@@ -11,11 +11,11 @@ const AssocaiteAppStepThree = () => {
     <div className="flex flex-col space-y-6 p-4">
       <div className="flex flex-col space-y-2">
         <label className="uppercase font-bold text-xl text-gray-700">
-          Why Are You Interested?
+          Why you interested to become associate in Design Space ?
         </label>
         <p className="text-sm text-gray-500">
-          Tell us about your interest in this role and what makes you a great
-          fit.
+          Tell me about your interest in this role and what makes you a great
+          fit.Minimum 100 words.Fill the form Carfully before submiting it.
         </p>
       </div>
 

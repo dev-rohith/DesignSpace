@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
-import { Sidebar } from "../components";
+import InternalSidebar from "../components/layout/InternalSidebar";
 
 const InternalSpaceLayout = () => {
   return (
     <div className="flex">
-      <Sidebar />
+      <InternalSidebar />
       <Outlet />
     </div>
   );

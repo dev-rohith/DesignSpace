@@ -5,7 +5,6 @@ import CloudinaryService from "../services/cloudinary-service.js";
 import fs from "fs";
 import AppError from "../utils/app-error-util.js";
 import { RedisDataManager } from "../services/redis-service.js";
-import designerProfileCtrl from "./desinger-controller.js";
 import DesignerProfile from "../models/designer-profile-model.js";
 
 const landingCtrl = {};
@@ -28,18 +27,17 @@ landingCtrl.getLanding = catchAsync(async (req, res, next) => {
     }
 
     const designerLocations = await DesignerProfile.find()
-      .select("location.coordinates address.city -_id")
+      .select("location.coordinates address.city address.country -_id")
       .lean();
     config.designers_locations =
       designerLocations.length >= 1 ? designerLocations : [];
 
-    // Store config in Redis (ensure JSON format)
     await RedisDataManager.addItemToRedis(
       "landingConfig",
       JSON.stringify(config)
     );
   } else {
-    config = JSON.parse(config); // Parse Redis string back to object
+    config = JSON.parse(config); 
   }
 
   res.status(200).json(config);

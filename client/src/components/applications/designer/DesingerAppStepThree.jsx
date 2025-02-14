@@ -1,7 +1,9 @@
-import { useForm } from "../../context/MultiFormProvider";
+import { useSelector } from "react-redux";
+import { useForm } from "../../../context/MultiFormProvider";
 
 const DesingerAppStepThree = () => {
   const { formData, updateFormData } = useForm();
+  const { isLoading } = useSelector((store) => store.application);
 
   const handleChange = (e) => {
     updateFormData({ description: e.target.value });
@@ -19,12 +21,14 @@ const DesingerAppStepThree = () => {
         </p>
       </div>
 
-      <textarea
-        value={formData.description || ""}
-        onChange={handleChange}
-        placeholder="Share your motivation and relevant experience..."
-        className="w-full min-h-[200px] p-4 border rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none resize-y text-gray-700"
-      />
+      {!isLoading && (
+        <textarea
+          value={formData.description || ""}
+          onChange={handleChange}
+          placeholder="Share your motivation and relevant experience..."
+          className="w-full min-h-[200px] p-4 border rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none resize-y text-gray-700"
+        />
+      )}
     </div>
   );
 };

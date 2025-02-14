@@ -5,7 +5,10 @@ import APIFeatures from "../utils/api-features.js";
 import AppError from "../utils/app-error-util.js";
 import catchAsync from "../utils/catch-async-util.js";
 import fs from "fs";
-import { userPasswordValidator } from "../validators/user-validation.js";
+import {
+  userPasswordValidator,
+  userStatusChangeValidator,
+} from "../validators/user-validation.js";
 
 const userCtrl = {};
 
@@ -20,16 +23,14 @@ userCtrl.getUser = catchAsync(async (req, res, next) => {
 });
 
 userCtrl.updatePassword = catchAsync(async (req, res, next) => {
-
   const { value, error } = userPasswordValidator.validate(req.body);
   if (error) return next(new AppError(error.details[0].message, 422));
-  const {currentPassword, newPassword} = value
+  const { currentPassword, newPassword } = value;
 
-  const user = await User.findOne({ _id: req.user?.userId }).select("+password");
-  if (
-    !user ||
-    !(await user.correctPassword(currentPassword, user.password))
-  ) {
+  const user = await User.findOne({ _id: req.user?.userId }).select(
+    "+password"
+  );
+  if (!user || !(await user.correctPassword(currentPassword, user.password))) {
     return next(new AppError("Incorrect password", 401));
   }
 
@@ -60,7 +61,7 @@ userCtrl.updateProfilePic = catchAsync(async (req, res, next) => {
   }
   res.json({
     message: "your profile picture has been updated successfully",
-    data: user.profilePicture,
+    new_pic: user.profilePicture,
   });
 });
 
@@ -101,10 +102,14 @@ userCtrl.getClients = catchAsync(async (req, res, next) => {
 });
 
 userCtrl.UserStatusController = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const { status } = req.body;
+  const { value, error } = userStatusChangeValidator.validate({
+    ...req.body,
+    ...req.params,
+  });
+  if (error) return next(new AppError(error.details[0].message, 422));
+  const { user_id, status } = value;
   const deactivatedUser = await User.findByIdAndUpdate(
-    id,
+    user_id,
     { status },
     {
       new: true,
