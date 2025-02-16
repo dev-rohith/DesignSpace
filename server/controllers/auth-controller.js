@@ -109,7 +109,7 @@ authController.verifyAccount = catchAsync(async (req, res, next) => {
   }
 
   if (Number(otp) === userOtp.otp) {
-    await User.findByIdAndUpdate(userOtp.user, {isVerified: true})
+    await User.findByIdAndUpdate(userOtp.user, { isVerified: true });
     await Otp.findByIdAndDelete(userOtp._id);
     return res.status(201).json({
       message: "your account has be created successfully",
@@ -178,14 +178,12 @@ authController.login = catchAsync(async (req, res, next) => {
     );
   }
 
-  const user = await User.findOne({ email, isVerified: true }).select(
-    "+password"
-  );
+  const user = await User.findOne({ email }).select("+password");
 
-  if (!user)
-    return next(
-      new AppError("user not found or not verified try to signup again", 404)
-    );
+  if (!user) return next(new AppError("user not found", 404));
+
+  if (user.isVerified === false)
+    return next(new AppError("user is not verified try to verify by using signup process", 403));
 
   if (!(await user.correctPassword(password, user.password))) {
     return next(new AppError("invalid credentials", 403));

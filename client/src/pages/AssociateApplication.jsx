@@ -8,6 +8,7 @@ import LandingLayout from "../layout/LandingLayout";
 import { MultiFormProvider } from "../context/MultiFormProvider";
 
 import {
+  AssociateApplicationProcess,
   AssociateAppStepOne,
   AssociateAppStepThree,
   AssociateAppStepTwo,
@@ -20,8 +21,9 @@ const DesingerApplication = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const steps = ["Cover Letter", "Self Introduction", "Complete"];
+  const steps = ["Process", "Cover Letter", "Self Introduction", "Complete"];
   const formComponents = [
+    AssociateApplicationProcess,
     AssociateAppStepOne,
     AssociateAppStepTwo,
     AssociateAppStepThree,
@@ -51,10 +53,10 @@ const DesingerApplication = () => {
 
   return (
     <LandingLayout>
-      <div className="min-h-screen bg-gray-100 py-8">
-        <div className="max-w-3xl mx-auto">
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto ">
           <MultiFormProvider steps={steps} formComponents={formComponents}>
-            <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="rounded-lg shadow-lg p-8 bg-gradient-to-br from-green-50 via-white to-indigo-50">
               <Stepper />
               <div className="mt-8">
                 <FormContent />

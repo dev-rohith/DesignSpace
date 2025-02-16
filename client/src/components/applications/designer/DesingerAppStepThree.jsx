@@ -21,14 +21,12 @@ const DesingerAppStepThree = () => {
         </p>
       </div>
 
-      {!isLoading && (
-        <textarea
-          value={formData.description || ""}
-          onChange={handleChange}
-          placeholder="Share your motivation and relevant experience..."
-          className="w-full min-h-[200px] p-4 border rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none resize-y text-gray-700"
-        />
-      )}
+      <textarea
+        value={formData.description || ""}
+        onChange={handleChange}
+        placeholder="Share your motivation and relevant experience..."
+        className="w-full min-h-[200px] p-4 border rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none resize-y text-gray-700"
+      />
     </div>
   );
 };

@@ -198,7 +198,7 @@ applicationCtrl.deleteApplication = catchAsync(async (req, res, next) => {
 
   res.json({
     message: "application deleted successfully",
-    data: deletedApplication,
+    application: deletedApplication,
   });
 });
 

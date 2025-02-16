@@ -2,7 +2,13 @@ import { useSelector } from "react-redux";
 import SidebarItem from "../common/SidebarItem";
 import { Link } from "react-router-dom";
 import { SidebarProvider } from "../../context/SidebarProvider";
-import { BadgeIndianRupee, ChartArea, ContactRound, PanelsTopLeft, Users } from "lucide-react";
+import {
+  BadgeIndianRupee,
+  ChartArea,
+  ContactRound,
+  PanelsTopLeft,
+  Users,
+} from "lucide-react";
 
 const InternalSidebar = () => {
   const { user } = useSelector((store) => store.auth);
@@ -47,7 +53,7 @@ const InternalSidebar = () => {
         <SidebarItem
           icon={<PanelsTopLeft />}
           text="landingpage"
-          to="/admin/manage-landing"
+          to="/admin/landing"
         />
       )}
 
@@ -58,7 +64,6 @@ const InternalSidebar = () => {
           to="/admin/manage-pricing"
         />
       )}
-
     </SidebarProvider>
   );
 };

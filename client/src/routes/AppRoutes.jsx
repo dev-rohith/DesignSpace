@@ -29,6 +29,8 @@ import {
 import MyAccount from "../components/common/MyAccount";
 import PrivateRoute from "./PrivateRoute";
 import InternalSpaceLayout from "../layout/InternalSpaceLayout";
+import ManageLanding from "../pages/admin/ManageLanding";
+import ManagePricing from "../pages/admin/ManagePricing";
 
 const AppRoutes = () => {
   return (
@@ -109,6 +111,14 @@ const AppRoutes = () => {
           <Route
             path="application/:application_id"
             element={<ApplicationDetails />}
+          />
+          <Route
+            path="landing"
+            element={<ManageLanding />}
+          />
+          <Route
+            path="landing"
+            element={<ManagePricing />}
           />
         </Route>
       </Route>

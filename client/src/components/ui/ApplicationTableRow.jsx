@@ -31,13 +31,13 @@ const ApplicationTableRow = ({
     navigate(`/admin/application/${_id}`);
   };
 
-  const handleDelete = () => {
-      const actionResult = dispatch(deleteNonePendingApplication(_id));
-      if(deleteNonePendingApplication.fulfilled.match(actionResult)){
-        toast.success(actionResult.payload.message);
-      }else if(deleteNonePendingApplication.rejected.match(actionResult)){
-        toast.error(actionResult.payload.message);
-      }
+  const handleDelete = async () => {
+    const actionResult = await dispatch(deleteNonePendingApplication(_id));
+    if (deleteNonePendingApplication.fulfilled.match(actionResult)) {
+      toast.success(actionResult.payload.message);
+    } else if (deleteNonePendingApplication.rejected.match(actionResult)) {
+      toast.error(actionResult.payload.message);
+    }
   };
 
   return (
@@ -137,7 +137,10 @@ const ApplicationTableRow = ({
       )}
       {actionMadeBy && (
         <td className="p-4">
-          <button onClick={handleDelete} className="bg-red-600 text-white py-1  hover:bg-red-800 px-4 rounded-full cursor-pointer">
+          <button
+            onClick={handleDelete}
+            className="bg-red-600 text-white py-1  hover:bg-red-800 px-4 rounded-full cursor-pointer"
+          >
             Delete
           </button>
         </td>

@@ -25,6 +25,8 @@ export { default as StepperControl } from "./common/StepperControl";
 export { default as PendingApplicationsTable } from "./ui/PendingApplicationsTable";
 export { default as NonePendingApplicationsTable } from "./ui/NonePendingApplicationsTable";
 export { default as ApplicationDetails } from "./ui/ApplicationDetails";
+export { default as AssociateApplicationProcess } from "./ui/AssociateApplicationProcess";
+export { default as DesignerApplicationProcess } from "./ui/DesignerApplicationProcess";
 
 //------------------------ Design Space ------------------------------//
 
