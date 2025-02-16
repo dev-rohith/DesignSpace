@@ -22,6 +22,10 @@ export { default as DesingerAppStepThree } from "./applications/designer/Desinge
 export { default as ApplicationSucess } from "./ui/ApplicationSucess";
 export { default as StepperControl } from "./common/StepperControl";
 
+export { default as PendingApplicationsTable } from "./ui/PendingApplicationsTable";
+export { default as NonePendingApplicationsTable } from "./ui/NonePendingApplicationsTable";
+export { default as ApplicationDetails } from "./ui/ApplicationDetails";
+
 //------------------------ Design Space ------------------------------//
 
 export { default as Sidebar } from "./layout/Sidebar";
@@ -29,6 +33,7 @@ export { default as PendingProjects } from "./designSpace/PendingProjects";
 export { default as DesingersFeed } from "./designSpace/DesingersFeed";
 
 export { default as PricingCard } from "./ui/PricingCard";
-export { default as UserCard } from "./ui/UserCard";
+export { default as UserTableRow } from "./ui/UserTableRow";
 export { default as Stepper } from "./ui/Stepper";
 export { default as FormContent } from "./ui/FormContent";
+export { default as UsersTable } from "./ui/UsersTable";

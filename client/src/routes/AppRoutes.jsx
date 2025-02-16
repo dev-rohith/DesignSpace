@@ -12,13 +12,20 @@ import {
   Login,
   ManageUsers,
   Mychat,
+  NonePendingApplications,
   NotFound,
   OurWork,
+  PendingApplications,
   Pricing,
   SignUp,
   UnAuthorized,
 } from "../pages";
-import { ApplicationSucess, DesingersFeed, PendingProjects } from "../components";
+import {
+  ApplicationDetails,
+  ApplicationSucess,
+  DesingersFeed,
+  PendingProjects,
+} from "../components";
 import MyAccount from "../components/common/MyAccount";
 import PrivateRoute from "./PrivateRoute";
 import InternalSpaceLayout from "../layout/InternalSpaceLayout";
@@ -84,12 +91,26 @@ const AppRoutes = () => {
         <Route path="chat" element={<Mychat />} />
       </Route>
 
+
       {/* Admin Routes */}
 
-      <Route path="/admin" element={<InternalSpaceLayout />}>
-        <Route path="dashboard" element={<AdmindDashboard />} />
-        <Route path="manage-users" element={<ManageUsers />} />
-        <Route path="manage-applications" element={<ManageUsers />} />
+      <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
+        <Route path="/admin" element={<InternalSpaceLayout />}>
+          <Route path="dashboard" element={<AdmindDashboard />} />
+          <Route path="manage-users" element={<ManageUsers />} />
+          <Route
+            path="manage-pending-applications"
+            element={<PendingApplications />}
+          />
+          <Route
+            path="manage-applications"
+            element={<NonePendingApplications />}
+          />
+          <Route
+            path="application/:application_id"
+            element={<ApplicationDetails />}
+          />
+        </Route>
       </Route>
 
       <Route path="/unauthorized" element={<UnAuthorized />} />

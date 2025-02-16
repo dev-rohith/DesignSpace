@@ -1,7 +1,7 @@
-import { useDispatch, useSelector } from "react-redux";
-import { logoutDevice } from "../features/authApi";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutDevice } from "../features/actions/authActions";
+import toast from "react-hot-toast";
 
 const DeviceLimit = ({}) => {
   const { devices } = useSelector((store) => store.auth);

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "../apis/axiosIntance";
-import { setDeviceLimitError } from "./authSlice";
+import axiosInstance from "../../apis/axiosIntance";
+import { setDeviceLimitError } from "../slices/authSlice";
 //-------------------------------------------
 
 export const refreshToken = createAsyncThunk(
@@ -10,6 +10,7 @@ export const refreshToken = createAsyncThunk(
       const response = await axiosInstance.get("auth/refreshToken");
       return response.data.accessToken;
     } catch (error) {
+      console.log(error)
       return rejectWithValue(error.response.data.message || "Unknown error");
     }
   }
@@ -128,10 +129,10 @@ export const logoutAll = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("auth/logoutall");
-      return response.data.message
+      return response.data.message;
     } catch (error) {
       console.log(error);
-      rejectWithValue(error.response.data.message)
+      rejectWithValue(error.response.data.message);
     }
   }
 );

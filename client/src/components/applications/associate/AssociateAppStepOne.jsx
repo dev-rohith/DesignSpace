@@ -104,7 +104,7 @@ const AssociateAppStepOne = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 setPdfPreview(null);
-                updateFormData({ coverLetter: null });
+                updateFormData({ coverLetter: e.target.value });
               }}
               className="text-gray-500 hover:text-red-500"
             >

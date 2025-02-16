@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import { requestRoleAssociate } from "../features/applicationApi.js";
+import { requestRoleAssociate } from "../features/actions/applicationActions";
 
 import LandingLayout from "../layout/LandingLayout";
 import { MultiFormProvider } from "../context/MultiFormProvider";
@@ -33,7 +33,7 @@ const DesingerApplication = () => {
     const Form = new FormData();
     Form.append("requestedRole", "associate");
     Object.keys(data).forEach((key) => {
-      if (key === "coverLetter" || key === "introduction") {
+      if (key === "resume" || key === "introduction") {
         Form.append("files", data[key]);
       } else {
         Form.append(key, data[key]);
@@ -41,7 +41,6 @@ const DesingerApplication = () => {
     });
 
     const actionResult = await dispatch(requestRoleAssociate(Form));
-    console.log(actionResult)
     if (requestRoleAssociate.fulfilled.match(actionResult)) {
       toast.success(actionResult.payload.message);
       navigate("/application-success");

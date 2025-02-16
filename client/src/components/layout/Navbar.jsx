@@ -1,11 +1,13 @@
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown, ChevronsRight } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { logout, logoutAll } from "../../features/authApi";
 import toast from "react-hot-toast";
+
+import { logout, logoutAll } from "../../features/actions/authActions";
 import usePopUp from "../../hooks/usePopUp";
 
 const Navbar = () => {
+  const naviagate = useNavigate();
   const {
     isPopupOpen: isProfilePopUp,
     setIsPopupOpen: setIsProfilePopUp,
@@ -34,6 +36,8 @@ const Navbar = () => {
     const actionResult = await dispatch(logoutAll());
     if (logoutAll.fulfilled.match(actionResult)) {
       toast.success(actionResult.payload);
+      naviagate("/login");
+      navi;
     } else if (logoutAll.rejected.match(actionResult)) {
       toast.error(actionResult.payload);
     }
@@ -71,7 +75,8 @@ const Navbar = () => {
           }}
           className="group hover:cursor-pointer relative flex"
         >
-          more<ChevronDown className="w-6 h-5 group-hover:translate-y-0.5" />
+          more
+          <ChevronDown className="w-6 h-5 group-hover:translate-y-0.5" />
           <div className="mx-2 group-hover:border-b group-hover:border-black-100"></div>
           {isMorePopUp && (
             <div

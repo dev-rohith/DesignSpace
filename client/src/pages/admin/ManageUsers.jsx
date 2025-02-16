@@ -1,45 +1,50 @@
-import { useEffect, useState } from "react";
-import axiosInstance from "../../apis/axiosIntance";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import { UserCard } from "../../components";
+import {
+  changeUserStatus,
+  getUsers,
+} from "../../features/actions/adminactions";
+import UsersTable from "../../components/ui/UsersTable";
+import Filter from "../../components/common/Filter";
+import Sort from "../../components/common/Sort";
+import Pagination from "../../components/common/Pagination";
+import PageLimit from "../../components/common/PageLimit";
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState([]);
+  const { users } = useSelector((store) => store.admin);
+  const [searchParams] = useSearchParams();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
-      try {
-        const response = await axiosInstance.get("user");
-        setUsers(response.data);
-      } catch (error) {
-        toast.error("their was an error while feching users");
+      const actionResult = await dispatch(
+        getUsers(`user?${searchParams.toString()}`)
+      );
+      if (getUsers.rejected.match(actionResult)) {
+        toast.error(actionResult.payload);
       }
     })();
-  }, []);
+  }, [searchParams]);
 
-  const handleAction = async (userId, action) => {
-    try {
-      const response = await axiosInstance.put(`user/${userId}`, {
-        status: action,
-      });
-      toast.success(response.data.message);
-      const updatedUsers = users.map((user) => {
-        return user._id === userId ? (user = response.data.user) : user;
-      });
-      setUsers(updatedUsers);
-    } catch (error) {
-      toast.error(error.response.data.message);
+  const handleChangeStatus = async (userId, action) => {
+    const actionResult = await dispatch(changeUserStatus({ userId, action }));
+    if (changeUserStatus.fulfilled.match(actionResult)) {
+      toast.success(actionResult.payload.message);
+    } else if (changeUserStatus.rejected.match(actionResult)) {
+      toast.error(actionResult.payload.message);
     }
   };
 
-  if (users.length === 0) {
+  if (!users) {
     return (
       <div className="m-auto text-center p-6 bg-white shadow-lg rounded-lg  group hover:bg-violet-400">
         <h4 className="text-xl font-semibold text-gray-700 group-hover:text-red-700">
-          No Items Found
+          There was an Error while feching the data
         </h4>
         <p className="text-violet-600 mt-2 group group-hover:text-white">
-          Try adjusting your search or adding new items.
+          Try to reload or try after some time.
         </p>
       </div>
     );
@@ -47,23 +52,26 @@ const ManageUsers = () => {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="flex items-center space-x-40 bg-gray-400 uppercase shadow-md py-2 text-sm font-bold text-gray-800">
-        <span className="ml-18 mr-27">Profile</span>
-        <span className="m">Name</span>
-        <span className="ml-16">Email</span>
-        <span className="ml-28">Last Login</span>
-        <span className="ml-10">Status</span>
-        <span>Action</span>
+      <div className="flex justify-between items-center bg-violet-300 p-1 ">
+        <PageLimit size={5} step={5} />
+        <Filter
+          filters={[
+            { title: "status", options: ["active", "suspended"] },
+            { title: "role", options: ["client", "admin"] },
+          ]}
+        />
+        <Sort
+          options={[
+            { name: "Relevence", value: "" },
+            { name: "name(A-Z)", value: "firstName" },
+            { name: "name(Z-A)", value: "-firstName" },
+            { name: "newest", value: "createdAt" },
+            { name: "oldest", value: "-createdAt" },
+          ]}
+        />
       </div>
-
-      {/* usercontainer */}
-      <div className="flex flex-col gap-1">
-        {users.map((user) => {
-          return (
-            <UserCard key={user._id} {...user} handleAction={handleAction} />
-          );
-        })}
-      </div>
+      <UsersTable handleAction={handleChangeStatus} />
+      <Pagination data={users} />
     </div>
   );
 };

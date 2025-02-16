@@ -16,6 +16,7 @@ import {
 const applicationCtrl = {};
 
 applicationCtrl.createApplication = async (req, res, next) => {
+  console.log("hey there");
   const isExists = await Application.findOne({
     requestedBy: req.user.userId,
   });
@@ -61,7 +62,6 @@ applicationCtrl.createApplication = async (req, res, next) => {
     ) {
       return next(new AppError("error while uploading to cloudinary"));
     }
-
     await Application.create({
       requestedBy: req.user.userId,
       resume,
@@ -92,15 +92,22 @@ applicationCtrl.getPendingApplications = catchAsync(async (req, res, next) => {
     Application.find({ status: "pending" }),
     req.query
   )
+    .filterAndSearch()
     .sort()
     .paginate();
-
   const finalQuery = features.query
     .populate("requestedBy", "firstName lastName profilePicture status")
     .select("requestedBy status requestedRole requestedDate")
     .lean();
+
   const applications = await finalQuery;
-  res.json({ applications });
+
+  const total = await Application.countDocuments({ status: "pending" });
+  const perPage = parseInt(req.query.limit) || 10;
+  const totalPages = Math.ceil(total / perPage);
+  const page = parseInt(req.query.page) || 1;
+
+  res.json({ page, perPage, totalPages, total, data: applications });
 });
 
 applicationCtrl.getAllApplications = catchAsync(async (req, res, next) => {
@@ -114,11 +121,18 @@ applicationCtrl.getAllApplications = catchAsync(async (req, res, next) => {
 
   const finalQuery = features.query
     .populate("requestedBy", "firstName lastName profilePicture status")
-    .select("-resume -description -introduction_video -isApproved -__v")
+    .select("-resume -description -introduction_video -__v")
     .populate("actionMadeBy", "profilePicture firstName lastName")
     .lean();
+
   const applications = await finalQuery;
-  res.json({ applications });
+  const total = await Application.countDocuments({
+    $or: [{ status: "approved" }, { status: "rejected" }],
+  });
+  const perPage = parseInt(req.query.limit) || 10;
+  const totalPages = Math.ceil(total / perPage);
+  const page = parseInt(req.query.page) || 1;
+  res.json({ page, perPage, totalPages, total, data: applications });
 });
 
 applicationCtrl.updateApplication = catchAsync(async (req, res, next) => {
@@ -139,11 +153,9 @@ applicationCtrl.updateApplication = catchAsync(async (req, res, next) => {
   if (status === "approved") {
     application.actionMadeBy = req.user.userId;
     application.isApproved = true;
-    application.actionPerformedOn = Date.now();
     requesetedUser.role = application.requestedRole;
   } else if (status === "rejected") {
     application.actionMadeBy = req.user.userId;
-    application.actionPerformedOn = Date.now();
   }
 
   await requesetedUser.save();
@@ -196,7 +208,7 @@ applicationCtrl.getApplicationDetails = catchAsync(async (req, res, next) => {
   const { id } = value;
 
   const application = await Application.findById(id)
-    .select("-actionPerformedOn -actionMadeBy")
+    .select("-actionMadeBy")
     .populate("requestedBy", "firstName lastName profilePicture status")
     .lean();
   if (!application) return next(new AppError("application not found", 404));

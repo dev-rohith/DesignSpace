@@ -9,8 +9,8 @@ import {
   getUser,
   logout,
   logoutAll,
-} from "./authApi";
-import { updateUser, updateUserPic } from "./userApi";
+} from "../actions/authActions";
+import { updateUser, updateUserPic } from "../actions/userActions";
 
 const authSlice = createSlice({
   name: "auth",
@@ -73,7 +73,7 @@ const authSlice = createSlice({
     builder.addCase(refreshToken.fulfilled, (state, action) => {
       state.isLoggedIn = true;
     }),
-      builder.addCase(refreshToken.rejected, (state, action) => {
+     builder.addCase(refreshToken.rejected, (state, action) => {
         state.isLoggedIn = false;
         state.user = null;
       });

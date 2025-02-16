@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import { requestRoleDesigner } from "../features/applicationApi.js";
+import { requestRoleDesigner } from "../features/actions/applicationActions.js";
 
 import { MultiFormProvider } from "../context/MultiFormProvider.jsx";
 import LandingLayout from "../layout/LandingLayout.jsx";

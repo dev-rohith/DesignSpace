@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import LandingLayout from "../layout/LandingLayout";
 import { useDispatch } from "react-redux";
-import { getPortfolios } from "../features/landingApi";
+import { getPortfolios } from "../features/actions/landingActions";
 
 const OurWork = () => {
   const dispatch = useDispatch();

@@ -1,6 +1,6 @@
 import AppRoutes from "./routes/AppRoutes";
 import { useDispatch, useSelector } from "react-redux";
-import { getUser } from "./features/authApi";
+import { getUser } from "./features/actions/authActions";
 import PageLoadingSpinner from "./components/common/PageLoadingSpinner";
 
 const App = () => {

@@ -1,5 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getLanding, getPortfolios, getSubscriptionsDetails } from "./landingApi";
+import {
+  getLanding,
+  getPortfolios,
+  getSubscriptionsDetails,
+} from "../actions/landingActions";
 
 const landingSlice = createSlice({
   name: "landing",
@@ -11,7 +15,7 @@ const landingSlice = createSlice({
     isLoading: false,
     isError: false,
     portfolios: [],
-    subscriptions_prices: null
+    subscriptions_prices: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -43,18 +47,16 @@ const landingSlice = createSlice({
     });
 
     //subscription prices  logic
-    builder.addCase(getSubscriptionsDetails.fulfilled, (state, action)=>{
-      state.subscriptions_prices = action.payload
-      state.isLoading = false
-    })
-    builder.addCase(getSubscriptionsDetails.pending, (state,action)=>{
-      state.isLoading = true
-    })
-    builder.addCase(getSubscriptionsDetails.rejected, (state,action)=>{
-      state.isLoading = false
-    })
-
-    
+    builder.addCase(getSubscriptionsDetails.fulfilled, (state, action) => {
+      state.subscriptions_prices = action.payload;
+      state.isLoading = false;
+    });
+    builder.addCase(getSubscriptionsDetails.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getSubscriptionsDetails.rejected, (state, action) => {
+      state.isLoading = false;
+    });
   },
 });
 

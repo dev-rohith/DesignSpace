@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "../apis/axiosIntance";
+import axiosInstance from "../../apis/axiosIntance";
 
 export const requestRoleDesigner = createAsyncThunk(
   "application/createDesignerApplication",

@@ -1,15 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "../features/authSlice.js"
-import landingReducer from "../features/landingSlice.js"
-import applicationReducer from '../features/applicationSlice.js'
+import authReducer from "../features/slices/authSlice.js";
+import landingReducer from "../features/slices/landingSlice.js";
+import applicationReducer from "../features/slices/applicationSlice.js";
+import adminReducer from "../features/slices/adminSlice.js";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     landing: landingReducer,
-    application: applicationReducer
+    application: applicationReducer,
+    admin: adminReducer,
   },
 });
 
-
-export default store
+export default store;

@@ -40,7 +40,7 @@ authMiddleWare.refreshToken_rotation = catchAsync(async (req, res, next) => {
         decodedRefresh.deviceId,
         refreshToken
       );
-
+      console.log(foundRefreshToken);
       await TokenManager.removeRefreshToken(
         decodedRefresh.userId,
         decodedRefresh.deviceId

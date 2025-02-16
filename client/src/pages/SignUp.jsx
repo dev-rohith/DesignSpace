@@ -1,10 +1,11 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
+
+import { resendOtp, signup, verifyOtp } from "../features/actions/authActions";
 import { SignupComponent } from "../components";
 import LandingLayout from "../layout/LandingLayout";
-import { resendOtp, signup, verifyOtp } from "../features/authApi";
-import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import OtpVerification from "./OtpVerification";
 
 const SignUp = () => {

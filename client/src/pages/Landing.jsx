@@ -1,4 +1,10 @@
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+
+import LandingLayout from "../layout/LandingLayout";
+import { getLanding } from "../features/actions/landingActions";
+
 import {
   About,
   Carousel,
@@ -8,10 +14,6 @@ import {
   UserReviews,
   WhyChooseUs,
 } from "../components";
-import LandingLayout from "../layout/LandingLayout";
-import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
-import { getLanding } from "../features/landingApi.js";
 
 const Landing = () => {
   const {

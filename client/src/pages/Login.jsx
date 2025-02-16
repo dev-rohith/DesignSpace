@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -5,8 +6,7 @@ import toast from "react-hot-toast";
 
 import LandingLayout from "../layout/LandingLayout";
 import { LoginComponent } from "../components";
-import { login } from "../features/authApi";
-import { useEffect } from "react";
+import { login } from "../features/actions/authActions";
 
 const Login = () => {
   const dispatch = useDispatch();

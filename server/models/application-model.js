@@ -48,9 +48,6 @@ const applicationSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    actionPerformedOn: {
-      type: Date,
-    },
   },
   { timestamps: true }
 );

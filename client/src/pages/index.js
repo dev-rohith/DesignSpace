@@ -13,3 +13,5 @@ export { default as OurWork } from "./OurWork";
 
 export { default as AdmindDashboard } from "./admin/AdmindDashboard";
 export { default as ManageUsers } from "./admin/ManageUsers";
+export { default as PendingApplications } from "./admin/PendingApplications";
+export { default as NonePendingApplications } from "./admin/NonePendingApplications";

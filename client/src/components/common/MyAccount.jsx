@@ -1,11 +1,13 @@
-import { useDispatch, useSelector } from "react-redux";
-import Sidebar from "../layout/Sidebar";
 import { useState } from "react";
-import axiosInstance from "../../apis/axiosIntance";
+import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { KeyRound, Lock, Mail, Save, User } from "lucide-react";
-import { updateUser, updateUserPic } from "../../features/userApi";
-import { logout, logoutAll } from "../../features/authApi";
+
+import axiosInstance from "../../apis/axiosIntance";
+import { logout, logoutAll } from "../../features/actions/authActions";
+import { updateUser, updateUserPic } from "../../features/actions/userActions";
+
+import Sidebar from "../layout/Sidebar";
 import UserProfilePicture from "../ui/userProfilePicture";
 import SavingSpinner from "../ui/SavingSpinner";
 import InternalSidebar from "../layout/InternalSidebar";

@@ -86,8 +86,14 @@ userCtrl.getUsers = catchAsync(async (req, res, next) => {
   const finalQuery = features.query
     .select("status role profilePicture lastName firstName email lastLoginOn")
     .lean();
+
   const users = await finalQuery;
-  res.json(users);
+  const total = await User.countDocuments();
+  const perPage = parseInt(req.query.limit) || 10;
+  const totalPages = Math.ceil(total / perPage);
+  const page = parseInt(req.query.page) || 1;
+
+  res.json({ page, perPage, totalPages, total, data: users });
 });
 
 userCtrl.getClients = catchAsync(async (req, res, next) => {

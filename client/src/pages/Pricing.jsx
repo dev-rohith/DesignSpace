@@ -2,12 +2,10 @@ import { Key, TrendingDown } from "lucide-react";
 import { PricingCard } from "../components";
 import LandingLayout from "../layout/LandingLayout";
 import { useEffect } from "react";
-import { getSubscriptionsDetails } from "../features/landingApi";
+import { getSubscriptionsDetails } from "../features/actions/landingActions";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { onPayment } from "../features/paymentAPI";
-import axios from "axios";
-import { use } from "react";
+import { onPayment } from "../features/actions/paymentActions";
 import axiosInstance from "../apis/axiosIntance";
 
 const Pricing = () => {
