@@ -7,6 +7,7 @@ import {
   ChartArea,
   ContactRound,
   PanelsTopLeft,
+  UserPen,
   Users,
 } from "lucide-react";
 
@@ -60,10 +61,20 @@ const InternalSidebar = () => {
       {user?.role === "admin" && (
         <SidebarItem
           icon={<BadgeIndianRupee />}
-          text="projects"
+          text="pricing"
           to="/admin/manage-pricing"
         />
       )}
+
+      {user?.role === "associate" && (
+        <SidebarItem
+          icon={<UserPen />}
+          text="Work Profile"
+          to="/associate/profile"
+        />
+      )}
+
+
     </SidebarProvider>
   );
 };

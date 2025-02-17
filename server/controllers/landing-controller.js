@@ -122,7 +122,7 @@ landingCtrl.addCustomerReview = catchAsync(async (req, res, next) => {
       review,
     };
 
-    const newCustomerReviews = await LandingConfig.findOneAndUpdate(
+     await LandingConfig.findOneAndUpdate(
       {},
       { $push: { customer_reviews: newReview } },
       { upsert: true, new: true }
@@ -132,7 +132,7 @@ landingCtrl.addCustomerReview = catchAsync(async (req, res, next) => {
 
     res.status(201).json({
       message: "review uploaded successfully",
-      data: newCustomerReviews,
+      data: newReview,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -33,7 +33,7 @@ const UserReviews = ({ customerReviews }) => {
   return (
     <div className="relative px-20 mb-10">
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex">
+        <div className="flex p-2 h-98">
           {customerReviews?.map((review) => (
             <div key={review?._id} className="flex">
               <UserReviewItem {...review} />

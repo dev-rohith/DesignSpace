@@ -15,3 +15,7 @@ export { default as AdmindDashboard } from "./admin/AdmindDashboard";
 export { default as ManageUsers } from "./admin/ManageUsers";
 export { default as PendingApplications } from "./admin/PendingApplications";
 export { default as NonePendingApplications } from "./admin/NonePendingApplications";
+
+export { default as DesignerDashboard } from "./designer/DesignerDashboard";
+
+export { default as AssociateDashboard } from "./associate/AssociateDashboard";

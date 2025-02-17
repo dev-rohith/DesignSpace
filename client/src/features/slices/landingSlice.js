@@ -4,7 +4,7 @@ import {
   getPortfolios,
   getSubscriptionsDetails,
 } from "../actions/landingActions";
-import { addCaroseulItem, deleteCaroseulItem } from "../actions/adminactions";
+import { addCaroseulItem, addCustomerReviewItem, deleteCaroseulItem, deleteCustomerReviewItem } from "../actions/adminactions";
 
 const landingSlice = createSlice({
   name: "landing",
@@ -12,10 +12,10 @@ const landingSlice = createSlice({
     carousel: [],
     isCarouselUpdating: false,
     customer_reviews: [],
+    isReviewsUpdating: false,
     designers: [],
     designers_locations: [],
     isLoading: false,
-    isError: false,
     portfolios: [],
     subscriptions_prices: null,
   },
@@ -32,7 +32,6 @@ const landingSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(getLanding.rejected, (state, action) => {
-      state.isError = true;
       state.isLoading = false;
     });
 
@@ -62,6 +61,32 @@ const landingSlice = createSlice({
     });
     builder.addCase(deleteCaroseulItem.rejected, (state, action) => {
       state.isCarouselUpdating = false;
+    });
+
+    //addingcustomer reviews logic
+    builder.addCase(addCustomerReviewItem.fulfilled, (state, action) => {
+      state.customer_reviews.push(action.payload.data);
+      state.isReviewsUpdating = false;
+    })
+    builder.addCase(addCustomerReviewItem.pending, (state, action) => {
+      state.isReviewsUpdating = true;
+    });
+    builder.addCase(addCustomerReviewItem.rejected, (state, action) => {
+      state.isReviewsUpdating = false;
+    });
+
+    //deleting customer reviews logic
+    builder.addCase(deleteCustomerReviewItem.fulfilled, (state, action) => {
+      state.customer_reviews = state.customer_reviews.filter(
+        (item) => item.video.public_id !== action.payload.data.video.public_id
+      );
+      state.isReviewsUpdating = false;
+    });
+    builder.addCase(deleteCustomerReviewItem.pending, (state, action) => {
+      state.isReviewsUpdating = true;
+    });
+    builder.addCase(deleteCustomerReviewItem.rejected, (state, action) => {
+      state.isReviewsUpdating = false;
     });
 
     //portifolios logic

@@ -12,7 +12,7 @@ const ManageUsers = () => {
         <Filter
           filters={[
             { title: "status", options: ["active", "suspended"] },
-            { title: "role", options: ["client", "admin"] },
+            { title: "role", options: ["client", "admin", "designer", "associate"] },
           ]}
         />
         <Search />

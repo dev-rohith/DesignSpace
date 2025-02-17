@@ -4,7 +4,6 @@ const CarouselItem = ({
   url,
   resource_type,
   public_id,
-  itemHeight = "[400px]",
   handleDelete,
 }) => {
   const { isCarouselUpdating } = useSelector((store) => store.landing);
@@ -13,7 +12,7 @@ const CarouselItem = ({
     <div className="flex-[0_0_100%] min-w-0">
       {resource_type === "image" ? (
         <img
-          className={`w-full h-${itemHeight} object-cover`}
+          className="w-full h-100 object-cover"
           src={url}
           alt="carouselItem"
         />

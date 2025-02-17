@@ -55,6 +55,7 @@ const UsersTable = () => {
           <th className="py-2 text-left pl-4">Profile</th>
           <th className="py-2 text-left">Name</th>
           <th className="py-2 text-left">Email</th>
+          <th className="py-2 text-left">Role</th>
           <th className="py-2 text-left hidden sm:table-cell">Last Login</th>
           <th className="py-2 text-left">Status</th>
           <th className="py-2 text-left">Action</th>

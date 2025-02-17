@@ -72,8 +72,6 @@ export const getNonePendingApplications = createAsyncThunk(
   }
 );
 
-
-
 export const deleteNonePendingApplication = createAsyncThunk(
   "admin/deleteNonePendingApplication",
   async (applicationId, { rejectWithValue }) => {
@@ -88,32 +86,60 @@ export const deleteNonePendingApplication = createAsyncThunk(
   }
 );
 
-//------------------------------------ not worked ones
-
 export const addCaroseulItem = createAsyncThunk(
   "landing/carousel",
   async (data, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("landing/carousel", data);
-      console.log(response.data)
-      return response.data;
-    } catch (error) {
-       return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-
-
-export const deleteCaroseulItem = createAsyncThunk(
-  "admin/deletecoroseulItem",
-  async (id, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.delete(`/landing/carousel/${id}`);
-      console.log(response.data)
+      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
   }
 );
+
+export const deleteCaroseulItem = createAsyncThunk(
+  "admin/deletecoroseulItem",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(`/landing/carousel/${id}`);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const addCustomerReviewItem = createAsyncThunk(
+  "admin/addCustomerReviewItem",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(
+        "landing/customer-review",
+        data
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteCustomerReviewItem = createAsyncThunk(
+  "admin/deleteCustomerReviewItem",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/landing/customer-review/${id}`
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+//------------------------------------ not worked ones

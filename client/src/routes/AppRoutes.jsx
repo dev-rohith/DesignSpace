@@ -5,7 +5,9 @@ import DesignSpaceLayout from "../layout/DesignSpaceLayout";
 import {
   AdmindDashboard,
   AssociateApplication,
+  AssociateDashboard,
   DesignerApplication,
+  DesignerDashboard,
   DeviceLimit,
   ForgotPassword,
   Landing,
@@ -31,12 +33,12 @@ import PrivateRoute from "./PrivateRoute";
 import InternalSpaceLayout from "../layout/InternalSpaceLayout";
 import ManageLanding from "../pages/admin/ManageLanding";
 import ManagePricing from "../pages/admin/ManagePricing";
+import AssociateProfile from "../pages/associate/AssociateProfile";
 
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Public Routes */}
-
       <Route
         path="/"
         element={<PrivateRoute exculde={true} allowedRoles={["client"]} />}
@@ -93,9 +95,7 @@ const AppRoutes = () => {
         <Route path="chat" element={<Mychat />} />
       </Route>
 
-
       {/* Admin Routes */}
-
       <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
         <Route path="/admin" element={<InternalSpaceLayout />}>
           <Route path="dashboard" element={<AdmindDashboard />} />
@@ -112,14 +112,21 @@ const AppRoutes = () => {
             path="application/:application_id"
             element={<ApplicationDetails />}
           />
-          <Route
-            path="landing"
-            element={<ManageLanding />}
-          />
-          <Route
-            path="landing"
-            element={<ManagePricing />}
-          />
+          <Route path="landing" element={<ManageLanding />} />
+          <Route path="manage-pricing" element={<ManagePricing />} />
+        </Route>
+      </Route>
+
+      <Route element={<PrivateRoute allowedRoles={["designner"]} />}>
+        <Route path="designer" element={<InternalSpaceLayout />}>
+        <Route index element={<DesignerDashboard />} />
+        </Route>
+      </Route>
+
+      <Route element={<PrivateRoute allowedRoles={["associate"]} />}>
+        <Route path="/associate" element={<InternalSpaceLayout />}>
+        <Route index element={<AssociateDashboard />} />
+        <Route path="profile" element={<AssociateProfile />} />
         </Route>
       </Route>
 

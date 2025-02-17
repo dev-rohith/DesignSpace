@@ -57,7 +57,7 @@ const Landing = () => {
             />
           </section>
           <section>
-            <div className="text-center mb-8">
+            <div className="text-center mb-8 h">
               <h3 className="uppercase text-3xl font-bold text-gray-700">
                 Customer Reviews
               </h3>

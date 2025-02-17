@@ -32,6 +32,9 @@ const UserTableRow = ({
       <td>
         <p className="text-gray-600 truncate max-w-[220px]">{email}</p>
       </td>
+      <td>
+        <p className="text-gray-600 truncate max-w-[220px]">{role}</p>
+      </td>
       <td className="hidden sm:table-cell">
         <p className="text-gray-500 truncate max-w-[200px]">{lastLogin}</p>
       </td>
