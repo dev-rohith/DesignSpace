@@ -32,29 +32,18 @@ const UserReviews = ({ customerReviews }) => {
 
   return (
     <div className="relative px-20 mb-10">
-      <div className="text-center mb-8">
-        <h3 className="uppercase text-3xl font-bold text-gray-700">
-          Customer Reviews
-        </h3>
-        <p>What Our Happy customers says</p>
-      </div>
-
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex space-x-3 ">
+        <div className="flex">
           {customerReviews?.map((review) => (
-            <div 
-              key={review?._id} 
-              className="flex"
-            >
+            <div key={review?._id} className="flex">
               <UserReviewItem {...review} />
             </div>
           ))}
         </div>
       </div>
 
-
       <button
-        className="absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors"
+        className="absolute left-6 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors"
         onClick={scrollPrev}
       >
         <svg
@@ -74,7 +63,7 @@ const UserReviews = ({ customerReviews }) => {
       </button>
 
       <button
-        className="absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors"
+        className="absolute right-6 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors"
         onClick={scrollNext}
       >
         <svg

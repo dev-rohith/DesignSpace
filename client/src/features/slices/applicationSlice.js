@@ -28,6 +28,8 @@ const applicationSlice = createSlice({
     builder.addCase(requestRoleAssociate.rejected, (state, action) => {
       state.isLoading = false;
     });
+
+    
   },
 });
 

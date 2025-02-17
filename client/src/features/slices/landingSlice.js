@@ -4,11 +4,13 @@ import {
   getPortfolios,
   getSubscriptionsDetails,
 } from "../actions/landingActions";
+import { addCaroseulItem, deleteCaroseulItem } from "../actions/adminactions";
 
 const landingSlice = createSlice({
   name: "landing",
   initialState: {
     carousel: [],
+    isCarouselUpdating: false,
     customer_reviews: [],
     designers: [],
     designers_locations: [],
@@ -32,6 +34,34 @@ const landingSlice = createSlice({
     builder.addCase(getLanding.rejected, (state, action) => {
       state.isError = true;
       state.isLoading = false;
+    });
+
+    //adding carousel item actions
+
+    builder.addCase(addCaroseulItem.fulfilled, (state, action) => {
+      state.carousel.push(action.payload.data);
+      state.isCarouselUpdating = false;
+    });
+    builder.addCase(addCaroseulItem.pending, (state, action) => {
+      state.isCarouselUpdating = true;
+    });
+    builder.addCase(addCaroseulItem.rejected, (state, action) => {
+      state.isCarouselUpdating = false;
+    });
+
+    //deleting carousel item actions
+
+    builder.addCase(deleteCaroseulItem.fulfilled, (state, action) => {
+      state.carousel = state.carousel.filter(
+        (item) => item.public_id !== action.payload.data.public_id
+      );
+      state.isCarouselUpdating = false;
+    });
+    builder.addCase(deleteCaroseulItem.pending, (state, action) => {
+      state.isCarouselUpdating = true;
+    });
+    builder.addCase(deleteCaroseulItem.rejected, (state, action) => {
+      state.isCarouselUpdating = false;
     });
 
     //portifolios logic

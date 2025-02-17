@@ -73,7 +73,6 @@ export const getNonePendingApplications = createAsyncThunk(
 );
 
 
-//------------------------------------ not worked ones
 
 export const deleteNonePendingApplication = createAsyncThunk(
   "admin/deleteNonePendingApplication",
@@ -89,25 +88,29 @@ export const deleteNonePendingApplication = createAsyncThunk(
   }
 );
 
-export const addcoroseulItem = createAsyncThunk(
-  "admin/addcoroseulItem",
+//------------------------------------ not worked ones
+
+export const addCaroseulItem = createAsyncThunk(
+  "landing/carousel",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("coroseul", data);
+      const response = await axiosInstance.post("landing/carousel", data);
+      console.log(response.data)
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+       return rejectWithValue(error.response.data);
     }
   }
 );
 
 
 
-export const deletecoroseulItem = createAsyncThunk(
+export const deleteCaroseulItem = createAsyncThunk(
   "admin/deletecoroseulItem",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.delete(`coroseul/${id}`);
+      const response = await axiosInstance.delete(`/landing/carousel/${id}`);
+      console.log(response.data)
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

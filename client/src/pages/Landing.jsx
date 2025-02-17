@@ -57,6 +57,12 @@ const Landing = () => {
             />
           </section>
           <section>
+            <div className="text-center mb-8">
+              <h3 className="uppercase text-3xl font-bold text-gray-700">
+                Customer Reviews
+              </h3>
+              <p>What Our Happy customers says</p>
+            </div>
             <UserReviews customerReviews={customer_reviews} />
           </section>
           <section>

@@ -12,7 +12,7 @@ const Pagination = ({ data = {} }) => {
     searchParams.set("page", newPage);
     setSearchParams(searchParams);
   };
-  
+
   const handlePrevious = () => page > 1 && onPageChange(page - 1);
   const handleNext = () => page < totalPages && onPageChange(page + 1);
   const handlePage = (newPage) => newPage !== page && onPageChange(newPage);

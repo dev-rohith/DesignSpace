@@ -44,7 +44,7 @@ export const uploadSingleFile = (allowedTypes, fileName, maxFileSize) => {
       fileSize: maxFileSize,
     }, // Example file size limit of 5MB
   }).single(fileName);
-}; 
+};
 
 export const uploadMultipleFiles = (allowedTypes, maxFileSize, maxFiles) => {
   return multer({
@@ -55,5 +55,4 @@ export const uploadMultipleFiles = (allowedTypes, maxFileSize, maxFiles) => {
       files: maxFiles, // Maximum files
     },
   }).array("files", maxFiles);
-}; 
-
+};

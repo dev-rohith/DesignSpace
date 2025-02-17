@@ -37,7 +37,7 @@ landingCtrl.getLanding = catchAsync(async (req, res, next) => {
       JSON.stringify(config)
     );
   } else {
-    config = JSON.parse(config); 
+    config = JSON.parse(config);
   }
 
   res.status(200).json(config);
@@ -64,8 +64,8 @@ landingCtrl.createCarouselItem = async (req, res, next) => {
     await RedisDataManager.removeItemToRedis("landingConfig");
 
     res.status(201).json({
-      message: "carousel uploaded successfully",
-      data: newConfig,
+      message: "New Carousel ttem has been added successfully",
+      data: newCarouselItem,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -89,7 +89,7 @@ landingCtrl.addTopDesigner = catchAsync(async (req, res, next) => {
     aboutMe,
   };
 
-  const newConfig = await LandingConfig.findOneAndUpdate(
+  await LandingConfig.findOneAndUpdate(
     {},
     { $push: { designers: newTopDesinger } },
     { upsert: true, new: true }
@@ -97,7 +97,7 @@ landingCtrl.addTopDesigner = catchAsync(async (req, res, next) => {
   await RedisDataManager.removeItemToRedis("landingConfig");
   res.json({
     message: "review uploaded successfully",
-    data: newConfig,
+    data: newTopDesinger,
   });
 });
 
