@@ -82,7 +82,10 @@ const designerProfileSchema = new Schema({
       type: String,
       required: true,
     },
-    postal_code: String,
+    postal_code: {
+      type: String,
+      required: true,
+    },
   },
   location: {
     type: {

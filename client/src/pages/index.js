@@ -17,5 +17,7 @@ export { default as PendingApplications } from "./admin/PendingApplications";
 export { default as NonePendingApplications } from "./admin/NonePendingApplications";
 
 export { default as DesignerDashboard } from "./designer/DesignerDashboard";
+export { default as DesignerProfile } from "./designer/DesignerProfile";
+export { default as DesignerPortfolio } from "./designer/DesignerPortfolio";
 
 export { default as AssociateDashboard } from "./associate/AssociateDashboard";

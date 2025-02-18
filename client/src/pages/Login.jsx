@@ -25,7 +25,7 @@ const Login = () => {
     if (login.fulfilled.match(actionResult)) {
       if (actionResult.payload.role === "client") navigate("/");
       if (actionResult.payload.role === "admin") navigate("/admin");
-      if (actionResult.payload.role === "desinger") navigate("/designer");
+      if (actionResult.payload.role === "designer") navigate("/designer");
       if (actionResult.payload.role === "associate") navigate("/associate");
     } else if (login.rejected.match(actionResult)) {
       toast.error(actionResult.payload);

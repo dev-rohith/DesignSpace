@@ -3,6 +3,7 @@ import authReducer from "../features/slices/authSlice.js";
 import landingReducer from "../features/slices/landingSlice.js";
 import applicationReducer from "../features/slices/applicationSlice.js";
 import adminReducer from "../features/slices/adminSlice.js";
+import designerReducer from "../features/slices/designerSlice.js";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     landing: landingReducer,
     application: applicationReducer,
     admin: adminReducer,
+    designer: designerReducer,
   },
 });
 

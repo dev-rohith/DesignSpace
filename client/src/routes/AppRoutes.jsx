@@ -8,6 +8,8 @@ import {
   AssociateDashboard,
   DesignerApplication,
   DesignerDashboard,
+  DesignerPortfolio,
+  DesignerProfile,
   DeviceLimit,
   ForgotPassword,
   Landing,
@@ -32,7 +34,6 @@ import MyAccount from "../components/common/MyAccount";
 import PrivateRoute from "./PrivateRoute";
 import InternalSpaceLayout from "../layout/InternalSpaceLayout";
 import ManageLanding from "../pages/admin/ManageLanding";
-import ManagePricing from "../pages/admin/ManagePricing";
 import AssociateProfile from "../pages/associate/AssociateProfile";
 
 const AppRoutes = () => {
@@ -113,20 +114,23 @@ const AppRoutes = () => {
             element={<ApplicationDetails />}
           />
           <Route path="landing" element={<ManageLanding />} />
-          <Route path="manage-pricing" element={<ManagePricing />} />
         </Route>
       </Route>
 
-      <Route element={<PrivateRoute allowedRoles={["designner"]} />}>
-        <Route path="designer" element={<InternalSpaceLayout />}>
-        <Route index element={<DesignerDashboard />} />
+      {/* Designer Routes */}
+      <Route element={<PrivateRoute allowedRoles={["designer"]} />}>
+        <Route path="/designer" element={<InternalSpaceLayout />}>
+          <Route index element={<DesignerDashboard />} />
+          <Route path="profile" element={<DesignerProfile />} />
+          <Route path="portfolio" element={<DesignerPortfolio />} />
         </Route>
       </Route>
 
+      {/* Assocaite Routes */}
       <Route element={<PrivateRoute allowedRoles={["associate"]} />}>
         <Route path="/associate" element={<InternalSpaceLayout />}>
-        <Route index element={<AssociateDashboard />} />
-        <Route path="profile" element={<AssociateProfile />} />
+          <Route index element={<AssociateDashboard />} />
+          <Route path="profile" element={<AssociateProfile />} />
         </Route>
       </Route>
 

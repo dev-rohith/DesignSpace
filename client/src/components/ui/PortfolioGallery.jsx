@@ -4,6 +4,7 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 const PortfolioGallery = ({ data }) => {
   const [selectedImages, setSelectedImages] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const openGallery = (images) => {
     setSelectedImages(images);
     setCurrentImageIndex(0);
@@ -63,7 +64,7 @@ const PortfolioGallery = ({ data }) => {
                   </span>
                 </div>
 
-                {/* Thumbnail Grid */}
+                {/* Image Grid */}
                 <div className="grid grid-cols-2 gap-2 p-4">
                   {item.images.slice(0, 4).map((image, index) => (
                     <div
@@ -91,8 +92,7 @@ const PortfolioGallery = ({ data }) => {
           </div>
         </div>
       ))}
-
-      {/* Image Gallery Modal */}
+      {/* Modal */}
       {selectedImages && (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
           <button

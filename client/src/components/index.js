@@ -26,11 +26,18 @@ export { default as AddLandingItem } from "./common/AddLandingItem";
 export { default as ErrorState } from "./common/ErrorState";
 export { default as Spinner } from "./common/Spinner";
 
+export { default as AddressSection } from "./common/AddressSection";
+export { default as Modal } from "./common/Modal";
+
 export { default as PendingApplicationsTable } from "./ui/PendingApplicationsTable";
 export { default as NonePendingApplicationsTable } from "./ui/NonePendingApplicationsTable";
 export { default as ApplicationDetails } from "./ui/ApplicationDetails";
 export { default as AssociateApplicationProcess } from "./ui/AssociateApplicationProcess";
 export { default as DesignerApplicationProcess } from "./ui/DesignerApplicationProcess";
+export { default as DesignerProfileBody } from "./ui/DesignerProfileBody";
+
+
+export { default as ManagePricing } from "./ui/ManagePricing";
 
 //------------------------ Design Space ------------------------------//
 

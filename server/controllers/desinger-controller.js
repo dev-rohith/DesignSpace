@@ -15,7 +15,7 @@ designerProfileCtrl.getDesingerProfile = catchAsync(async (req, res, next) => {
   const { designer_id } = req.params;
   const desingerProfile = await DesignerProfile.findOne({ user: designer_id })
     .populate("user", "firstName lastName profilePicture")
-    .select(" -ratings -location")
+    .select(" -ratings -location -portfolio")
     .lean();
   res.json(desingerProfile);
 });
@@ -53,81 +53,58 @@ designerProfileCtrl.getAllPortfolios = catchAsync(async (req, res, next) => {
 //////////////////////////--private--/////////////////////////////////
 
 designerProfileCtrl.createMyProfile = catchAsync(async (req, res, next) => {
-  const {
-    company,
-    position,
-    experience,
-    aboutMe,
-    specializations,
-    starting_price,
-    languages_know,
-    designStyle,
-    softwareExpertise,
-    address,
-  } = req.body;
-
+  const { address } = req.body;
   const { lat, lng } = await getCoordinates(address);
 
   if (!lat || !lng)
     return next(new AppError("please provide valid address", 400));
 
-  const designer = new DesignerProfile({
+  const designerProfile = await DesignerProfile.create({
     user: req.user.userId,
-    company,
-    position,
-    experience,
-    aboutMe,
-    specializations,
-    languages_know,
-    starting_price,
-    designStyle,
-    softwareExpertise,
-    address,
+    ...req.body,
     location: {
       coordinates: [lat, lng],
     },
   });
 
-  await designer.save();
+  if (!designerProfile)
+    return next(new AppError("error while creating profile", 500));
 
-  res.json({ designer });
+  const createdDesignerProfile = await DesignerProfile.findOne({
+    user: req.user.userId,
+  })
+    .select("-portfolio -user -ratings -location -_id -__v")
+    .lean();
+
+  res.json(createdDesignerProfile);
 });
 
 designerProfileCtrl.getMyProfile = catchAsync(async (req, res, next) => {
+  console.log("hitting");
   const myProfile = await DesignerProfile.findOne({
     user: req.user.userId,
-  }).select("-user -ratings -location");
+  })
+    .select("-portfolio -user -ratings -location -_id -__v")
+    .lean();
   if (!myProfile) return next(new AppError("Profile not found", 404));
   res.json(myProfile);
 });
 
+designerProfileCtrl.getMyPortfolio = catchAsync(async (req, res, next) => {
+  const portifolio = await DesignerProfile.findOne({ user: req.user.userId })
+    .select("portfolio")
+    .lean();
+  if (!portifolio) return next(new AppError("Profile not found", 404));
+  res.json(portifolio);
+});
+
 designerProfileCtrl.editMyProfile = catchAsync(async (req, res, next) => {
-  const {
-    company,
-    position,
-    experience,
-    aboutMe,
-    specializations,
-    starting_price,
-    languages_know,
-    designStyle,
-    softwareExpertise,
-    address,
-  } = req.body;
+  const { address } = req.body;
 
   const { lat, lng } = await getCoordinates(address);
 
   const updatedProfileData = {
-    company,
-    position,
-    experience,
-    aboutMe,
-    specializations,
-    languages_know,
-    starting_price,
-    designStyle,
-    softwareExpertise,
-    address,
+    ...req.body,
     location: {
       type: "Point",
       coordinates: [lng, lat],
@@ -138,7 +115,7 @@ designerProfileCtrl.editMyProfile = catchAsync(async (req, res, next) => {
     { user: req.user.userId },
     updatedProfileData,
     { new: true }
-  ).select("-portfolio -user -ratings -location");
+  ).select("-portfolio -user -ratings -location -_id -__v");
 
   if (!updatedProfile) {
     return next(
@@ -150,17 +127,21 @@ designerProfileCtrl.editMyProfile = catchAsync(async (req, res, next) => {
 });
 
 designerProfileCtrl.addItemToPortfolio = catchAsync(async (req, res, next) => {
-  const { title, description, category, starting_price, languages_know } =
-    req.body;
+  const { title, description } = req.body;
 
   const designer = await DesignerProfile.findOne({ user: req.user.userId });
 
   if (!designer) {
-    next(
+    return next(
       new AppError(
         "Designer profile not found try to create basic proflie to add portifolio",
         400
       )
+    );
+  }
+  if (designer.portfolio.length >= 5) {
+    return next(
+      new AppError("You only can able to add 5 item to your portifolio", 400)
     );
   }
 
@@ -168,14 +149,11 @@ designerProfileCtrl.addItemToPortfolio = catchAsync(async (req, res, next) => {
     title,
     description,
     images: [],
-    languages_know,
-    starting_price,
-    category,
-    date: new Date(),
   };
 
   const fileUploadPromises = req.files.map((file) => {
-    return CloudinaryService.uploadFile(file); // Upload file to Cloudinary
+    // Upload file to Cloudinary
+    return CloudinaryService.uploadFile(file);
   });
   const uploadResults = await Promise.all(fileUploadPromises);
 
@@ -284,12 +262,5 @@ designerProfileCtrl.editItemFromPortfolio = catchAsync(
     res.status(200).json({ message: "updated sucessfully" });
   }
 );
-
-designerProfileCtrl.getMyPortfolio = catchAsync(async (req, res, next) => {
-  const portifolio = await DesignerProfile.findOne({ user: req.user.userId })
-    .select("portfolio")
-    .lean();
-  res.json(portifolio);
-});
 
 export default designerProfileCtrl;

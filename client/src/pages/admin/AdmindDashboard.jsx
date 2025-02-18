@@ -1,6 +1,10 @@
+import { ManagePricing } from "../../components";
+
 const AdmindDashboard = () => {
   return (
-    <div>AdmindDashboard</div>
-  )
-}
-export default AdmindDashboard
+    <div>
+      <ManagePricing />
+    </div>
+  );
+};
+export default AdmindDashboard;

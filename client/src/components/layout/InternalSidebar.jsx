@@ -6,6 +6,7 @@ import {
   BadgeIndianRupee,
   ChartArea,
   ContactRound,
+  Images,
   PanelsTopLeft,
   UserPen,
   Users,
@@ -58,13 +59,22 @@ const InternalSidebar = () => {
         />
       )}
 
-      {user?.role === "admin" && (
+      {user?.role === "designer" && (
         <SidebarItem
-          icon={<BadgeIndianRupee />}
-          text="pricing"
-          to="/admin/manage-pricing"
+          icon={<UserPen />}
+          text="Work Profile"
+          to="/designer/profile"
         />
       )}
+      {user?.role === "designer" && (
+        <SidebarItem
+          icon={<Images />}
+          text="My Portfolio"
+          to="/designer/portfolio"
+        />
+      )}
+
+
 
       {user?.role === "associate" && (
         <SidebarItem
@@ -73,8 +83,6 @@ const InternalSidebar = () => {
           to="/associate/profile"
         />
       )}
-
-
     </SidebarProvider>
   );
 };
