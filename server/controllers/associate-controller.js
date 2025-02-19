@@ -42,14 +42,15 @@ associateProfileCtrl.updateProfile = catchAsync(async (req, res, next) => {
     availability,
     address,
     location: {
-      coordinates: [lat, lng],
+      type: "Point",
+      coordinates: [lng, lat], 
     },
   };
   const updatedProfile = await AssociateProfile.findOneAndUpdate(
     { user: req.user.userId },
     newProfile,
     { new: true }
-  ).lean();
+  ).select('-user -_id -__v -location').lean();
   if (!updatedProfile)
     return next(new AppError("user profile not found to update", 404));
   res.json({
@@ -59,7 +60,7 @@ associateProfileCtrl.updateProfile = catchAsync(async (req, res, next) => {
 });
 
 associateProfileCtrl.getMyProfile = catchAsync(async (req, res, next) => {
-  const profile = await AssociateProfile.findOne({ user: req.user.userId });
+  const profile = await AssociateProfile.findOne({ user: req.user.userId }).select("-user -_id -__v -location").lean();
   if (!profile)
     return next(new AppError("profile not found first create a profile", 404));
   res.json(profile);

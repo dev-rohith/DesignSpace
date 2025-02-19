@@ -211,24 +211,21 @@ designerProfileCtrl.deleteItemFromPortfolio = catchAsync(
 designerProfileCtrl.editItemFromPortfolio = catchAsync(
   async (req, res, next) => {
     const { item_id } = req.params;
-    const { title, description, category, starting_price, languages_know } =
-      req.body;
+    const { title, description } = req.body;
 
     const newPortfolioItem = {
       title,
       description,
-      languages_know,
-      starting_price,
-      category,
+      date: new Date(),
     };
 
-    const designerPortfolio = await DesignerProfile.findOne({
+    const designer = await DesignerProfile.findOne({
       user: req.user.userId,
     });
 
     if (req.files) {
       const fileUploadPromises = req.files.map((file) => {
-        return CloudinaryService.uploadFile(file); // Upload file to Cloudinary
+        return CloudinaryService.uploadFile(file);
       });
       const uploadResults = await Promise.all(fileUploadPromises);
       try {
@@ -247,22 +244,26 @@ designerProfileCtrl.editItemFromPortfolio = catchAsync(
       });
 
       if (uploads.length > 0) {
-        newPortfolioItem.images = uploads; //adding updated images incase user uploaded then or else previous remains same
+        newPortfolioItem.images = uploads;
 
-        const targetItem = designerPortfolio.portfolio.find((element) => {
+        const targetItem = designer.portfolio.find((element) => {
           return `${element._id}` === item_id;
         });
         const removePreviousImages = targetItem.images.map((image) => {
-          CloudinaryService.deleteFile(image.public_id, "image"); //potential clean up from the cloudinay removing previous images
+          CloudinaryService.deleteFile(image.public_id, "image");
         });
         await Promise.allSettled(removePreviousImages);
       }
     }
-    designerPortfolio.portfolio = designerPortfolio.portfolio.map((element) =>
+
+    designer.portfolio = designer.portfolio.map((element) =>
       `${element._id}` === item_id ? newPortfolioItem : element
     );
-    designerPortfolio.save();
-    res.status(200).json({ message: "updated sucessfully" });
+
+    designer.save();
+
+    const editedItem = designer.portfolio[designer.portfolio.length - 1];
+    res.status(200).json({ message: "updated sucessfully", data: editedItem });
   }
 );
 
