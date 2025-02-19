@@ -16,7 +16,7 @@ const SkillSection = memo(
 
     const handleAdd = useCallback(() => {
       if (!newSkill.trim()) return;
-      onAddSkill(field, newSkill.trim());
+      onAddSkill(field, newSkill);
       setNewSkill("");
     }, [field, newSkill, onAddSkill]);
 
@@ -44,6 +44,7 @@ const SkillSection = memo(
                 onChange={(e) => setNewSkill(e.target.value)}
               />
               <button
+              type="button"
                 className="text-violet-600 hover:text-violet-800 cursor-pointer"
                 onClick={handleAdd}
               >

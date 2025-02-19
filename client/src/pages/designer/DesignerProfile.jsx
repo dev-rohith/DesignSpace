@@ -20,6 +20,27 @@ import {
 } from "../../features/actions/designerActions";
 import validateDesignerProfileData from "../../utils/DesingerProfileValidation";
 
+
+const initialState = {
+  company: "",
+  position: "",
+  experience: "",
+  aboutMe: "",
+  languages_know: [],
+  starting_price: "",
+  specializations: [],
+  designStyle: [],
+  softwareExpertise: [],
+  address: {
+    street: "",
+    house_number: "",
+    city: "",
+    state: "",
+    country: "",
+    postal_code: "",
+  },
+}
+
 const DesignerProfile = () => {
   const {
     profile,
@@ -29,25 +50,7 @@ const DesignerProfile = () => {
     isProfileUpdating,
   } = useSelector((store) => store.designer);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    company: "",
-    position: "",
-    experience: "",
-    aboutMe: "",
-    languages_know: [],
-    starting_price: "",
-    specializations: [],
-    designStyle: [],
-    softwareExpertise: [],
-    address: {
-      street: "",
-      house_number: "",
-      city: "",
-      state: "",
-      country: "",
-      postal_code: "",
-    },
-  });
+  const [formData, setFormData] = useState(initialState);
 
   const [errors, setErrors] = useState({});
 
@@ -137,10 +140,10 @@ const DesignerProfile = () => {
           <Layout className="w-full h-full" />
         </div>
         <div className="max-w-7xl mx-auto px-6 py-8 relative">
-          <h1 className="text-4xl font-bold text-white flex items-center">
+          <h3 className="text-4xl font-bold text-white flex items-center">
             <User className="w-8 h-8 mr-3" />
             Designer Profile
-          </h1>
+          </h3>
           <p className="text-violet-100 mt-2 flex items-center">
             <Award className="w-4 h-4 mr-2" />
             Manage your professional presence
@@ -218,6 +221,8 @@ const DesignerProfile = () => {
                 </ul>
               </div>
             )}
+
+              {/* Body of the profile page */}
             <DesignerProfileBody
               errors={errors}
               formData={formData}

@@ -7,11 +7,14 @@ import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { onPayment } from "../features/actions/paymentActions";
 import axiosInstance from "../apis/axiosIntance";
+import { useNavigate } from "react-router-dom";
 
 const Pricing = () => {
   const { subscriptions_prices } = useSelector((store) => store.landing);
+  const {user} = useSelector(store=>store.auth)
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async (params) => {
@@ -41,7 +44,11 @@ const Pricing = () => {
   }, []);
 
   const handlePurchase = async (plan) => {
-    console.log(plan);
+
+    if(!user){
+      navigate("/login")
+      return
+    }
 
     const actionResult = await dispatch(onPayment(plan));
     if (onPayment.fulfilled.match(actionResult)) {

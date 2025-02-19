@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
+  addPortfolioItem,
   createProfileDesigner,
   deletePortfolioItem,
+  editPortfolioItem,
   getMyPortfolio,
   getMyProfileDesigner,
   updateProfileDesigner,
@@ -81,14 +83,42 @@ const designerSlice = createSlice({
         (item) => item._id !== action.payload.data._id
       );
       state.isPortfolioUpdating = false;
-    })
+    });
     builder.addCase(deletePortfolioItem.pending, (state, action) => {
-        state.isPortfolioUpdating = true;
+      state.isPortfolioUpdating = true;
     });
     builder.addCase(deletePortfolioItem.rejected, (state, action) => {
-        state.isPortfolioUpdating = false;
-    }); 
+      state.isPortfolioUpdating = false;
+    });
 
+    builder.addCase(addPortfolioItem.fulfilled, (state, action) => {
+      state.portfolio.push(action.payload.data);
+      state.isPortfolioUpdating = false;
+    });
+    builder.addCase(addPortfolioItem.pending, (state, action) => {
+      state.isPortfolioUpdating = true;
+    });
+    builder.addCase(addPortfolioItem.rejected, (state, action) => {
+      state.isPortfolioUpdating = false;
+    });
+
+    builder.addCase(editPortfolioItem.fulfilled, (state, action) => {
+      console.log(action.payload);
+      state.portfolio = state.portfolio.map((item) => {
+        if (item._id === action.payload.currentId) {
+          return action.payload.data;
+        } else {
+          return item;
+        }
+      });
+      state.isPortfolioUpdating = false;
+    });
+    builder.addCase(editPortfolioItem.pending, (state, action) => {
+      state.isPortfolioUpdating = true;
+    });
+    builder.addCase(editPortfolioItem.rejected, (state, action) => {
+      state.isPortfolioUpdating = false;
+    });
   },
 });
 

@@ -46,36 +46,30 @@ const DesignerPortfolio = () => {
     setIsModalOpen(true);
   };
 
+  const handleCloseModal = () => {
+    setEditId(null);
+    setIsModalOpen(false);
+  };
+
   if (isLoading) return <Spinner />;
   if (!portfolio) return <ErrorState error="Failed to Load Data" />;
 
   return (
     <div className="min-h-screen overflow-y-auto w-screen bg-gray-50">
       {isModalOpen && (
-        <Modal
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsEditing(null);
-            setIsModalOpen(false);
-          }}
-        >
-          <PortifolioItemOperations isEditing={isEditing} />
+        <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+          <PortifolioItemOperations
+            editId={editId}
+            handleCloseModal={handleCloseModal}
+          />
         </Modal>
       )}
       <header className="bg-white border-b">
         <div className="max-w-7xl mx-auto p-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-semibold">Portfolio</h1>
-              <p className="text-gray-600">
-                Showcase your best work to potential clients
-              </p>
-            </div>
-            <button className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Add Portfolio
-            </button>
-          </div>
+          <h1 className="text-2xl font-semibold">Portfolio</h1>
+          <p className="text-gray-600">
+            Showcase your best work to potential clients
+          </p>
         </div>
       </header>
 
@@ -108,7 +102,7 @@ const DesignerPortfolio = () => {
           {portfolio.length < 3 && (
             <button
               onClick={handleAddPortfolioItem}
-              className="bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 h-74 ml-2 mt-4 hover:border-violet-300 hover:bg-violet-50 transition-all group"
+              className="bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 h-74 ml-2 mt-4 hover:border-violet-300 hover:bg-violet-50 transition-all group cursor-pointer"
             >
               <div className="text-center">
                 <Plus className="w-8 h-8 mx-auto text-gray-400 group-hover:text-violet-500" />

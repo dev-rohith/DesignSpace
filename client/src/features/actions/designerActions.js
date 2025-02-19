@@ -21,7 +21,6 @@ export const getMyPortfolio = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("designer/portfolio");
-      console.log(response.data);
       return response.data.portfolio;
     } catch (error) {
       console.log(error.response.data);
@@ -47,10 +46,10 @@ export const updateProfileDesigner = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.put("/designer/profile", data);
-      console.log(response.data)
+      console.log(response.data);
       return response.data;
     } catch (error) {
-     return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -67,12 +66,27 @@ export const deletePortfolioItem = createAsyncThunk(
   }
 );
 
+export const addPortfolioItem = createAsyncThunk(
+  "designer/addPortfolioItem",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/designer/portfolio", data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 export const editPortfolioItem = createAsyncThunk(
   "designer/editPortfolioItem",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.put(`/designer/portfolio/${data.id}`, data);
+      const response = await axiosInstance.put(
+        `/designer/portfolio/${data.id}`,
+        data.formData
+      );
+      response.data.currentId = data.id;
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
