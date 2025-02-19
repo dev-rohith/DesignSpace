@@ -89,15 +89,18 @@ landingCtrl.addTopDesigner = catchAsync(async (req, res, next) => {
     aboutMe,
   };
 
-  await LandingConfig.findOneAndUpdate(
+  const updatedDoc = await LandingConfig.findOneAndUpdate(
     {},
     { $push: { designers: newTopDesinger } },
     { upsert: true, new: true }
   );
+
+  const addedDesigner = updatedDoc?.designers?.slice(-1)[0];
+
   await RedisDataManager.removeItemToRedis("landingConfig");
   res.json({
-    message: "review uploaded successfully",
-    data: newTopDesinger,
+    message: "Designer added successfully",
+    data: addedDesigner,
   });
 });
 
@@ -122,7 +125,7 @@ landingCtrl.addCustomerReview = catchAsync(async (req, res, next) => {
       review,
     };
 
-     await LandingConfig.findOneAndUpdate(
+    await LandingConfig.findOneAndUpdate(
       {},
       { $push: { customer_reviews: newReview } },
       { upsert: true, new: true }

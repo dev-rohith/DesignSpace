@@ -46,7 +46,7 @@ const AddLandingCarouselItem = () => {
     <div className="text-center">
       <div
         onClick={() => fileInputRef.current.click()}
-        className=" border-2 h-[300px] border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors group bg-gray-50 overflow-hidden"
+        className=" border-2 h-100 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors group bg-gray-50 overflow-hidden"
       >
         {image ? (
           <img

@@ -39,5 +39,7 @@ router.use(authMiddleWare.authorize("admin"));
 router.get("/", userCtrl.getUsers);
 router.put("/:user_id", userCtrl.UserStatusController);
 
+router.get("/designers", userCtrl.getDesigners);
+
 
 export default router

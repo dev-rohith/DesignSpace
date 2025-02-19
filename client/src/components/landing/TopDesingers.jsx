@@ -41,7 +41,7 @@ const TopDesigners = ({ data = [], designerLocations }) => {
               <TopDesingerCard
                 key={`${item._id || index}-${index}`}
                 {...item}
-                className="flex-shrink-0"
+                
               />
             ))}
           </div>

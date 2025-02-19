@@ -4,7 +4,14 @@ import {
   getPortfolios,
   getSubscriptionsDetails,
 } from "../actions/landingActions";
-import { addCaroseulItem, addCustomerReviewItem, deleteCaroseulItem, deleteCustomerReviewItem } from "../actions/adminactions";
+import {
+  addCaroseulItem,
+  addCustomerReviewItem,
+  addTopDesingerItem,
+  deleteCaroseulItem,
+  deleteCustomerReviewItem,
+  deleteTopDesignerItem,
+} from "../actions/adminactions";
 
 const landingSlice = createSlice({
   name: "landing",
@@ -14,6 +21,7 @@ const landingSlice = createSlice({
     customer_reviews: [],
     isReviewsUpdating: false,
     designers: [],
+    isDesignersUpdating: false,
     designers_locations: [],
     isLoading: false,
     portfolios: [],
@@ -63,11 +71,38 @@ const landingSlice = createSlice({
       state.isCarouselUpdating = false;
     });
 
+    //adding top designers
+
+    builder.addCase(addTopDesingerItem.fulfilled, (state, action) => {
+      state.designers.push(action.payload.data);
+      state.isDesignersUpdating = false;
+    });
+    builder.addCase(addTopDesingerItem.pending, (state, action) => {
+      state.isDesignersUpdating = true;
+    });
+    builder.addCase(addTopDesingerItem.rejected, (state, action) => {
+      state.isDesignersUpdating = false;
+    });
+
+    //deleting top designers logic
+    builder.addCase(deleteTopDesignerItem.fulfilled, (state, action) => {
+      state.designers = state.designers.filter(
+        (item) => item._id !== action.payload.data._id
+      );
+      state.isDesignersUpdating = false;
+    });
+    builder.addCase(deleteTopDesignerItem.pending, (state, action) => {
+      state.isDesignersUpdating = true;
+    });
+    builder.addCase(deleteTopDesignerItem.rejected, (state, action) => {
+      state.isDesignersUpdating = false;
+    });
+
     //addingcustomer reviews logic
     builder.addCase(addCustomerReviewItem.fulfilled, (state, action) => {
       state.customer_reviews.push(action.payload.data);
       state.isReviewsUpdating = false;
-    })
+    });
     builder.addCase(addCustomerReviewItem.pending, (state, action) => {
       state.isReviewsUpdating = true;
     });

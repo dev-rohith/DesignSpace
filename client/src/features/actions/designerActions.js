@@ -54,3 +54,28 @@ export const updateProfileDesigner = createAsyncThunk(
     }
   }
 );
+
+export const deletePortfolioItem = createAsyncThunk(
+  "designer/deletePortfolioItem",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(`/designer/portfolio/${id}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+
+export const editPortfolioItem = createAsyncThunk(
+  "designer/editPortfolioItem",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put(`/designer/portfolio/${data.id}`, data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);

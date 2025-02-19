@@ -24,6 +24,8 @@ const DesingersFeed = () => {
     })();
   }, []);
 
+
+
   if (isLoading) return <Spinner />;
   if (error) return <ErrorState error={error} />;
 

@@ -13,9 +13,10 @@ const designerProfileCtrl = {};
 
 designerProfileCtrl.getDesingerProfile = catchAsync(async (req, res, next) => {
   const { designer_id } = req.params;
+  console.log(req.query.select);
   const desingerProfile = await DesignerProfile.findOne({ user: designer_id })
     .populate("user", "firstName lastName profilePicture")
-    .select(" -ratings -location -portfolio")
+    .select(req.query.select || "-location -portfolio")
     .lean();
   res.json(desingerProfile);
 });
@@ -139,9 +140,9 @@ designerProfileCtrl.addItemToPortfolio = catchAsync(async (req, res, next) => {
       )
     );
   }
-  if (designer.portfolio.length >= 5) {
+  if (designer.portfolio.length >= 3) {
     return next(
-      new AppError("You only can able to add 5 item to your portifolio", 400)
+      new AppError("You only can able to add 3 item to your portifolio", 400)
     );
   }
 
@@ -149,6 +150,7 @@ designerProfileCtrl.addItemToPortfolio = catchAsync(async (req, res, next) => {
     title,
     description,
     images: [],
+    date: new Date(),
   };
 
   const fileUploadPromises = req.files.map((file) => {
@@ -174,9 +176,11 @@ designerProfileCtrl.addItemToPortfolio = catchAsync(async (req, res, next) => {
   designer.portfolio.push(newPortfolioItem);
   await designer.save();
 
+  const addedItem = designer.portfolio[designer.portfolio.length - 1];
+
   res.status(200).json({
     message: "Portfolio item added successfully",
-    data: newPortfolioItem,
+    data: addedItem,
   });
 });
 
@@ -187,16 +191,15 @@ designerProfileCtrl.deleteItemFromPortfolio = catchAsync(
       { user: req.user.userId },
       { $pull: { portfolio: { _id: item_id } } }
     );
-
     const deletedItem = userProfile.portfolio.find(
       (item) => `${item._id}` === item_id
     );
 
-    const removeItemsPromises = map((image) => {
+    const removeItemsPromises = deletedItem.images.map((image) => {
       return CloudinaryService.deleteFile(image.public_id, "image");
     });
 
-    const removeItemsFromCloudinary = await Promise.all(removeItemsPromises);
+    await Promise.all(removeItemsPromises);
 
     res.json({
       message: "item deleted successfully",

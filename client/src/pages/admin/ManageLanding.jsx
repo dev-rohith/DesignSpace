@@ -10,6 +10,7 @@ import AddLandingCarouselItem from "../../components/common/AddLandingItem";
 import {
   deleteCaroseulItem,
   deleteCustomerReviewItem,
+  deleteTopDesignerItem,
 } from "../../features/actions/adminactions";
 import toast from "react-hot-toast";
 import AddTopDesignerItem from "../../components/ui/AddTopDesignerItem";
@@ -36,6 +37,15 @@ const ManageLanding = () => {
     if (deleteCaroseulItem.fulfilled.match(actionResult)) {
       toast.success(actionResult.payload.message);
     } else if (deleteCaroseulItem.rejected.match(actionResult)) {
+      toast.error(actionResult.payload.message);
+    }
+  };
+
+  const deleteTopDesigner = async (id) => {
+    const actionResult = await dispatch(deleteTopDesignerItem(id));
+    if (deleteTopDesignerItem.fulfilled.match(actionResult)) {
+      toast.success(actionResult.payload.message);
+    } else if (deleteTopDesignerItem.rejected.match(actionResult)) {
       toast.error(actionResult.payload.message);
     }
   };
@@ -83,10 +93,13 @@ const ManageLanding = () => {
               {designers.map((data, index) => (
                 <div
                   key={data._id || index}
-                  className="flex-[0_0_calc(33.33%-16px)] min-w-0 mr-16 py-4"
+                  className="flex-[0_0_calc(42.33%-16px)] min-w-0 py-4"
                 >
-                  <div className="h-full">
-                    <TopDesingerCard {...data} />
+                  <div className="h-full space-x-1 ">
+                    <TopDesingerCard
+                      {...data}
+                      deleteTopDesigner={deleteTopDesigner}
+                    />
                   </div>
                 </div>
               ))}

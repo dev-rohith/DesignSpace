@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   createProfileDesigner,
+  deletePortfolioItem,
   getMyPortfolio,
   getMyProfileDesigner,
   updateProfileDesigner,
@@ -14,6 +15,7 @@ const designerSlice = createSlice({
     isProfileUpdating: false,
     isProfileEmpty: false,
     portfolio: null,
+    isPortfolioUpdating: false,
     projects: [],
     tasks: [],
     isLoading: false,
@@ -62,6 +64,7 @@ const designerSlice = createSlice({
     });
 
     //portfolio logic here
+
     builder.addCase(getMyPortfolio.fulfilled, (state, action) => {
       state.portfolio = action.payload;
       state.isLoading = false;
@@ -72,6 +75,20 @@ const designerSlice = createSlice({
     builder.addCase(getMyPortfolio.rejected, (state, action) => {
       state.isLoading = false;
     });
+
+    builder.addCase(deletePortfolioItem.fulfilled, (state, action) => {
+      state.portfolio = state.portfolio.filter(
+        (item) => item._id !== action.payload.data._id
+      );
+      state.isPortfolioUpdating = false;
+    })
+    builder.addCase(deletePortfolioItem.pending, (state, action) => {
+        state.isPortfolioUpdating = true;
+    });
+    builder.addCase(deletePortfolioItem.rejected, (state, action) => {
+        state.isPortfolioUpdating = false;
+    }); 
+
   },
 });
 

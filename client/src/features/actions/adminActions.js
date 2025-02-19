@@ -142,4 +142,33 @@ export const deleteCustomerReviewItem = createAsyncThunk(
   }
 );
 
+export const addTopDesingerItem = createAsyncThunk(
+  "admin/addTopDesingerItem",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/landing/designer", data);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error.response.data);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteTopDesignerItem = createAsyncThunk(
+  "admin/deleteTopDesignerItem",
+  async (id, { rejectWithValue }) => {
+    console.log(id);
+    try {
+      const response = await axiosInstance.delete(`/landing/desinger/${id}`);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error.response);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 //------------------------------------ not worked ones

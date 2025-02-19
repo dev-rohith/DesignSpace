@@ -13,14 +13,15 @@ import {
 const userCtrl = {};
 
 userCtrl.getUser = catchAsync(async (req, res, next) => {
-  let filterSting =
-    "email lastLoginOn status role profilePicture lastName firstName";
+  let filterSting = "email lastLoginOn status role profilePicture lastName firstName";
   if (req.user.userRole === "client") filterSting += " subscription";
   const user = await User.findOne({ _id: req.user?.userId })
     .select(filterSting)
     .lean();
   res.json(user);
 });
+
+
 
 userCtrl.updatePassword = catchAsync(async (req, res, next) => {
   const { value, error } = userPasswordValidator.validate(req.body);
@@ -105,6 +106,17 @@ userCtrl.getClients = catchAsync(async (req, res, next) => {
     .lean();
   const users = await finalQuery;
   res.json(users);
+});
+
+userCtrl.getDesigners = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(User.find({ role: "designer" }), req.query)
+    .filterAndSearch("firstName")
+    .paginate();
+  const finalQuery = features.query
+    .select("profilePicture lastName firstName status")
+    .lean();
+  const desinger = await finalQuery;
+  res.json(desinger);
 });
 
 userCtrl.UserStatusController = catchAsync(async (req, res, next) => {
