@@ -93,3 +93,55 @@ export const editPortfolioItem = createAsyncThunk(
     }
   }
 );
+
+//this are the actions for the projects
+
+export const getDesignerPendingProjects = createAsyncThunk(
+  "designer/getDesignerPendingProjects",
+  async (url, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(url);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getDesignerInProgressProjects = createAsyncThunk(
+  "designer/getDesignerInProgressProjects",
+  async (url, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(url);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getDesignerInReviewProjects = createAsyncThunk(
+  "designer/getDesignerInReviewProjects",
+  async (url, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(url);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getDesignerCompletedProjects = createAsyncThunk(
+  "designer/getDesignerCompletedProjects",
+  async (url, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(url);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);

@@ -102,7 +102,7 @@ userCtrl.getClients = catchAsync(async (req, res, next) => {
     .filterAndSearch("firstName")
     .paginate();
   const finalQuery = features.query
-    .select("profilePicture lastName firstName")
+    .select("profilePicture lastName firstName status")
     .lean();
   const users = await finalQuery;
   res.json(users);

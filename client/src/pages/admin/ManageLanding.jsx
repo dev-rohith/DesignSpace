@@ -31,8 +31,7 @@ const ManageLanding = () => {
   }, [dispatch]);
 
   const deleteCarouselItem = async (id) => {
-    console.log(id);
-    console.log(id);
+
     const actionResult = await dispatch(deleteCaroseulItem(id));
     if (deleteCaroseulItem.fulfilled.match(actionResult)) {
       toast.success(actionResult.payload.message);

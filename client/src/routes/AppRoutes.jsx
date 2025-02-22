@@ -6,8 +6,16 @@ import {
   AdmindDashboard,
   AssociateApplication,
   AssociateDashboard,
+  ClientCompletedProjects,
+  ClientInprogressProjects,
+  ClientInReviewProjects,
+  ClientPendingProjects,
   DesignerApplication,
+  DesignerCompletedProjects,
   DesignerDashboard,
+  DesignerInProgressProjects,
+  DesignerInReviewProjects,
+  DesignerPendingProjects,
   DesignerPortfolio,
   DesignerProfile,
   DeviceLimit,
@@ -28,13 +36,14 @@ import {
   ApplicationDetails,
   ApplicationSucess,
   DesingersFeed,
-  PendingProjects,
 } from "../components";
 import MyAccount from "../components/common/MyAccount";
 import PrivateRoute from "./PrivateRoute";
 import InternalSpaceLayout from "../layout/InternalSpaceLayout";
 import ManageLanding from "../pages/admin/ManageLanding";
 import AssociateProfile from "../pages/associate/AssociateProfile";
+import CreateProject from "../pages/designer/CreateProject";
+import ProjectDetails from "../pages/ProjectDetails";
 
 const AppRoutes = () => {
   return (
@@ -92,7 +101,40 @@ const AppRoutes = () => {
       <Route path="/design-space" element={<DesignSpaceLayout />}>
         <Route index element={<Navigate to="designers" replace />} />
         <Route path="designers" element={<DesingersFeed />} />
-        <Route path="pending-projects" element={<PendingProjects />} />
+
+        <Route
+          path="pending-projects"
+          element={
+            <PrivateRoute allowedRoles={["client"]}>
+              <ClientPendingProjects />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="inprogress-projects"
+          element={
+            <PrivateRoute allowedRoles={["client"]}>
+              <ClientInprogressProjects />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="inreview-projects"
+          element={
+            <PrivateRoute allowedRoles={["client"]}>
+              <ClientInReviewProjects />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="completed-projects"
+          element={
+            <PrivateRoute allowedRoles={["client"]}>
+              <ClientCompletedProjects />
+            </PrivateRoute>
+          }
+        />
+
         <Route path="chat" element={<Mychat />} />
       </Route>
 
@@ -117,12 +159,33 @@ const AppRoutes = () => {
         </Route>
       </Route>
 
+      <Route element={<PrivateRoute allowedRoles={["designer", "client"]} />}>
+        <Route path="project/:project_id" element={<ProjectDetails />} />
+      </Route>
+
       {/* Designer Routes */}
       <Route element={<PrivateRoute allowedRoles={["designer"]} />}>
         <Route path="/designer" element={<InternalSpaceLayout />}>
           <Route index element={<DesignerDashboard />} />
           <Route path="profile" element={<DesignerProfile />} />
           <Route path="portfolio" element={<DesignerPortfolio />} />
+          <Route path="create-project" element={<CreateProject />} />
+          <Route
+            path="pending-projects"
+            element={<DesignerPendingProjects />}
+          />
+          <Route
+            path="inprogress-projects"
+            element={<DesignerInProgressProjects />}
+          />
+          <Route
+            path="inreview-projects"
+            element={<DesignerInReviewProjects />}
+          />
+          <Route
+            path="completed-projects"
+            element={<DesignerCompletedProjects />}
+          />
         </Route>
       </Route>
 

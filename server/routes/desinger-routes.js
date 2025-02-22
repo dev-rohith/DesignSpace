@@ -28,7 +28,7 @@ router
 router
   .route("/portfolio")
   .post(
-    uploadMultipleFiles(["image/png", "image/jpeg"], 1024 * 1024 * 10, 5),
+    uploadMultipleFiles(["image/png", "image/jpeg"], 1024 * 1024 * 10, 10),
     designerProfileCtrl.addItemToPortfolio
   )
   .get(designerProfileCtrl.getMyPortfolio);

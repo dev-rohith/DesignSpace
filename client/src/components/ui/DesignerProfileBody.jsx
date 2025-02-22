@@ -10,8 +10,10 @@ import {
   User,
 } from "lucide-react";
 import InputField from "../common/InputField";
-import SkillSection from "../common/SkillSection";
 import AddressSection from "../common/AddressSection";
+import MultiInput from "../common/MultiInput";
+
+
 
 const DesignerProfileBody = ({
   errors,
@@ -80,13 +82,13 @@ const DesignerProfileBody = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {skillSections.map((section) => (
-          <SkillSection
+          <MultiInput
             key={section.field}
             {...section}
             items={formData?.[section.field] || []}
             isEditing={isEditing}
-            onAddSkill={handleAddSkill}
-            onRemoveSkill={handleRemoveSkill}
+            onAddInput={handleAddSkill}
+            onRemoveInput={handleRemoveSkill}
             errors={errors.skills}
           />
         ))}

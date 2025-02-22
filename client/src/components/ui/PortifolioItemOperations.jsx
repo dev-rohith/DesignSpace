@@ -22,6 +22,10 @@ const PortfolioItemOperations = ({ editId, handleCloseModal }) => {
   );
 
   const handleAddPortfolioItem = async (e) => {
+    if(formData.files.length > 10) {
+      toast.error('You can only able to upload upto 10 images on each portfolio item')
+      return
+    }
     e.preventDefault();
     const Form = new FormData();
     Form.append("title", formData.title);

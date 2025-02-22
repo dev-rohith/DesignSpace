@@ -42,7 +42,6 @@ export { default as ManagePricing } from "./ui/ManagePricing";
 //------------------------ Design Space ------------------------------//
 
 export { default as Sidebar } from "./layout/Sidebar";
-export { default as PendingProjects } from "./designSpace/PendingProjects";
 export { default as DesingersFeed } from "./designSpace/DesingersFeed";
 
 export { default as PricingCard } from "./ui/PricingCard";

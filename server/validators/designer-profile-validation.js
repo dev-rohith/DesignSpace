@@ -36,6 +36,8 @@ const desingerProfile = Joi.object({
   address: addressSchema.required(),
 }).options({ abortEarly: false });
 
+
+
 export const validateDesingerProfile = (req, res, next) => {
   const { error } = desingerProfile.validate(req.body, { abortEarly: false });
 

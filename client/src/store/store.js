@@ -5,6 +5,7 @@ import applicationReducer from "../features/slices/applicationSlice.js";
 import adminReducer from "../features/slices/adminSlice.js";
 import designerReducer from "../features/slices/designerSlice.js";
 import associateReducer from "../features/slices/associateSlice.js";
+import projectReducer from '../features/slices/projectSlice.js'
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     admin: adminReducer,
     designer: designerReducer,
     associate: associateReducer,
+    project: projectReducer
   },
 });
 

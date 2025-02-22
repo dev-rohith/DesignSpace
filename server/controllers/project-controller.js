@@ -1,39 +1,40 @@
 import Project from "../models/project-model.js";
 import CloudinaryService from "../services/cloudinary-service.js";
 import { getCoordinates } from "../services/georeverse-coding.js";
+import APIFeatures from "../utils/api-features.js";
 import AppError from "../utils/app-error-util.js";
 import catchAsync from "../utils/catch-async-util.js";
-
 import fs from "fs";
 
 const projectCtrl = {};
 
-
 projectCtrl.createProject = catchAsync(async (req, res, next) => {
-  const { title, description, clientId, address, minimumDays, budget } =
-    req.body;
+  const { title, description, client, address, minimumDays, budget } = req.body;
 
   const { lat, lng } = await getCoordinates(address);
 
-  const project = await Project.create({
+  await Project.create({
     title,
     description,
-    clientId,
+    client,
     address,
     minimumDays,
     budget,
     location: { lat, lng },
-    designerId: req.user.userId,
+    designer: req.user.userId,
   });
 
-  res.json({ message: "project created successfully", data: project }); // only creating is enough
+  res.json({ message: "project created successfully" });
 });
 
 projectCtrl.getProject = catchAsync(async (req, res, next) => {
   const { project_id } = req.params;
-  const project = await Project.findById(project_id);
+  const project = await Project.findById(project_id)
+    .populate("designer", "firstName lastName profilePicture")
+    .populate("client", "firstName lastName profilePicture");
+
   if (!project) return next(new AppError("project not found", 404));
-  res.json({ data: project });
+  res.json(project);
 });
 
 projectCtrl.editProject = catchAsync(async (req, res, next) => {
@@ -64,7 +65,13 @@ projectCtrl.editProject = catchAsync(async (req, res, next) => {
 
   res.json({
     message: "Project updated successfully",
-    project: updatedProject,
+    data: {
+      title: updatedProject.title,
+      description: updatedProject.description,
+      budget: updatedProject.budget,
+      address: updatedProject.address,
+      minimumDays: updatedProject.minimumDays,
+    },
   });
 });
 
@@ -86,22 +93,51 @@ projectCtrl.deleteProject = catchAsync(async (req, res, next) => {
   res.json({ message: "Project deleted successfully" });
 });
 
-projectCtrl.getMyPendingProjects = catchAsync(async (req, res, next) => {
-  const myPendingProjects = await Project.find({
-    designerId: req.user.userId,
-    status: "pending",
-  })
-    .populate("clientId", "firsName lastName profilePicture")
-    .select("title description budget")
+projectCtrl.getMyProjectsDesigner = catchAsync(async (req, res, next) => {
+  const { status } = req.params;
+  const features = new APIFeatures(
+    Project.find({
+      designer: req.user.userId,
+      status,
+    }),
+    req.query
+  )
+    .filterAndSearch("title")
+    .paginate(6)
+    .sort();
+
+  const finalQuery = features.query
+    .populate("client", "firstName lastName profilePicture")
+    .select("title description budget minimumDays isPaid createdAt")
     .lean();
-  res.json({ data: myPendingProjects });
+  const myPendingProjects = await finalQuery;
+
+  const total = await Project.countDocuments({ status });
+  const perPage = parseInt(req.query.limit) || 6;
+  const totalPages = Math.ceil(total / perPage);
+  const page = parseInt(req.query.page) || 1;
+
+  res.json({ page, perPage, totalPages, total, data: myPendingProjects });
+});
+
+projectCtrl.getMyProjectsClient = catchAsync(async (req, res, next) => {
+  const { status } = req.params;
+  const myPendingProjects = await Project.find({
+    client: req.user.userId,
+    status,
+  })
+    .populate("designer", "firstName lastName profilePicture")
+    .select("title description budget  minimumDays isPaid createdAt updatedAt")
+    .lean();
+  res.json(myPendingProjects);
 });
 
 projectCtrl.updateProjectProgress = catchAsync(async (req, res, next) => {
   const { project_id } = req.params;
+
   const project = await Project.findById(project_id);
   if (!project) return next(new AppError("Project not found", 404));
-  if (project.status !== "in_progress") {
+  if (project.status !== "inprogress") {
     return next(
       new AppError(
         "your project not in progress state; you can't update progress",
@@ -116,7 +152,10 @@ projectCtrl.updateProjectProgress = catchAsync(async (req, res, next) => {
 
   project.save();
 
-  res.json({ message: "progress updated successfully", data: project });
+  res.json({
+    message: "progress updated successfully",
+    data: { milestones, completion_percentage },
+  });
 });
 
 projectCtrl.addBeforeProjectToPortfolio = catchAsync(async (req, res, next) => {
@@ -125,26 +164,26 @@ projectCtrl.addBeforeProjectToPortfolio = catchAsync(async (req, res, next) => {
 
   if (!project) return next(new AppError("Project not found", 400));
   if (project.status !== "review")
-    return next(new AppError("You can only upload in review state", 400));
+    return next(new AppError("You can only upload items in review state", 400));
   if (!req.file)
     return next(new AppError("Upload an image to add to portfolio", 400));
 
   const uploadResult = await CloudinaryService.uploadFile(req.file);
 
   try {
-    await fs.promises.unlink(req.file.path); // Use req.file.path
+    await fs.promises.unlink(req.file.path);
   } catch (unlinkError) {
     console.error("Error while deleting the file:", unlinkError.message);
   }
 
-  project.beforePrictures.push({
+  project.beforePictures.push({
     url: uploadResult.secure_url,
     public_id: uploadResult.public_id,
   });
 
   await project.save();
 
-  res.json({ message: "Uploaded successfully", project });
+  res.json({ message: "Uploaded successfully", data: project.beforePictures[project.beforePictures.length - 1] });
 });
 
 projectCtrl.deleteBeforeProjectToPortifolio = catchAsync(
@@ -154,16 +193,19 @@ projectCtrl.deleteBeforeProjectToPortifolio = catchAsync(
 
     if (!project) return next(new AppError("project is not found", 404));
 
-    const removedItem = project.beforePrictures.find(
-      (item) => `${item._id}` === Item_id
+    const removedItem = project.beforePictures.find(
+      (item) => item.public_id === Item_id
     );
 
-    project.beforePrictures = project.beforePrictures.filter(
-      (item) => `${item._id}` !== Item_id
+    project.beforePictures = project.beforePictures.filter(
+      (item) => item.public_id !== Item_id
     );
     await CloudinaryService.deleteFile(removedItem.public_id, "image");
     await project.save();
-    res.json({ message: "item is successfully removed from before list" });
+    res.json({
+      message: "item is successfully removed from before list",
+      data: removedItem,
+    });
   }
 );
 
@@ -180,7 +222,7 @@ projectCtrl.addAfterProjectToPortfolio = catchAsync(async (req, res, next) => {
   const uploadResult = await CloudinaryService.uploadFile(req.file);
 
   try {
-    await fs.promises.unlink(req.file.path); // Use req.file.path
+    await fs.promises.unlink(req.file.path);
   } catch (unlinkError) {
     console.error("Error while deleting the file:", unlinkError.message);
   }
@@ -192,7 +234,7 @@ projectCtrl.addAfterProjectToPortfolio = catchAsync(async (req, res, next) => {
 
   await project.save();
 
-  res.json({ message: "Uploaded successfully", project });
+  res.json({ message: "Uploaded successfully", data: project.afterPictures[project.afterPictures.length - 1] });
 });
 
 projectCtrl.deleteAfterProjectToPortifolio = catchAsync(
@@ -203,17 +245,50 @@ projectCtrl.deleteAfterProjectToPortifolio = catchAsync(
     if (!project) return next(new AppError("project is not found", 404));
 
     const removedItem = project.afterPictures.find(
-      (item) => `${item._id}` === Item_id
+      (item) => item.public_id === Item_id
     );
 
     project.afterPictures = project.afterPictures.filter(
-      (item) => `${item._id}` !== Item_id
+      (item) => item.public_id !== Item_id
     );
     await CloudinaryService.deleteFile(removedItem.public_id, "image");
     await project.save();
-    res.json({ message: "item is successfully removed from after list" });
+    res.json({
+      message: "item is successfully removed from after list",
+      data: removedItem,
+    });
   }
 );
+
+projectCtrl.sentProjectToReview = catchAsync(async (req, res, next) => {
+  const { project_id } = req.params;
+  const project = await Project.findById(project_id);
+  if (!project) return next(new AppError("Project not found", 404));
+  if (project.status !== "inprogress") return next(new AppError("Project is not in progress", 400));
+  if(project.completion_percentage !== 100) return next(new AppError("Project is not completed project completion percentage should be 100% to be sent to review", 400));
+  project.status = "review";
+  project.save();
+  res.json({ message: "Project is successfully sent to review" });
+});
+
+projectCtrl.acceptProject = catchAsync(async (req, res, next) => {
+  const { project_id } = req.params;
+  const project = await Project.findById(project_id);
+  if (!project) return next(new AppError("Project not found", 404));
+  if (project.status !== "pending")
+    return next(
+      new AppError(
+        "Project is not in Pending stage its already in progress",
+        400
+      )
+    );
+  project.status = "inprogress";
+  project.save();
+  res.json({
+    message:
+      "Project is successfully accepted you can see it in your inprogress projects",
+  });
+});
 
 projectCtrl.complete = catchAsync(async (req, res, next) => {
   const { project_id } = req.params;
@@ -224,7 +299,7 @@ projectCtrl.complete = catchAsync(async (req, res, next) => {
   if (project.status !== "review")
     return next(new AppError("You can only upload in review state", 400));
   if (
-    project.beforePrictures.length === 0 &&
+    project.beforePictures.length === 0 &&
     project.afterPictures.length === 0
   )
     next(
@@ -238,7 +313,5 @@ projectCtrl.complete = catchAsync(async (req, res, next) => {
   project.save();
   res.json({ message: "project is successfully completed" });
 });
-
-
 
 export default projectCtrl;

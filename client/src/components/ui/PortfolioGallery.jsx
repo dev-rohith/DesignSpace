@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import ImagesModal from "../common/ImagesModal";
 
 const PortfolioGallery = ({ data }) => {
   const [selectedImages, setSelectedImages] = useState(null);
@@ -94,38 +95,7 @@ const PortfolioGallery = ({ data }) => {
       ))}
       {/* Modal */}
       {selectedImages && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
-          <button
-            onClick={closeGallery}
-            className="absolute top-4 right-4 text-white hover:text-gray-300"
-          >
-            <X size={24} />
-          </button>
-
-          <button
-            onClick={prevImage}
-            className="absolute left-4 text-white hover:text-gray-300"
-          >
-            <ChevronLeft size={24} />
-          </button>
-
-          <img
-            src={selectedImages[currentImageIndex].url}
-            alt={`Gallery image ${currentImageIndex + 1}`}
-            className="max-h-[90vh] max-w-[90vw] object-contain"
-          />
-
-          <button
-            onClick={nextImage}
-            className="absolute right-4 text-white hover:text-gray-300"
-          >
-            <ChevronRight size={24} />
-          </button>
-
-          <div className="absolute bottom-4 text-white">
-            {currentImageIndex + 1} / {selectedImages.length}
-          </div>
-        </div>
+           <ImagesModal prevImage={prevImage} nextImage={nextImage} closeGallery={closeGallery} currentImageIndex={currentImageIndex} selectedImages={selectedImages} />
       )}
     </div>
   );

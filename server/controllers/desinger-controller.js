@@ -81,7 +81,6 @@ designerProfileCtrl.createMyProfile = catchAsync(async (req, res, next) => {
 });
 
 designerProfileCtrl.getMyProfile = catchAsync(async (req, res, next) => {
-  console.log("hitting");
   const myProfile = await DesignerProfile.findOne({
     user: req.user.userId,
   })

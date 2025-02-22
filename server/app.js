@@ -53,7 +53,7 @@ app.use("/api/v1/designer", desingerRouter);
 
 app.use("/api/v1/associate", associateRouter);
 
-app.use("/api/v1/project", projectRouter);
+app.use("/api/v1/projects", projectRouter);
 
 app.use(globalErrorHandler);
 

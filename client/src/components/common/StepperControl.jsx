@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { useForm } from "../../context/MultiFormProvider";
-import { Loader, LoaderPinwheel } from "lucide-react";
+import { Loader } from "lucide-react";
 
  const StepperControl = ({ handleFormSubmit }) => {
   const { isLoading } = useSelector((store) => store.application);

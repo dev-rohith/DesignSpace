@@ -1,16 +1,27 @@
-import { MapPin, Home, Building, Map, Globe, Navigation, DoorOpen } from "lucide-react";
+import {
+  MapPin,
+  Home,
+  Building,
+  Map,
+  Globe,
+  Navigation,
+  DoorOpen,
+} from "lucide-react";
 import InputField from "./InputField";
 
-const AddressSection = ({ formData, handleInputChange, isEditing, error }) => (
+const AddressSection = ({
+  formData,
+  handleInputChange,
+  isEditing = true,
+  error,
+}) => (
   <>
-    <div className="flex items-center mb-6">
-      <MapPin className="w-6 h-6 mr-2 text-violet-600" />
-      <h2 className="text-2xl font-semibold text-violet-900">
-        Address Details
-      </h2>
+    <div className="flex items-center mb-6 py-1 rounded-4xl justify-center bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 ">
+      <MapPin className="w-4 h-4 mr-1 text-white" />
+      <h2 className="text-lg font-semibold text-gray-50">Address Details</h2>
     </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 ml-4 md:grid-cols-2 gap-6">
       <div className="space-y-4">
         <InputField
           label="house/door no."

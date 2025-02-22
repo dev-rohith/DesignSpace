@@ -9,9 +9,9 @@ import {
   MapPin,
 } from "lucide-react";
 import InputField from "../common/InputField";
-import SkillSection from "../common/SkillSection";
 import ToggleButton from "../common/ToggleButton";
 import AddressSection from "../common/AddressSection";
+import MultiInput from "../common/MultiInput";
 
 const AssociateProfileBody = ({
   formData,
@@ -50,14 +50,14 @@ const AssociateProfileBody = ({
 
       {/* Skills Section */}
       <div className="animate-fade-up animate-delay-200">
-        <SkillSection
+        <MultiInput
           title="Skills"
           icon={Briefcase}
           items={formData.skills || []}
           field="skills"
           isEditing={isEditing}
-          onAddSkill={handleAddSkill}
-          onRemoveSkill={handleRemoveSkill}
+          onAddInput={handleAddSkill}
+          onRemoveInput={handleRemoveSkill}
           errors={errors}
         />
       </div>

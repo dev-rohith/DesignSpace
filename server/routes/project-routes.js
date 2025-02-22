@@ -5,46 +5,63 @@ import { uploadSingleFile } from "../middleware/multer-middleware.js";
 
 const router = Router();
 
-
 router.use(authMiddleWare.protect);
 
-// router.get('/my-pending', authMiddleWare.authorize('client'), projectCtrl.getClientPendingPortifolios)
+
+router.get(
+  "/:project_id",
+  authMiddleWare.authorize("client", "designer"),
+  projectCtrl.getProject
+);
+
+router.put(
+  "/accept/:project_id",
+  authMiddleWare.authorize("client"),
+  projectCtrl.acceptProject
+);
+
+router.get(
+  "/client/:status",
+  authMiddleWare.authorize("client"),
+  projectCtrl.getMyProjectsClient
+);
 
 router.use(authMiddleWare.authorize("designer"));
 
 router.post("/", projectCtrl.createProject);
-router.get("/pending", projectCtrl.getMyPendingProjects);
+router.get("/designer/:status", projectCtrl.getMyProjectsDesigner);
 
 router
   .route("/:project_id")
-  .get(projectCtrl.getProject)
   .put(projectCtrl.editProject)
   .delete(projectCtrl.deleteProject);
 
+router.put("/:project_id/sent-review", projectCtrl.sentProjectToReview);
+
 router.put("/progress/:project_id", projectCtrl.updateProjectProgress);
 
-router.post(
+router.put(
   "/before/:project_id",
   uploadSingleFile(["image/png", "image/jpeg"], "image", 1024 * 1024 * 10),
   projectCtrl.addBeforeProjectToPortfolio
 );
 
 router.delete(
-    "/before/:project_id/:Item_id",
-    projectCtrl.deleteBeforeProjectToPortifolio
+  "/before/:project_id/item/:Item_id",
+  projectCtrl.deleteBeforeProjectToPortifolio
 );
 
-router.post(
-    "/after/:project_id",
-    uploadSingleFile(["image/png", "image/jpeg"], "image", 1024 * 1024 * 10),
-    projectCtrl.addAfterProjectToPortfolio
+router.put(
+  "/after/:project_id",
+  uploadSingleFile(["image/png", "image/jpeg"], "image", 1024 * 1024 * 10),
+  projectCtrl.addAfterProjectToPortfolio
 );
 
 router.delete(
-    "/after/:project_id/:Item_id",
-    projectCtrl.deleteAfterProjectToPortifolio
+  "/after/:project_id/item/:Item_id",
+  projectCtrl.deleteAfterProjectToPortifolio
 );
 
-router.put('/:project_id/complete', projectCtrl.complete)
+router.put("/:project_id/complete", projectCtrl.complete);
 
 export default router;

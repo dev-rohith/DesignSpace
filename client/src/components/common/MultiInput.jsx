@@ -1,24 +1,24 @@
 import { Plus, X } from "lucide-react";
 import { memo, useCallback, useState } from "react";
 
-const SkillSection = memo(
+const MultiInput = memo(
   ({
     title,
     icon: Icon,
     items = [],
     field,
     isEditing,
-    onAddSkill,
-    onRemoveSkill,
+    onAddInput,
+    onRemoveInput,
     errors,
   }) => {
-    const [newSkill, setNewSkill] = useState("");
+    const [newInput, setNewInput] = useState("");
 
     const handleAdd = useCallback(() => {
-      if (!newSkill.trim()) return;
-      onAddSkill(field, newSkill);
-      setNewSkill("");
-    }, [field, newSkill, onAddSkill]);
+      if (!newInput.trim()) return;
+      onAddInput(field, newInput);
+      setNewInput("");
+    }, [field, newInput, onAddInput]);
 
     return (
       <div className="space-y-4">
@@ -40,11 +40,11 @@ const SkillSection = memo(
                 type="text"
                 placeholder={`Add ${title.toLowerCase()}`}
                 className="px-2 py-1 text-sm border border-violet-200 rounded-md"
-                value={newSkill}
-                onChange={(e) => setNewSkill(e.target.value)}
+                value={newInput}
+                onChange={(e) => setNewInput(e.target.value)}
               />
               <button
-              type="button"
+                type="button"
                 className="text-violet-600 hover:text-violet-800 cursor-pointer"
                 onClick={handleAdd}
               >
@@ -63,7 +63,7 @@ const SkillSection = memo(
               {isEditing && (
                 <button
                   className="ml-2 cursor-pointer"
-                  onClick={() => onRemoveSkill(field, item)}
+                  onClick={() => onRemoveInput(field, item)}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -76,4 +76,4 @@ const SkillSection = memo(
   }
 );
 
-export default SkillSection;
+export default MultiInput;

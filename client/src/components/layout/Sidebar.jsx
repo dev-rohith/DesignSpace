@@ -1,4 +1,5 @@
 import {
+  CalendarArrowDown,
   ContactRound,
   FileUser,
   MessageCircle,
@@ -9,7 +10,7 @@ import {
 } from "lucide-react";
 import { SidebarProvider } from "../../context/SidebarProvider";
 import SidebarItem from "../common/SidebarItem";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const Sidebar = () => {
@@ -30,20 +31,38 @@ const Sidebar = () => {
           to="/design-space/chat"
         />
       )}
+
       {(!user || user.role === "client") && (
         <SidebarItem
-          icon={<SquareChartGantt />}
-          text="Projects"
+          icon={<CalendarArrowDown />}
+          text="pending projects"
           to="/design-space/pending-projects"
         />
       )}
 
-      {user?.role === "client" && (
-        <SidebarItem
-          icon={<SquareKanban />}
-          text="Projects"
-          to="/design-space/pending-projects"
-        />
+      {(!user || user?.role === "client") && (
+        <SidebarItem icon={<ContactRound />} text="manage projects">
+          <nav className="flex flex-col text-sm bg-white shadow-md  mr-3">
+            <Link
+              to="/design-space/inprogress-projects"
+              className="px-2 py-1 hover:bg-gray-100"
+            >
+              in progress &#10132;
+            </Link>
+            <Link
+              to="/design-space/inreview-projects"
+              className="px-2 py-1 hover:bg-gray-100"
+            >
+              in review &#10132;
+            </Link>
+            <Link
+              to="/design-space/completed-projects"
+              className="px-2 py-1 hover:bg-gray-100"
+            >
+              completed &#10132;
+            </Link>
+          </nav>
+        </SidebarItem>
       )}
     </SidebarProvider>
   );

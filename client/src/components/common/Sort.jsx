@@ -15,7 +15,7 @@ const Sort = ({ options = [] }) => {
     <div className="relative inline-block">
       <select
         onChange={handleChange}
-        defaultValue={options[0]?.value}
+        defaultValue={searchParams.get("sort") || options[0]?.value}
         className="appearance-none bg-white px-4 py-2 pr-10 text-sm border border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer"
       >
         {options.map(({ name, value }) => (
