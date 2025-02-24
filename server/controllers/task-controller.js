@@ -6,6 +6,7 @@ import { getCoordinates } from "../services/georeverse-coding.js";
 import { getIpInfo } from "../services/getIpInfo-service.js";
 import AppError from "../utils/app-error-util.js";
 import catchAsync from "../utils/catch-async-util.js";
+import APIFeatures from "../utils/api-features.js";
 
 const taskCtrl = {};
 
@@ -42,7 +43,7 @@ taskCtrl.createTask = catchAsync(async (req, res, next) => {
   const task = await Task.create(taskData);
   if (!task) return next(new AppError("Error while creating the task", 400));
 
-  res.json(task);
+  res.json({ message: "Task created successfully" });
 });
 
 taskCtrl.updateTask = catchAsync(async (req, res, next) => {
@@ -68,7 +69,7 @@ taskCtrl.updateTask = catchAsync(async (req, res, next) => {
     dueDate,
     isVisibleToClient,
     address,
-    status: "in_progress",
+    status: "inprogress",
   };
 
   const { lat, lng } = await getCoordinates(address);
@@ -96,6 +97,45 @@ taskCtrl.updateTask = catchAsync(async (req, res, next) => {
   res.json(task);
 });
 
+taskCtrl.getDesignerTasks = catchAsync(async (req, res, next) => {
+  const { status } = req.params;
+    const features = new APIFeatures(
+      Task.find({
+        designer: req.user.userId,
+        status,
+      }),
+      req.query
+    )
+      .filterAndSearch("title")
+      .paginate(6)
+      .sort();
+  
+    const finalQuery = features.query
+    .select("-address -isVisibleToClient -location -designer -workUpdates")
+    .populate("associate", "firstName lastName profilePicture status")
+    .lean();
+
+    const myPendingTasks = await finalQuery;
+  
+    const total = await Task.countDocuments({ status });
+    const perPage = parseInt(req.query.limit) || 6;
+    const totalPages = Math.ceil(total / perPage);
+    const page = parseInt(req.query.page) || 1;
+  
+    res.json({ page, perPage, totalPages, total, data: myPendingTasks });
+
+});
+
+taskCtrl.getMyTaskDesinger = catchAsync(async (req, res, next) => {
+  const { task_id } = req.params;
+  const task = await Task.findOne({
+    _id: task_id,
+    designer: req.user.userId,
+  }).lean();
+  if (!task) return next(new AppError("task was not found", 400));
+  res.json(task);
+});
+
 taskCtrl.assignAssociateToTheTask = catchAsync(async (req, res, next) => {
   const { task_id, associate_id } = req.params;
   const associate = await User.findOne({
@@ -107,31 +147,84 @@ taskCtrl.assignAssociateToTheTask = catchAsync(async (req, res, next) => {
       new AppError("associate is not found or not an associate", 404)
     );
 
-  const updatedProject = await Task.findByIdAndUpdate(
+  const updatedTask = await Task.findByIdAndUpdate(
     task_id,
     { associate: associate_id, status: "in_progress" },
     { new: true }
-  ).lean();
-  if (!updatedProject)
+  ).select('-designer').populate("associate", "firstName lastName profilePicture").lean();
+  if (!updatedTask)
     return next(new AppError("Error while updating the project", 400));
   // mail need to send to the associate email saying that project is assingned with prject info ------------------------------------------------
   res.json({
     message: "Associate assigned to task successfully",
-    data: updatedProject,
+    data: updatedTask,
   });
-});
-
-taskCtrl.getMyPendingTasks = catchAsync(async (req, res, next) => {
-  const myPendingTasks = await Task.find({
-    designer: req.user.userId,
-    status: "pending",
-  });
-  res.json(myPendingTasks);
 });
 
 ////////////////////---associate-actions------/////////////////////////////////////////////////////////
 
-taskCtrl.getMyTask = catchAsync(async (req, res, next) => {
+taskCtrl.getAllLiveTasks = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(
+    Task.find({
+      status: "pending",
+    }),
+    req.query
+  )
+    .filterAndSearch("title")
+    .paginate(6)
+    .sort();
+
+  const finalQuery = features.query
+  .select("-isVisibleToClient -location -associate -workUpdates")
+  .populate("designer", "firstName lastName profilePicture status")
+  .lean();
+
+  const myPendingTasks = await finalQuery;
+
+  const total = await Task.countDocuments({ status: 'pending' });
+  const perPage = parseInt(req.query.limit) || 6;
+  const totalPages = Math.ceil(total / perPage);
+  const page = parseInt(req.query.page) || 1;
+
+  res.json({ page, perPage, totalPages, total, data: myPendingTasks });
+});
+
+taskCtrl.getAssociateTasks = catchAsync(async (req, res, next) => {
+  const { status } = req.params;
+  const features = new APIFeatures(
+    Task.find({
+      associate: req.user.userId,
+      status,
+    }),
+    req.query
+  )
+    .filterAndSearch("title")
+    .paginate(6)
+    .sort();
+
+  const finalQuery = features.query
+  .select("-address -isVisibleToClient -location -associate -workUpdates")
+  .populate("designer", "firstName lastName profilePicture status")
+  .lean();
+
+  const myTasks = await finalQuery;
+
+  const total = await Task.countDocuments({ status });
+  const perPage = parseInt(req.query.limit) || 6;
+  const totalPages = Math.ceil(total / perPage);
+  const page = parseInt(req.query.page) || 1;
+
+  res.json({ page, perPage, totalPages, total, data: myTasks });
+});
+
+taskCtrl.getTaskDettails = catchAsync(async (req, res, next) => {
+  const { task_id } = req.params;
+  const task = await Task.findOne({ _id: task_id, status: "pending" }).select('-workUpdates').populate('designer', 'firstName lastName profilePicture').lean();
+  if (!task) return next(new AppError("task was not found", 400));
+  res.json(task);
+});
+
+taskCtrl.getMyTaskAssociate = catchAsync(async (req, res, next) => {
   const { task_id } = req.params;
   const task = await Task.findOne({ associate: req.user.userId, _id: task_id })
     .populate("designer", "firstName lastName profilePicture")
@@ -144,7 +237,7 @@ taskCtrl.acceptByAssociate = catchAsync(async (req, res, next) => {
   const { task_id } = req.params;
   const updatedProject = await Task.findByIdAndUpdate(
     task_id,
-    { associate: req.user.userId, status: "in_progress" },
+    { associate: req.user.userId, status: "inprogress" },
     { new: true }
   ).lean();
   if (!updatedProject)
@@ -155,20 +248,6 @@ taskCtrl.acceptByAssociate = catchAsync(async (req, res, next) => {
   });
 });
 
-taskCtrl.getAllPendingTasks = catchAsync(async (req, res, next) => {
-  const myPendingTasks = await Task.find({
-    status: "pending",
-  });
-  res.json(myPendingTasks);
-});
-
-//////////////////////////////-----update the progress-----////////////////////////////////////////////
-
-taskCtrl.getMyProgressTasks = catchAsync(async (req, res, next) => {
-  const MyProgressTasks = await Task.find({ status: "in_progress" });
-  res.json(MyProgressTasks);
-});
-
 taskCtrl.updateTaskProgress = catchAsync(async (req, res, next) => {
   if (!req.files) return next(new AppError("Files are required", 400));
 
@@ -176,7 +255,7 @@ taskCtrl.updateTaskProgress = catchAsync(async (req, res, next) => {
   const ip = "206.253.208.100";
   const { description } = req.body;
 
-  const task = await Task.findOne({ _id: task_id, status: "in_progress" });
+  const task = await Task.findOne({ _id: task_id, status: "inprogress" });
   if (!task) return next(new AppError("task not found", 404));
 
   const workUpdate = { description, images: [] };
@@ -214,9 +293,11 @@ taskCtrl.updateTaskProgress = catchAsync(async (req, res, next) => {
 
   await task.save();
 
+  const updatedWork = task.workUpdates[task.workUpdates.length - 1];
+
   res.status(200).json({
     status: "success",
-    data: task,
+    data: updatedWork,
   });
 });
 
@@ -225,7 +306,7 @@ taskCtrl.deleteProgressItem = catchAsync(async (req, res, next) => {
   const task = await Task.findOne({
     _id: task_id,
     associate: req.user.userId,
-    status: "in_progress",
+    status: "inprogress",
   });
   if (!task)
     return next(new AppError("task was not found to delete prgress Item", 400));
@@ -239,13 +320,11 @@ taskCtrl.deleteProgressItem = catchAsync(async (req, res, next) => {
     (workItem) => `${workItem._id}` !== delete_id
   );
   task.save();
-  const deletedItemImagesPromises = deleteItem.images.map((image) => {
+  const deleteImagesPromises = deleteItem.images.map((image) => {
     return CloudinaryService.deleteFile(image.public_id, "image");
   });
 
-  const removeItemsFromCloudinary = await Promise.all(
-    deletedItemImagesPromises
-  );
+  await Promise.all(deleteImagesPromises);
 
   res.json({
     message: "item deleted successfully",

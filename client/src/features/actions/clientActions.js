@@ -3,9 +3,9 @@ import axiosInstance from "../../apis/axiosIntance";
 
 export const getClientPendingProjects = createAsyncThunk(
     "client/getClientPendingProjects",
-    async (_, { rejectWithValue }) => {
+    async (url, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.get("projects/client/pending");
+            const response = await axiosInstance.get(url);
             return response.data;   
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -16,9 +16,9 @@ export const getClientPendingProjects = createAsyncThunk(
 
 export const getClientInprogressProjects = createAsyncThunk(
     "client/getClientInprogressProjects",
-    async (_, { rejectWithValue }) => {
+    async (url, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.get("projects/client/inprogress");
+            const response = await axiosInstance.get(url);
             return response.data;   
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -28,9 +28,9 @@ export const getClientInprogressProjects = createAsyncThunk(
 
 export const getClientInReviewProjects = createAsyncThunk(
     "client/getClientInReviewProjects",
-    async (_, { rejectWithValue }) => {
+    async (url, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.get("projects/client/inreview");
+            const response = await axiosInstance.get(url);
             return response.data;   
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -41,9 +41,9 @@ export const getClientInReviewProjects = createAsyncThunk(
 
 export const getClientCompletedProjects = createAsyncThunk(
     "client/getClientCompletedProjects",
-    async (_, { rejectWithValue }) => {
+    async (url, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.get("projects/client/completed");
+            const response = await axiosInstance.get(url);
             return response.data;   
         } catch (error) {
             return rejectWithValue(error.response.data);

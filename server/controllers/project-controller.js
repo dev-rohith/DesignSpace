@@ -1,3 +1,4 @@
+import DesignerProfile from "../models/designer-profile-model.js";
 import Project from "../models/project-model.js";
 import CloudinaryService from "../services/cloudinary-service.js";
 import { getCoordinates } from "../services/georeverse-coding.js";
@@ -122,14 +123,29 @@ projectCtrl.getMyProjectsDesigner = catchAsync(async (req, res, next) => {
 
 projectCtrl.getMyProjectsClient = catchAsync(async (req, res, next) => {
   const { status } = req.params;
-  const myPendingProjects = await Project.find({
-    client: req.user.userId,
-    status,
-  })
+  const features = new APIFeatures(
+    Project.find({
+      client: req.user.userId,
+      status,
+    }),
+    req.query
+  )
+    .filterAndSearch("title")
+    .paginate(8)
+    .sort();
+
+  const finalQuery = features.query
     .populate("designer", "firstName lastName profilePicture")
     .select("title description budget  minimumDays isPaid createdAt updatedAt")
     .lean();
-  res.json(myPendingProjects);
+  const myPendingProjects = await finalQuery;
+
+  const total = await Project.countDocuments({ status });
+  const perPage = parseInt(req.query.limit) || 6;
+  const totalPages = Math.ceil(total / perPage);
+  const page = parseInt(req.query.page) || 1;
+
+  res.json({ page, perPage, totalPages, total, data: myPendingProjects });
 });
 
 projectCtrl.updateProjectProgress = catchAsync(async (req, res, next) => {
@@ -183,7 +199,10 @@ projectCtrl.addBeforeProjectToPortfolio = catchAsync(async (req, res, next) => {
 
   await project.save();
 
-  res.json({ message: "Uploaded successfully", data: project.beforePictures[project.beforePictures.length - 1] });
+  res.json({
+    message: "Uploaded successfully",
+    data: project.beforePictures[project.beforePictures.length - 1],
+  });
 });
 
 projectCtrl.deleteBeforeProjectToPortifolio = catchAsync(
@@ -234,7 +253,10 @@ projectCtrl.addAfterProjectToPortfolio = catchAsync(async (req, res, next) => {
 
   await project.save();
 
-  res.json({ message: "Uploaded successfully", data: project.afterPictures[project.afterPictures.length - 1] });
+  res.json({
+    message: "Uploaded successfully",
+    data: project.afterPictures[project.afterPictures.length - 1],
+  });
 });
 
 projectCtrl.deleteAfterProjectToPortifolio = catchAsync(
@@ -264,8 +286,15 @@ projectCtrl.sentProjectToReview = catchAsync(async (req, res, next) => {
   const { project_id } = req.params;
   const project = await Project.findById(project_id);
   if (!project) return next(new AppError("Project not found", 404));
-  if (project.status !== "inprogress") return next(new AppError("Project is not in progress", 400));
-  if(project.completion_percentage !== 100) return next(new AppError("Project is not completed project completion percentage should be 100% to be sent to review", 400));
+  if (project.status !== "inprogress")
+    return next(new AppError("Project is not in progress", 400));
+  if (project.completion_percentage !== 100)
+    return next(
+      new AppError(
+        "Project is not completed project completion percentage should be 100% to be sent to review",
+        400
+      )
+    );
   project.status = "review";
   project.save();
   res.json({ message: "Project is successfully sent to review" });
@@ -290,18 +319,50 @@ projectCtrl.acceptProject = catchAsync(async (req, res, next) => {
   });
 });
 
+projectCtrl.clientRating = catchAsync(async (req, res, next) => {
+  const { project_id } = req.params;
+  const { projectReview, designerRating, designerReview } = req.body;
+
+  const project = await Project.findById(project_id);
+  if (!project) return next(new AppError("Project not found", 404));
+  if (project.status !== "review")
+    return next(new AppError("Project is not in review stage", 400));
+  if(project.review) return next(new AppError("Project is already reviewed You cant do it again", 400));
+  project.review = projectReview;
+  const designer = await DesignerProfile.findOne( {user: project.designer} );
+  
+  if (!designer) return next(new AppError("Designer not found", 404));
+  
+  designer.ratings.push({
+    givenBy: req.user.userId,
+    rating : designerRating,
+    review : designerReview,
+  });
+
+  await project.save();
+  await designer.updateAverageRating();
+
+  res.json({ message: "Project review is successfully submitted" });
+});
+
 projectCtrl.complete = catchAsync(async (req, res, next) => {
   const { project_id } = req.params;
 
   const project = await Project.findById(project_id);
-
   if (!project) return next(new AppError("project is not found", 404));
+
   if (project.status !== "review")
-    return next(new AppError("You can only upload in review state", 400));
-  if (
-    project.beforePictures.length === 0 &&
-    project.afterPictures.length === 0
-  )
+    return next(
+      new AppError("You can only complete the project in review state", 400)
+    );
+  if (!project.review)
+    return next(
+      new AppError(
+        "You can't complete the project without review! Take an review from the customer side first to complete the project!",
+        400
+      )
+    );
+  if (project.beforePictures.length === 0 && project.afterPictures.length === 0)
     next(
       new AppError(
         "Add atleast one image on before and after project to complete",

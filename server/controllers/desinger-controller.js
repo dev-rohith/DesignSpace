@@ -25,7 +25,7 @@ designerProfileCtrl.getAllDesingers = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(DesignerProfile, req.query)
     .filterAndSearch()
     .sort()
-    .paginate();
+    .paginate(8);
 
   const finalQuery = features.query
     .select("-portfolio -address -location")
@@ -33,8 +33,13 @@ designerProfileCtrl.getAllDesingers = catchAsync(async (req, res, next) => {
     .lean();
 
   const desingers = await finalQuery;
+  
+const total = await DesignerProfile.countDocuments();
+const perPage = parseInt(req.query.limit) || 6;
+const totalPages = Math.ceil(total / perPage);
+const page = parseInt(req.query.page) || 1;
 
-  res.json(desingers);
+res.json({ page, perPage, totalPages, total, data: desingers });
 });
 
 designerProfileCtrl.getAllPortfolios = catchAsync(async (req, res, next) => {

@@ -12,7 +12,6 @@ const AssociateApplicationProcess = () => {
           </h1>
         </div>
 
-        {/* Introduction Card */}
         <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-green-100">
           <p className="text-lg text-gray-700 leading-relaxed">
             Join our dynamic team as an Associate and be part of something
@@ -21,7 +20,6 @@ const AssociateApplicationProcess = () => {
           </p>
         </div>
 
-        {/* Available Roles */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <Star className="w-5 h-5 text-violet-500" />
@@ -48,7 +46,6 @@ const AssociateApplicationProcess = () => {
           </div>
         </div>
 
-        {/* Key Points */}
         <div className="space-y-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
             <Shield className="w-5 h-5 text-green-500" />

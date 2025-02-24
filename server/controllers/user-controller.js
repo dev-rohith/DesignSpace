@@ -119,6 +119,17 @@ userCtrl.getDesigners = catchAsync(async (req, res, next) => {
   res.json(desinger);
 });
 
+userCtrl.getAssociates = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(User.find({ role: "associate" }), req.query)
+    .filterAndSearch("firstName")
+    .paginate();
+  const finalQuery = features.query
+    .select("profilePicture lastName firstName status")
+    .lean();
+  const desinger = await finalQuery;
+  res.json(desinger);
+});
+
 userCtrl.UserStatusController = catchAsync(async (req, res, next) => {
   const { value, error } = userStatusChangeValidator.validate({
     ...req.body,

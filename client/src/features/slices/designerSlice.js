@@ -18,8 +18,6 @@ const designerSlice = createSlice({
     isProfileEmpty: false,
     portfolio: null,
     isPortfolioUpdating: false,
-    projects: [],
-    tasks: [],
     isLoading: false,
   },
   reducers: {},

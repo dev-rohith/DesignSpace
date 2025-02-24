@@ -16,9 +16,15 @@ router.get(
 
 router.put(
   "/accept/:project_id",
-  authMiddleWare.authorize("client"),
+  authMiddleWare.authorize("client"),   //payment here ---------------------------------
   projectCtrl.acceptProject
 );
+
+router.put(
+  "/review/:project_id",
+  authMiddleWare.authorize("client"),
+  projectCtrl.clientRating
+)
 
 router.get(
   "/client/:status",

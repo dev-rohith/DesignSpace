@@ -6,7 +6,6 @@ import TopDesingerCard from "../../components/ui/TopDesingerCard";
 import { getLanding } from "../../features/actions/landingActions";
 import UserReviewItem from "../../components/ui/UserReviewItem";
 import { AddLandingItem, ErrorState, Spinner } from "../../components";
-import AddLandingCarouselItem from "../../components/common/AddLandingItem";
 import {
   deleteCaroseulItem,
   deleteCustomerReviewItem,

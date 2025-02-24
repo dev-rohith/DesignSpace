@@ -7,7 +7,6 @@ const associateSlice = createSlice({
     profile: null,
     isProfileUpdating: false,
     profileErrors: null,
-    tasks: [],
     isLoading: false,
   },
   reducers: {},

@@ -70,6 +70,7 @@ const projectSchema = new Schema(
       },
     ],
     milestones: [String],
+    review: String,
   },
   { timestamps: true }
 );

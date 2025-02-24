@@ -8,9 +8,7 @@ import {
 import toast from "react-hot-toast";
 
 const PortfolioItemOperations = ({ editId, handleCloseModal }) => {
-  const { portfolio, isPortfolioUpdating } = useSelector(
-    (store) => store.designer
-  );
+  const { portfolio, isPortfolioUpdating } = useSelector((store) => store.designer);
   const currentItem = portfolio.find((item) => item._id === editId);
 
   const dispatch = useDispatch();

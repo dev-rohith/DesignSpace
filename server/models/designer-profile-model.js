@@ -43,7 +43,10 @@ const designerProfileSchema = new Schema({
   ],
 
   // Ratings and Reviews
-  average_rating: Number,
+  average_rating: {
+    type: Number,
+    default: 0,
+  },
   ratings: [
     {
       givenBy: {
@@ -59,7 +62,6 @@ const designerProfileSchema = new Schema({
       date: { type: Date, default: Date.now },
     },
   ],
-  //average rating is calculated on frontend
 
   // Contact information
   address: {
@@ -87,6 +89,7 @@ const designerProfileSchema = new Schema({
       required: true,
     },
   },
+
   location: {
     type: {
       type: String,
@@ -94,13 +97,22 @@ const designerProfileSchema = new Schema({
       enum: ["Point"],
     },
     coordinates: {
-      type: [Number], // [longitude, latitude]
+      type: [Number], 
       required: true,
     },
   },
 });
 
-// Add geospatial index for location
+designerProfileSchema.methods.updateAverageRating = async function () {
+  if (this.ratings.length === 0) {
+    this.average_rating = 0;
+  } else {
+    const total = this.ratings.reduce((sum, r) => sum + r.rating, 0);
+    this.average_rating = total / this.ratings.length;
+  }
+  await this.save();
+};
+
 designerProfileSchema.index({ location: "2dsphere" });
 
 const DesignerProfile = model("DesignerProfile", designerProfileSchema);

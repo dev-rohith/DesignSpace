@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import ApplicationTableRow from "./ApplicationTableRow";
+import ApplicationTableRow from "../applications/ApplicationTableRow";
 
 const PendingApplicationsTable = () => {
   const { applications } = useSelector((store) => store.admin);
@@ -10,7 +10,7 @@ const PendingApplicationsTable = () => {
         No applications found
       </p>
     );
-    
+
   return (
     <table className="w-full border-collapse">
       <thead>

@@ -1,248 +1,244 @@
-import React, { useState } from 'react';
-import { format, formatDistance } from 'date-fns';
-import { 
-  MapPin, 
-  Calendar, 
-  DollarSign, 
-  Clock, 
-  CheckCircle,
-  AlertCircle,
-  Image as ImageIcon,
-  User,
+import React, { useEffect, useState } from "react";
+import {
+  MapPin,
+  DollarSign,
+  Clock,
   Target,
-  X,
-  CreditCard
-} from 'lucide-react';
+  CreditCard,
+  Loader,
+  BadgeIndianRupee,
+  IndianRupeeIcon,
+} from "lucide-react";
+import { useDispatch } from "react-redux";
+import { getProjectDetails, reviewProject } from "../../features/actions/projectActions";
+import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import ErrorState from "../common/placeholders/ErrorState";
+import ProjectImages from "./clientProjectDetails/ProjectImages";
+import LocationMap from "../common/LocationMap";
+import ClientRatingAndReview from "./clientProjectDetails/ClientRatingAndReview";
+import {format, formatDistanceToNow } from "date-fns";
 
-const ProjectDetailsView = ({ 
-  title,
-  description,
-  address,
-  designer,
-  status,
-  minimumDays,
-  budget,
-  isPaid,
-  completion_percentage,
-  beforePrictures = [],
-  afterPictures = [],
-  createdAt,
-  updatedAt
-}) => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const hasImages = beforePrictures.length > 0 || afterPictures.length > 0;
+const ProjectDetailsView = () => {
+  const [projectDetails, setProjectDetails] = useState(null);
+  const [location, setLocation] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const formatDateTime = (date) => {
-    return format(new Date(date), "MMM d, yyyy 'at' h:mm a");
-  };
+  const { project_id } = useParams();
+  const dispatch = useDispatch();
 
-  const getTimeDistance = (date) => {
-    return formatDistance(new Date(date), new Date(), { addSuffix: true });
-  };
+  useEffect(() => {
+    const fetchProject = async () => {
+      const actionResult = await dispatch(getProjectDetails(project_id));
+      if (getProjectDetails.fulfilled.match(actionResult)) {
+        setProjectDetails(actionResult.payload);
+        setIsLoading(false);
+      } else if (getProjectDetails.rejected.match(actionResult)) {
+        toast.error(actionResult.payload.message);
+      }
+    };
+    fetchProject();
+  }, [dispatch, project_id]);
 
-  const ImageGallery = ({ images, title }) => {
-    if (!images || images.length === 0) return null;
+  useEffect(() => {
+    if (projectDetails && projectDetails.location) {
+      setLocation([
+        {
+          latitude: projectDetails.location.lat,
+          longitude: projectDetails.location.lng,
+        },
+      ]);
+    }
+  }, [projectDetails]);
 
+  const handleReviewSubmit = async (data) => {
+    console.log(data)
+    const actionResult = await dispatch(
+       reviewProject({
+         id: projectDetails._id,
+         formData : data,
+       })
+     );
+     if (reviewProject.fulfilled.match(actionResult)) {
+       toast.success(actionResult.payload.message);
+     } else if (reviewProject.rejected.match(actionResult)) {
+       toast.error(actionResult.payload.message);
+     }
+ }
+
+  if (isLoading) {
     return (
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <ImageIcon className="w-5 h-5 text-violet-600" />
-          {title}
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {images.map((image) => (
-            <div 
-              key={image._id}
-              className="relative group cursor-pointer"
-              onClick={() => setSelectedImage(image)}
-            >
-              <img
-                src={image.url}
-                alt={title}
-                className="w-full h-48 object-cover transform transition-transform group-hover:opacity-90"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-          ))}
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader className="w-8 h-8 animate-spin text-violet-600" />
       </div>
     );
-  };
+  }
 
-  const ImageModal = () => {
-    if (!selectedImage) return null;
+  if (!projectDetails)
+    return <ErrorState error="Error while fetching project details" />;
 
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
-        <button
-          onClick={() => setSelectedImage(null)}
-          className="absolute top-4 right-4 text-white hover:text-gray-300"
-        >
-          <X className="w-8 h-8" />
-        </button>
-        <img
-          src={selectedImage.url}
-          alt="Full size"
-          className="max-w-full max-h-[90vh] object-contain"
-        />
-      </div>
-    );
-  };
+  const {
+    beforePictures,
+    afterPictures,
+    title,
+    description,
+    status,
+    minimumDays,
+    budget,
+    completion_percentage,
+    isPaid,
+    updatedAt,
+  } = projectDetails;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 to-gray-50 py-6 px-4">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header Section */}
-        <div className="bg-white shadow p-6">
+        <div className="bg-white rounded-lg shadow p-6">
           <div className="flex flex-col lg:flex-row justify-between items-start gap-6 mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
-              <p className="text-lg text-gray-600">{description}</p>
+              <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+              <p className="text-gray-600 mt-2">{description}</p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className={`px-4 py-2 text-sm font-medium ${
-                status === 'pending' ? 'bg-amber-500 text-white' :
-                status === 'review' ? 'bg-violet-500 text-white' :
-                status === 'completed' ? 'bg-green-500 text-white' :
-                'bg-blue-500 text-white'
-              }`}>
-                {status.toUpperCase()}
+            <span
+              className={`px-3 py-1 rounded-full text-sm font-medium ${
+                status === "pending"
+                  ? "bg-yellow-100 text-yellow-800"
+                  : status === "inprogress"
+                  ? "bg-green-100 text-green-800"
+                  : status === "completed"
+                  ? "bg-blue-100 text-blue-800"
+                  : "bg-gray-100 text-gray-800"
+              }`}
+            >
+              {status}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-4 rounded-lg shadow-sm flex items-center gap-3">
+              <Clock className="w-5 h-5 text-violet-600" />
+              <div>
+                <p className="text-sm text-gray-600">Timeline</p>
+                <p className="text-lg font-semibold">{minimumDays} days</p>
               </div>
-              <div className={`px-4 py-2 text-sm font-medium ${
-                isPaid ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-              }`}>
-                {isPaid ? 'PAID' : 'PAYMENT PENDING'}
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-sm flex items-center gap-3">
+              <BadgeIndianRupee className="w-6 h-6 text-violet-600" />
+              <div>
+                <p className="text-sm text-gray-600">Budget</p>
+                <p className="text-lg font-semibold flex items-center">
+                  <IndianRupeeIcon size={20} /> {budget}
+                </p>
+              </div>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-sm flex items-center gap-3">
+              <Target className="w-5 h-5 text-violet-600" />
+              <div>
+                <p className="text-sm text-gray-600">Progress</p>
+                <p className="text-lg font-semibold">
+                  {completion_percentage}% Complete
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center gap-3 bg-gradient-to-r from-violet-50 to-violet-100 p-4">
-              <Clock className="w-6 h-6 text-violet-600" />
-              <div>
-                <p className="text-sm text-gray-500">Timeline</p>
-                <p className="font-semibold">{minimumDays} days</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 bg-gradient-to-r from-violet-50 to-violet-100 p-4">
-              <DollarSign className="w-6 h-6 text-violet-600" />
-              <div>
-                <p className="text-sm text-gray-500">Budget</p>
-                <p className="font-semibold">${budget.toLocaleString()}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 bg-gradient-to-r from-violet-50 to-violet-100 p-4">
-              <Target className="w-6 h-6 text-violet-600" />
-              <div>
-                <p className="text-sm text-gray-500">Progress</p>
-                <p className="font-semibold">{completion_percentage}% Complete</p>
-              </div>
-            </div>
-          </div>
-
-          {status === 'pending' && !isPaid && (
-            <div className="mt-6">
-              <button className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-violet-600 to-violet-800 text-white font-medium hover:from-violet-700 hover:to-violet-900 flex items-center justify-center gap-2">
-                <CreditCard className="w-5 h-5" />
-                Make Payment to Process
-              </button>
-            </div>
+          {status === "pending" && !isPaid && (
+            <button className="mt-6 w-full sm:w-auto px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg flex items-center justify-center gap-2">
+              <CreditCard className="w-5 h-5" /> Make Payment
+            </button>
           )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
-          <div className={`${hasImages ? 'lg:col-span-2' : ''} space-y-6`}>
-            {/* Progress Bar */}
-            <div className="bg-white shadow p-6">
-              <h2 className="text-2xl font-semibold mb-6">Project Progress</h2>
-              <div className="space-y-4">
-                <div className="h-4 bg-gray-100">
-                  <div 
-                    className="h-full bg-gradient-to-r from-violet-500 to-violet-600 transition-all duration-500"
-                    style={{ width: `${completion_percentage}%` }}
-                  />
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-semibold  mb-2">Project Progress</h3>
+                
+                <div
+                  className={`text-2xl font-bold ${
+                    completion_percentage === 100
+                      ? "text-green-500"
+                      : "text-violet-600"
+                  }`}
+                >
+                  {completion_percentage} %
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>Start</span>
-                  <span>{completion_percentage}% Completed</span>
-                </div>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div
+                  className="bg-violet-600 h-2.5 rounded-full transition-all duration-300"
+                  style={{
+                    width: `${Math.min(
+                      Math.max(completion_percentage, 0),
+                      100
+                    )}%`,
+                  }}
+                />
+                <div className="text-xs ml-1 font-medium text-gray-500">Progress updated on: {updatedAt
+                                    ? `${format(
+                                        new Date(updatedAt),
+                                        "PPpp"
+                                      )} (${formatDistanceToNow(new Date(updatedAt))} ago)`
+                                    : "N/A"}</div>
               </div>
             </div>
-
-            {/* Image Galleries - Only render if images exist */}
-            {hasImages && (
-              <div className="bg-white shadow p-6">
-                <ImageGallery images={beforePrictures} title="Before Images" />
-                <ImageGallery images={afterPictures} title="After Images" />
-              </div>
+            <ProjectImages
+              afterPictures={afterPictures}
+              beforePictures={beforePictures}
+            />
+            {status === "review" && (
+                <ClientRatingAndReview designerPicture={projectDetails.designer?.profilePicture} handleReviewSubmit={handleReviewSubmit} />
             )}
           </div>
-
-          {/* Side Details */}
           <div className="space-y-6">
-            {/* Designer Info */}
-            <div className="bg-white shadow p-6">
+            <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-xl font-semibold mb-4">Designer</h2>
-              <div className="flex items-center gap-4 bg-gradient-to-r from-violet-50 to-violet-100 p-4">
+              <div className="flex items-center gap-4 bg-violet-50 p-4 rounded-lg">
                 <img
-                  src={designer.profilePicture}
-                  alt={`${designer.firstName} ${designer.lastName}`}
-                  className="w-16 h-16 object-cover"
+                  src={projectDetails.designer?.profilePicture}
+                  alt={projectDetails.designer?.firstName}
+                  className="w-16 h-16 object-cover rounded-full"
                 />
                 <div>
                   <p className="font-semibold text-lg">
-                    {designer.firstName} {designer.lastName}
+                    {projectDetails.designer?.firstName}{" "}
+                    {projectDetails.designer?.lastName}
                   </p>
                   <p className="text-gray-600">Project Designer</p>
                 </div>
               </div>
             </div>
-
-            {/* Location Info */}
-            <div className="bg-white shadow p-6">
+            <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-xl font-semibold mb-4">Location</h2>
-              <div className="flex items-start gap-3 bg-gradient-to-r from-violet-50 to-violet-100 p-4">
+              <div className="flex items-start gap-3 bg-violet-50 p-4 rounded-lg">
                 <MapPin className="w-5 h-5 text-violet-600 mt-1" />
                 <div>
-                  <p className="font-medium">{address.street}</p>
-                  <p className="text-gray-600">{address.city}, {address.state}</p>
-                  <p className="text-gray-600">{address.country} - {address.postal_code}</p>
+                  <p className="font-medium">
+                    {projectDetails.address?.house_number}
+                  </p>
+                  <p className="font-medium">
+                    {projectDetails.address?.street}
+                  </p>
+                  <p className="text-gray-600">
+                    {projectDetails.address?.city},{" "}
+                    {projectDetails.address?.state}
+                  </p>
+                  <p className="text-gray-600">
+                    {projectDetails.address?.country} -{" "}
+                    {projectDetails.address?.postal_code}
+                  </p>
                 </div>
               </div>
             </div>
-
-            {/* Timeline */}
-            <div className="bg-white shadow p-6">
-              <h2 className="text-xl font-semibold mb-4">Timeline</h2>
-              <div className="space-y-4">
-                <div className="bg-gradient-to-r from-violet-50 to-violet-100 p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-violet-600 mt-2" />
-                    <div>
-                      <p className="font-medium">Project Created</p>
-                      <p className="text-sm text-gray-600">{formatDateTime(createdAt)}</p>
-                      <p className="text-sm text-violet-600">{getTimeDistance(createdAt)}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-gradient-to-r from-violet-50 to-violet-100 p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-violet-600 mt-2" />
-                    <div>
-                      <p className="font-medium">Last Updated</p>
-                      <p className="text-sm text-gray-600">{formatDateTime(updatedAt)}</p>
-                      <p className="text-sm text-violet-600">{getTimeDistance(updatedAt)}</p>
-                    </div>
-                  </div>
-                </div>
+            {location.length > 0 && (
+              <div className="bg-white rounded-lg shadow p-2  ">
+                <LocationMap locations={location}  />
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
-
-      <ImageModal />
     </div>
   );
 };

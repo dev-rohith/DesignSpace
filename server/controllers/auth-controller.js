@@ -183,7 +183,12 @@ authController.login = catchAsync(async (req, res, next) => {
   if (!user) return next(new AppError("user not found", 404));
 
   if (user.isVerified === false)
-    return next(new AppError("user is not verified try to verify by using signup process", 403));
+    return next(
+      new AppError(
+        "user is not verified try to verify by using signup process",
+        403
+      )
+    );
 
   if (!(await user.correctPassword(password, user.password))) {
     return next(new AppError("invalid credentials", 403));
@@ -248,19 +253,11 @@ authController.forgotPassword = catchAsync(async (req, res, next) => {
 
   // 3) Send it to user's email
   try {
-    const resetURL = `${req.protocol}://${req.get(
-      "host"
-    )}/api/v1/users/resetPassword/${resetToken}`;
+    const resetURL = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
-    //email logic here                                      //---------------------------- sending email with front end link
+    await new Email(user.firstName, user.email).sendPasswordReset(resetURL);
 
-    // await new Email(user, resetURL).sendPasswordReset();
-
-    // res.status(200).json({
-    //   status: "success",
-    //   message: "Token sent to email!",
-    // });
-    res.json({ message: "password Reset link sent to email", resetToken });
+    res.json({ message: "password Reset link sent to email successfully" });
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
@@ -303,9 +300,7 @@ authController.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
-  const accessToken = Token.generateAccessToken(user._id, user.role);
-
-  res.json({ accessToken });
+  res.json({ message: "Your password has been reseted successfully" });
 });
 
 authController.logoutDevice = catchAsync(async (req, res, next) => {

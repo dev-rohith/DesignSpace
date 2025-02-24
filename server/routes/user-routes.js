@@ -6,24 +6,21 @@ import { uploadAvatar } from "../middleware/multer-middleware.js";
 const router = Router();
 
 //--------------------- get me protected for login --------------------//
-router.use(authMiddleWare.protect)
+router.use(authMiddleWare.protect);
 
 router.get("/me", userCtrl.getUser);
-
 
 //-------------------------- user power ------------------------//
 
 router.put("/update", userCtrl.updateMe);
 
-router.put("/updatePassword", userCtrl.updatePassword); 
+router.put("/updatePassword", userCtrl.updatePassword);
 
 router.put(
   "/update-profile-pic",
   uploadAvatar(["image/png", "image/jpeg"]),
   userCtrl.updateProfilePic
 );
-
-
 
 //-------------------------- designer power ------------------------//
 router.get(
@@ -32,7 +29,13 @@ router.get(
   userCtrl.getClients
 );
 
-//-------------------------- admin power ------------------------//  
+router.get(
+  "/associates",
+  authMiddleWare.authorize("designer"),
+  userCtrl.getAssociates
+);
+
+//-------------------------- admin power ------------------------//
 
 router.use(authMiddleWare.authorize("admin"));
 
@@ -41,5 +44,4 @@ router.put("/:user_id", userCtrl.UserStatusController);
 
 router.get("/designers", userCtrl.getDesigners);
 
-
-export default router
+export default router;

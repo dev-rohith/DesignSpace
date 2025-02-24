@@ -16,11 +16,11 @@ import {
   Save,
   User,
 } from "lucide-react";
-import ErrorState from "../../components/common/ErrorState";
 import Spinner from "../../components/common/Spinner";
 import AssociateProfileBody from "../../components/ui/AssociateProfileBody";
 import toast from "react-hot-toast";
 import { validateAssociateProfileData } from "../../utils/associateProfileValidation";
+import { ErrorState } from "../../components";
 
 const initialFormState = {
   address: {

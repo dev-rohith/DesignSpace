@@ -18,7 +18,7 @@ const DesignerCompletedProjects = () => {
     (async () => {
       const actionResult = await dispatch(
         getDesignerCompletedProjects(
-          `/projects/designer/inprgress?${searchParams.toString()}`
+          `/projects/designer/completed?${searchParams.toString()}`
         )
       );
       if (getDesignerCompletedProjects.rejected.match(actionResult)) {
@@ -58,7 +58,7 @@ const DesignerCompletedProjects = () => {
         {projects.data.length === 0 && (
           <div className="flex items-center justify-center h-screen w-screen">
             <h5 className="text-xl font-semibold text-gray-600">
-              No Pending Projects Found
+              You Not Completed any project Yet
             </h5>
           </div>
         )}

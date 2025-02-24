@@ -19,11 +19,11 @@ export { default as DesignerAppStepOne } from "./applications/designer/DesignerA
 export { default as DesignerAppStepTwo } from "./applications/designer/DesignerAppStepTwo";
 export { default as DesingerAppStepThree } from "./applications/designer/DesingerAppStepThree";
 
-export { default as ApplicationSucess } from "./ui/ApplicationSucess";
+export { default as ApplicationSucess } from "./applications/ApplicationSucess";
 export { default as StepperControl } from "./common/StepperControl";
 
 export { default as AddLandingItem } from "./common/AddLandingItem";
-export { default as ErrorState } from "./common/ErrorState";
+export { default as ErrorState } from "./common/placeholders/ErrorState";
 export { default as Spinner } from "./common/Spinner";
 
 export { default as AddressSection } from "./common/AddressSection";
@@ -31,11 +31,10 @@ export { default as Modal } from "./common/Modal";
 
 export { default as PendingApplicationsTable } from "./ui/PendingApplicationsTable";
 export { default as NonePendingApplicationsTable } from "./ui/NonePendingApplicationsTable";
-export { default as ApplicationDetails } from "./ui/ApplicationDetails";
-export { default as AssociateApplicationProcess } from "./ui/AssociateApplicationProcess";
-export { default as DesignerApplicationProcess } from "./ui/DesignerApplicationProcess";
+export { default as ApplicationDetails } from "./applications/ApplicationDetails";
+export { default as AssociateApplicationProcess } from "./applications/associate/AssociateApplicationProcess";
+export { default as DesignerApplicationProcess } from "./applications/designer/DesignerApplicationProcess";
 export { default as DesignerProfileBody } from "./ui/DesignerProfileBody";
-
 
 export { default as ManagePricing } from "./ui/ManagePricing";
 
@@ -46,6 +45,6 @@ export { default as DesingersFeed } from "./designSpace/DesingersFeed";
 
 export { default as PricingCard } from "./ui/PricingCard";
 export { default as UserTableRow } from "./ui/UserTableRow";
-export { default as Stepper } from "./ui/Stepper";
+export { default as Stepper } from "./common/Stepper";
 export { default as FormContent } from "./ui/FormContent";
 export { default as UsersTable } from "./ui/UsersTable";

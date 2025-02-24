@@ -29,8 +29,6 @@ router.post("/forgetPassword", authController.forgotPassword);
 router.put("/resetPassword/:token", authController.resetPassword);
 
 
-router.post("/forgetPassword", authController.forgotPassword);
-router.put("/resetPassword/:token", authController.resetPassword);
 
  // user logout but the refresh is needed
 router.post("/logout/:deviceId", authController.logoutDevice);

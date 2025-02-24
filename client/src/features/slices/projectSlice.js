@@ -9,10 +9,12 @@ import {
 import {
   addAfterProjectToPortfolio,
   addBeforeProjectToPortfolio,
+  completeTheProject,
   deleteAfterProjectToPortifolio,
   deleteBeforeProjectToPortifolio,
   deletePedingProject,
   getProjectDetails,
+  reviewProject,
   sentProjectToReview,
   updateProjectDetails,
   updateProjectProgress,
@@ -73,6 +75,18 @@ const projectSlice = createSlice({
     builder.addCase(updateProjectDetails.rejected, (state, action) => {
       state.isUpdating = false;
     });
+
+
+    builder.addCase(completeTheProject.fulfilled, (state, action) => {
+      state.currentProject.status = "completed";
+      state.isUpdating = false;
+    })
+    builder.addCase(completeTheProject.pending, (state, action) => {
+      state.isUpdating = true;
+    })
+    builder.addCase(completeTheProject.rejected, (state, action) => {
+      state.isUpdating = false;
+    })
 
  
 

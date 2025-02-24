@@ -32,11 +32,7 @@ import {
   SignUp,
   UnAuthorized,
 } from "../pages";
-import {
-  ApplicationDetails,
-  ApplicationSucess,
-  DesingersFeed,
-} from "../components";
+import { ApplicationDetails, ApplicationSucess } from "../components";
 import MyAccount from "../components/common/MyAccount";
 import PrivateRoute from "./PrivateRoute";
 import InternalSpaceLayout from "../layout/InternalSpaceLayout";
@@ -44,6 +40,17 @@ import ManageLanding from "../pages/admin/ManageLanding";
 import AssociateProfile from "../pages/associate/AssociateProfile";
 import CreateProject from "../pages/designer/CreateProject";
 import ProjectDetails from "../pages/ProjectDetails";
+import CreateTask from "../pages/designer/task/CreateTask";
+import DesignerCompletedTasks from "../pages/designer/task/DesignerCompletedTasks";
+import DesignerInProgressTasks from "../pages/designer/task/DesignerInProgressTasks";
+import DesignerPendingTasks from "../pages/designer/task/DesignerPendingTasks";
+import DesingersFeedOperations from "../components/designSpace/DesingersFeedOperations";
+import ResetPassword from "../pages/ResetPassword";
+import TaskDetails from "../pages/TaskDetails";
+import LiveTasks from "../pages/associate/task/LiveTasks";
+import RunningTasks from "../pages/associate/task/RunningTasks";
+import CompletedTasks from "../pages/associate/task/CompletedTasks";
+import MyTaskDetails from "../pages/associate/MyTaskDetails";
 
 const AppRoutes = () => {
   return (
@@ -61,6 +68,7 @@ const AppRoutes = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/device-limit" element={<DeviceLimit />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Route>
 
       <Route
@@ -100,7 +108,7 @@ const AppRoutes = () => {
 
       <Route path="/design-space" element={<DesignSpaceLayout />}>
         <Route index element={<Navigate to="designers" replace />} />
-        <Route path="designers" element={<DesingersFeed />} />
+        <Route path="designers" element={<DesingersFeedOperations />} />
 
         <Route
           path="pending-projects"
@@ -162,6 +170,13 @@ const AppRoutes = () => {
       <Route element={<PrivateRoute allowedRoles={["designer", "client"]} />}>
         <Route path="project/:project_id" element={<ProjectDetails />} />
       </Route>
+      <Route
+        element={<PrivateRoute allowedRoles={["designer", "associate"]} />}
+      >
+        <Route element={<InternalSpaceLayout />}>
+          <Route path="task/:task_id" element={<TaskDetails />} />
+        </Route>
+      </Route>
 
       {/* Designer Routes */}
       <Route element={<PrivateRoute allowedRoles={["designer"]} />}>
@@ -186,6 +201,13 @@ const AppRoutes = () => {
             path="completed-projects"
             element={<DesignerCompletedProjects />}
           />
+          <Route path="create-task" element={<CreateTask />} />
+          <Route path="pending-tasks" element={<DesignerPendingTasks />} />
+          <Route
+            path="inprogress-tasks"
+            element={<DesignerInProgressTasks />}
+          />
+          <Route path="completed-tasks" element={<DesignerCompletedTasks />} />
         </Route>
       </Route>
 
@@ -194,6 +216,10 @@ const AppRoutes = () => {
         <Route path="/associate" element={<InternalSpaceLayout />}>
           <Route index element={<AssociateDashboard />} />
           <Route path="profile" element={<AssociateProfile />} />
+          <Route path="live-tasks" element={<LiveTasks />} />
+          <Route path="running-tasks" element={<RunningTasks />} />
+          <Route path="completed-tasks" element={<CompletedTasks />} />
+          <Route path="my-task/:task_id" element={<MyTaskDetails />} />
         </Route>
       </Route>
 

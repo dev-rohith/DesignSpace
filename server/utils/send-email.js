@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { otp_email_template } from "./mail-templetes/otp.js";
+import { password_reset_template } from "./mail-templetes/password-reset.js";
 
 class Email {
   constructor(name, email) {
@@ -48,6 +49,18 @@ class Email {
     }
   }
 
+  async sendPasswordReset(link) {
+    try {
+      const template = password_reset_template(link);
+      const subject = "Reset password";
+      const info = await this.send(subject, template);
+      console.log("Email sent:", info.response);
+      return info;
+    } catch (error) {
+      console.error("Error sending email:", error);
+      throw new Error("Failed to send email.");
+    }
+  }
 
 }
 

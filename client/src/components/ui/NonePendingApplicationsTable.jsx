@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import ApplicationTableRow from "./ApplicationTableRow";
+import ApplicationTableRow from "../applications/ApplicationTableRow";
 
 const NonePendingApplicationsTable = () => {
   const { applications } = useSelector((store) => store.admin);

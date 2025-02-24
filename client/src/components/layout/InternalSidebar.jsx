@@ -5,11 +5,16 @@ import { SidebarProvider } from "../../context/SidebarProvider";
 import {
   BadgeIndianRupee,
   ChartArea,
+  CircleCheckBig,
+  ClipboardList,
+  ClipboardPlus,
+  ClockArrowDown,
   ContactRound,
   FilePlus2,
   Images,
   MousePointerClick,
   PanelsTopLeft,
+  Snail,
   SquareChartGantt,
   SquareKanban,
   UserPen,
@@ -85,14 +90,6 @@ const InternalSidebar = () => {
         />
       )}
 
-      {user?.role === "associate" && (
-        <SidebarItem
-          icon={<UserPen />}
-          text="Work Profile"
-          to="/associate/profile"
-        />
-      )}
-
       {user?.role === "designer" && (
         <SidebarItem
           icon={<SquareKanban />}
@@ -124,6 +121,68 @@ const InternalSidebar = () => {
             </Link>
           </nav>
         </SidebarItem>
+      )}
+
+      {user?.role === "designer" && (
+        <SidebarItem
+          icon={<ClipboardPlus />}
+          text="Create Task"
+          to="/designer/create-task"
+        />
+      )}
+
+      {user?.role === "designer" && (
+        <SidebarItem icon={<ClipboardList />} text="manage projects">
+          <nav className="flex flex-col relative text-sm bg-white shadow-md  mr-3">
+            <Link
+              to="/designer/pending-tasks"
+              className="px-2 py-1 hover:bg-gray-100"
+            >
+              Pending &#10132;
+            </Link>
+            <Link
+              to="/designer/inprogress-tasks"
+              className="px-2 py-1 hover:bg-gray-100"
+            >
+              in review &#10132;
+            </Link>
+            <Link
+              to="/designer/completed-tasks"
+              className="px-2 py-1 hover:bg-gray-100"
+            >
+              completed &#10132;
+            </Link>
+          </nav>
+        </SidebarItem>
+      )}
+
+      {user?.role === "associate" && (
+        <SidebarItem
+          icon={<UserPen />}
+          text="Work Profile"
+          to="/associate/profile"
+        />
+      )}
+      {user?.role === "associate" && (
+        <SidebarItem
+          icon={<ClockArrowDown />}
+          text="Live Tasks"
+          to="/associate/live-tasks"
+        />
+      )}
+      {user?.role === "associate" && (
+        <SidebarItem
+          icon={<Snail />}
+          text="Running Tasks"
+          to="/associate/running-tasks"
+        />
+      )}
+      {user?.role === "associate" && (
+        <SidebarItem
+          icon={<CircleCheckBig />}
+          text="Completed Tasks"
+          to="/associate/completed-tasks"
+        />
       )}
     </SidebarProvider>
   );

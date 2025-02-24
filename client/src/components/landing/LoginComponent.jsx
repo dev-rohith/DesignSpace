@@ -126,7 +126,7 @@ const LoginComponent = ({ handleLogin }) => {
           </div>
 
           <div className="mt-5 text-xs border-b border-(--primary) py-4 text-(--primary)">
-            <Link to="">Forgot your password?</Link>
+            <Link to="/forgot-password">Forgot your password?</Link>
           </div>
 
           <div className="mt-3 text-xs flex justify-between items-center text-(--primary)">

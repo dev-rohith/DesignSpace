@@ -33,10 +33,10 @@ const Filter = ({ filters = [] }) => {
   };
 
   return (
-    <div className="ml-2 my-2 relative">
+    <div className="relative">
       <button
         disabled={isFilterPopUp}
-        className="bg-gray-50 px-6 py-2 tracking-wider disabled:bg-gray-400 text-sm text-gray-600 hover:bg-gray-200"
+        className="bg-transparent px-6 py-2 tracking-wider disabled:bg-gray-400 text-sm text-gray-600 hover:bg-gray-200"
         onClick={() => setIsFilterPopUp(!isFilterPopUp)}
       >
         Apply Filters

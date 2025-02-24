@@ -10,7 +10,7 @@ const PageLimit = ({ size = 5, step = 5 }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <label className="text-sm font-medium text-gray-700">Limit</label>
+      <label className="text-sm font-medium text-gray-700">Page Limit</label>
       <select
         value={searchParams.get("limit") || "default"}
         className="border rounded-md px-3 py-1 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300 cursor-pointer"

@@ -1,30 +1,35 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { getClientCompletedProjects } from "../../../features/actions/clientActions";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
-import { ErrorState, Spinner } from "../../../components";
 import toast from "react-hot-toast";
 import ClientProjectItem from "../../../components/ui/ClientProjectItem";
+import Sort from "../../../components/common/Sort";
+import Pagination from "../../../components/common/Pagination";
+import PageLimit from "../../../components/common/PageLimit";
+import { getClientCompletedProjects } from "../../../features/actions/clientActions";
+import NoProjectsFound from "../../../components/common/placeholders/NoProjectsFound";
+import { ErrorState, Spinner } from "../../../components";
 
-const CompletedProjects = () => {
+const PendingProjects = () => {
   const { projects, isLoading } = useSelector((store) => store.project);
+  const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
-      const actionResult = await dispatch(getClientCompletedProjects());
+      const actionResult = await dispatch(
+        getClientCompletedProjects(`projects/client/completed?${searchParams}`)
+      );
       if (getClientCompletedProjects.rejected.match(actionResult)) {
         toast.error(actionResult.payload.message);
       }
     })();
-  }, []);
-
-  console.log(projects);
+  }, [searchParams]);
 
   const handleViewProject = (id) => {
     if (!id) {
-      toast.error("Error while fetching project details");
+      toast.error("Error while naviagting to project details");
       return;
     }
     navigate(`/project/${id}`);
@@ -32,21 +37,45 @@ const CompletedProjects = () => {
 
   if (!projects) return <ErrorState error="Error while fetching data" />;
   if (isLoading) return <Spinner />;
+  if (projects.data.length === 0) return <NoProjectsFound message="No completed projects found" />;
 
-  if (projects.length === 0)
-    return (
-      <div className="flex items-center justify-center h-screen w-screen">
-        <h5 className="text-xl font-semibold text-gray-600">
-          No Pending Projects Found
-        </h5>
-      </div>
-    );
   return (
-    <div>
-      {projects.map((project) => (
-        <ClientProjectItem project={project} />
-      ))}
+    <div className="flex h-screen  overflow-hidden">
+      <div className="flex-1 flex flex-col w-screen md:w-full overflow-y-auto">
+        <div className="flex items-center justify-between mb-4 bg-violet-200 rounded-r-4xl px-4 sm:px-6 py-3">
+          <h5 className="text-lg sm:text-xl font-semibold text-gray-600">
+            Your Completed Projects
+          </h5>
+          <div className="flex items-center gap-6">
+            <PageLimit size={8} step={4} />
+
+            <div className="border-4 border-gray-200">
+              <Sort
+                options={[
+                  { name: "Relevance", value: "" },
+                  { name: "name(A-Z)", value: "title" },
+                  { name: "name(Z-A)", value: "-title" },
+                  { name: "newest", value: "createdAt" },
+                  { name: "oldest", value: "-createdAt" },
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-4 sm:px-6 pb-4 w-full">
+          {projects.data.map((project, index) => (
+            <ClientProjectItem
+              key={project._id || index}
+              {...project}
+              handleViewProject={handleViewProject}
+            />
+          ))}
+        </div>
+
+        {!searchParams.get("search") && <Pagination data={projects} />}
+      </div>
     </div>
   );
 };
-export default CompletedProjects;
+export default PendingProjects;

@@ -32,25 +32,22 @@ const PortfolioGallery = ({ data }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-violet-200">
-      {/* Designer's works */}
+    <div className="container mx-auto px-4 pt-7 bg-gray-50 border-b">
       {data.map((designer) => (
-        <div key={designer._id} className="mb-10">
-          {/* Designer Info */}
-          <div className="flex items-center gap-2 mb-6 ">
+        <div key={designer._id} className="mb-10 ">
+          <div className="flex items-center gap-4 mb-6 p-2 bg-opacity-60 bg-gray-100 backdrop-blur-md border-2 border-gray-400 rounded-xl w-fit shadow-lg hover:shadow-2xl transition-all duration-300">
             <img
               src={designer.user.profilePicture}
               alt={`${designer.user.firstName} ${designer.user.lastName}`}
-              className="w-14 rounded-full object-cover"
+              className="w-16 h-16 rounded-full border-4 border-violet-400 object-cover shadow-md"
             />
-            <div>
-              <h2 className="text-lg  font-bold uppercase">
+            <div className="pr-4 text-gray-800">
+              <h2 className="text-lg font-semibold uppercase text-violet-900">
                 {designer.user.firstName} {designer.user.lastName}
               </h2>
             </div>
           </div>
 
-          {/* Portfolio Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {designer.portfolio.map((item) => (
               <div
@@ -60,12 +57,8 @@ const PortfolioGallery = ({ data }) => {
                 <div className="p-4">
                   <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
                   <p className="text-gray-600 mb-4">{item.description}</p>
-                  <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                    {item.category}
-                  </span>
                 </div>
 
-                {/* Image Grid */}
                 <div className="grid grid-cols-2 gap-2 p-4">
                   {item.images.slice(0, 4).map((image, index) => (
                     <div
@@ -93,9 +86,14 @@ const PortfolioGallery = ({ data }) => {
           </div>
         </div>
       ))}
-      {/* Modal */}
       {selectedImages && (
-           <ImagesModal prevImage={prevImage} nextImage={nextImage} closeGallery={closeGallery} currentImageIndex={currentImageIndex} selectedImages={selectedImages} />
+        <ImagesModal
+          prevImage={prevImage}
+          nextImage={nextImage}
+          closeGallery={closeGallery}
+          currentImageIndex={currentImageIndex}
+          selectedImages={selectedImages}
+        />
       )}
     </div>
   );

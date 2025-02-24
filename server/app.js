@@ -47,7 +47,7 @@ app.use("/api/v1/landing", landingRouter);
 
 app.use("/api/v1/application", applicationRouter);
 
-app.use("/api/v1/task", taskRouter);
+app.use("/api/v1/tasks", taskRouter);
 
 app.use("/api/v1/designer", desingerRouter);
 

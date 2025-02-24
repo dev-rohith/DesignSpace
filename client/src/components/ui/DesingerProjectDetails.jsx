@@ -1,14 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { Edit2, Milestone } from "lucide-react";
+import { Edit2, Sparkles } from "lucide-react";
 import DesingerPendingProjectEdit from "./DesingerPendingProjectEdit";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  deletePedingProject,
-  getProjectDetails,
-  sentProjectToReview,
-  updateProjectDetails,
-  updateProjectProgress,
-} from "../../features/actions/projectActions";
+import { completeTheProject, deletePedingProject, getProjectDetails, sentProjectToReview, updateProjectDetails, updateProjectProgress} from "../../features/actions/projectActions";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import validatePendigProjectUpdate from "../../utils/pendingProjectUpdateValidation";
@@ -18,28 +12,16 @@ import { projectProgressUpdateValidation } from "../../utils/projectValidations"
 import UpdateProjectProgress from "./UpdateProjectProgress";
 import DesignerProjectDetailsHeader from "./DesignerProjectDetailsHeader";
 import BeforeAndAfterProject from "./BeforeAndAfterProject";
+import LocationMap from "../common/LocationMap";
+import { format, formatDistanceToNow } from "date-fns";
 
-const initialFormData = {
-  title: "",
-  description: "",
-  status: "",
-  minimumDays: 0,
-  budget: 0,
-  isPaid: false,
-  completion_percentage: 0,
-
-  address: {
-    street: "",
-    house_number: "",
-    city: "",
-    state: "",
-    country: "",
+const initialFormData = {title: "",description: "",status: "",minimumDays: 0,budget: 0,isPaid: false,completion_percentage: 0,address: {  street: "",  house_number: "",  city: "",  state: "",  country: "",
     postal_code: "",
   },
 
   location: {
-    lat: null,
-    lng: null,
+    lat: "",
+    lng: "",
   },
 
   client: {
@@ -72,6 +54,8 @@ const DesignerProjectDetails = () => {
   const [formData, setFormData] = useState(initialFormData);
   const [isUpdatingProgress, setIsUpdatingProgress] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [locations, setLocations] = useState([]);
   const [errors, setErrors] = useState({});
 
   const dispatch = useDispatch();
@@ -85,29 +69,25 @@ const DesignerProjectDetails = () => {
         toast.error(actionResult.payload.message);
       }
     })();
-  }, [project_id]);
 
-  useEffect(() => {
     if (currentProject) {
       setFormData(currentProject);
     }
-  }, [currentProject]);
+  }, [project_id, currentProject]);
 
-  const {
-    location,
-    _id,
-    title,
-    client,
-    designer,
-    status,
-    isPaid,
-    completion_percentage,
-    milestones,
-    beforePictures,
-    afterPictures,
-    createdAt,
-    updatedAt,
-  } = formData;
+  useEffect(() => {
+    if (formData.location?.lat && formData.location?.lng) {
+      setLocations([
+        {
+          latitude: formData.location?.lat,
+          longitude: formData.location?.lng,
+        },
+      ]);
+    }
+  }, [formData]);
+
+  const { _id, title, client, designer, status, isPaid, completion_percentage, milestones, beforePictures, afterPictures, createdAt, updatedAt } = formData;
+
   const handleSave = async () => {
     const errors = validatePendigProjectUpdate(formData);
     if (Object.keys(errors).length !== 0) {
@@ -168,6 +148,19 @@ const DesignerProjectDetails = () => {
     }
   };
 
+
+
+  const handleCompleteProject = async () => {
+    setIsCompleting(true);
+    const actionResult = await dispatch(completeTheProject(_id));
+    if (completeTheProject.fulfilled.match(actionResult)) {
+      toast.success(actionResult.payload.message);
+    } else if (completeTheProject.rejected.match(actionResult)) {
+      toast.error(actionResult.payload.message);
+    }
+    setIsCompleting(false);
+  };
+
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -225,6 +218,31 @@ const DesignerProjectDetails = () => {
                 >
                   {status}
                 </span>
+              </div>
+              <div className=" text-gray-600">
+                payment status :
+                <span
+                  className={`${
+                    isPaid === false ? "bg-red-300" : "bg-green-300"
+                  } inline-block ml-2 px-3 py-0.5 text-xs text-gray-700 rounded-4xl`}
+                >
+                  {isPaid ? "paid" : "not paid"}
+                </span>
+              </div>
+              <div className=" text-gray-600">
+                <p>
+                  <span className="text-yellow-700">Created At:</span>{" "}
+                  {createdAt ? format(new Date(createdAt), "PPpp") : "N/A"}
+                </p>
+                <p>
+                  <span className="text-pink-700">Updated At:</span>{" "}
+                  {updatedAt
+                    ? `${format(
+                        new Date(updatedAt),
+                        "PPpp"
+                      )} (${formatDistanceToNow(new Date(updatedAt))} ago)`
+                    : "N/A"}
+                </p>
               </div>
             </div>
 
@@ -300,8 +318,39 @@ const DesignerProjectDetails = () => {
             errors={errors}
           />
 
-          {status === 'review' && (
-            <BeforeAndAfterProject {...{_id, beforePictures, afterPictures }} />
+          {locations.length > 0 && (
+            <div className="border-6 border-pink-300 rounded-md">
+              <LocationMap
+                locations={locations}
+                height="300px"
+                width="100%"
+                zoom={15}
+              />
+            </div>
+          )}
+
+          {status === "review" && (
+            <BeforeAndAfterProject
+              {...{ _id, beforePictures, afterPictures }}
+            />
+          )}
+
+          {status === "review" && (
+            <div className="flex justify-end">
+              <button
+                onClick={handleCompleteProject}
+                className="relative px-4 py-3 text-sm font-semibold text-white transition-all bg-gradient-to-r from-green-600 via-gray-500 to-purple-900  hover:bg-gradient-to-r rounded-md shadow-lg ring-green-500 ring-3 ring-offset-2 hover:ring-offset-4 hover:ring-green-700 hover:scale-105 cursor-pointer "
+              >
+                {isCompleting
+                  ? "Completing the project..."
+                  : "Complete the Project"}
+                <Sparkles className="absolute w-3 h-3 text-white top-1 left-2 animate-pulse" />
+                <Sparkles className="absolute w-3.5 h-3.5 text-white bottom-2 right-3 animate-pulse" />
+                <Sparkles className="absolute w-2.5 h-2.5 text-white top-3 right-1 animate-pulse" />
+                <Sparkles className="absolute w-2 h-2 text-white bottom-1 left-3 animate-pulse" />
+                <Sparkles className="absolute w-3 h-3 text-white top-4 left-6 animate-pulse" />
+              </button>
+            </div>
           )}
         </div>
       </div>
