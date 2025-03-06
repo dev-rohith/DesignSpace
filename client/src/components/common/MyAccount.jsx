@@ -6,9 +6,9 @@ import { KeyRound, Lock, Mail, Save, User } from "lucide-react";
 import axiosInstance from "../../apis/axiosIntance";
 import { logout, logoutAll } from "../../features/actions/authActions";
 import { updateUser, updateUserPic } from "../../features/actions/userActions";
+import UserProfilePicture from '../ui/UserProfilePicture'
 
 import Sidebar from "../layout/Sidebar";
-import UserProfilePicture from "../ui/userProfilePicture";
 import SavingSpinner from "../ui/SavingSpinner";
 import InternalSidebar from "../layout/InternalSidebar";
 
