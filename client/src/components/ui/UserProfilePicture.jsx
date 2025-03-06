@@ -30,21 +30,20 @@ const UserProfilePicture = ({ profilePicture, handleProfileChange }) => {
         Profile Picture
       </h2>
       <div className="relative group">
-        <div className="absolute inset-0 bg-violet-200 rounded-3xl blur opacity-25 group-hover:opacity-40 transition-opacity"></div>
-        <div className="relative bg-gray-100 rounded-3xl p-4 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+        <div className="relative bg-gray-100  p-4 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
           <img
             src={imageUrl}
             alt="Profile preview"
             className="w-32 h-32 md:w-42 md:h-42 rounded-full border-2 border-gray-200 hover:border-violet-300 transition-colors object-cover"
           />
-          <label className="absolute bottom-6 right-6 p-2  bg-white/80 backdrop-blur-sm rounded-full  transform hover:scale-110 transition-transform">
+          <label className="absolute bottom-6 right-6 p-2  bg-white/80 border border-gray-600 backdrop-blur-sm rounded-full  transform hover:scale-110 transition-transform">
             <input
               type="file"
               className="absolute inset-0 w-full h-full opacity-0 "
               onChange={handleFileChange}
               accept="image/*"
             />
-            <Camera className="w-5 h-5 text-gray-600" />
+            <Camera className="w-5 h-5 text-gray-600  " />
           </label>
           {preview && (
             <button

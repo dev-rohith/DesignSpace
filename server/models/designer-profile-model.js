@@ -1,6 +1,5 @@
 import { Schema, model } from "mongoose";
 
-// professionalProfile.model.js
 const designerProfileSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
@@ -9,7 +8,6 @@ const designerProfileSchema = new Schema({
     unique: true,
   },
 
-  // Basic professional info
   company: String,
   position: String,
   experience: Number,
@@ -20,7 +18,7 @@ const designerProfileSchema = new Schema({
   designStyle: [String],
   softwareExpertise: [String],
 
-  // Portfolio
+
   portfolio: [
     {
       title: String,
@@ -42,11 +40,11 @@ const designerProfileSchema = new Schema({
     },
   ],
 
-  // Ratings and Reviews
   average_rating: {
     type: Number,
     default: 0,
   },
+
   ratings: [
     {
       givenBy: {
@@ -63,7 +61,6 @@ const designerProfileSchema = new Schema({
     },
   ],
 
-  // Contact information
   address: {
     street: {
       type: String,
@@ -97,7 +94,7 @@ const designerProfileSchema = new Schema({
       enum: ["Point"],
     },
     coordinates: {
-      type: [Number], 
+      type: [Number],
       required: true,
     },
   },

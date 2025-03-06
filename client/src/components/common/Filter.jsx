@@ -24,7 +24,7 @@ const Filter = ({ filters = [] }) => {
   };
 
   const handleApplyFilter = () => {
-    const newParams = new URLSearchParams();   // clear the search params need ----------------------
+    const newParams = new URLSearchParams();   // clearing the search params 
     for (const key in selectedOptions) {
       newParams.set(key, selectedOptions[key]);
     }
@@ -36,7 +36,7 @@ const Filter = ({ filters = [] }) => {
     <div className="relative">
       <button
         disabled={isFilterPopUp}
-        className="bg-transparent px-6 py-2 tracking-wider disabled:bg-gray-400 text-sm text-gray-600 hover:bg-gray-200"
+        className="bg-transparent px-6  tracking-wider  text-sm text-gray-600 hover:scale-105 transition-transform"
         onClick={() => setIsFilterPopUp(!isFilterPopUp)}
       >
         Apply Filters

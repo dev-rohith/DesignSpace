@@ -17,7 +17,7 @@ const ApplicationTableRow = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // Format date to a readable string
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {

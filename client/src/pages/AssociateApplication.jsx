@@ -54,7 +54,7 @@ const DesingerApplication = () => {
   return (
     <LandingLayout>
       <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto ">
+        <div className="max-w-6xl mx-auto ">
           <MultiFormProvider steps={steps} formComponents={formComponents}>
             <div className="rounded-lg shadow-lg p-8 bg-gradient-to-br from-green-50 via-white to-indigo-50">
               <Stepper />

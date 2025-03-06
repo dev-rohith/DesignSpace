@@ -1,10 +1,11 @@
 import { Router } from "express";
 import landingCtrl from "../controllers/landing-controller.js";
 import { uploadSingleFile } from "../middleware/multer-middleware.js";
+import catchErrors from "../utils/catch-async-util.js";
 
 const router = Router();
 
-router.get("/", landingCtrl.getLanding);
+router.get("/", catchErrors(landingCtrl.getLanding));
 
 router.post(
   "/carousel",
@@ -12,20 +13,29 @@ router.post(
     ["image/jpeg", "image/png", "image/gif", "video/mp4"],
     "carousel"
   ),
-  landingCtrl.createCarouselItem
+  catchErrors(landingCtrl.createCarouselItem)
 );
 
-router.delete("/carousel/:public_id", landingCtrl.deleteCarouselItem);
+router.delete(
+  "/carousel/:public_id",
+  catchErrors(landingCtrl.deleteCarouselItem)
+);
 
-router.post("/designer", landingCtrl.addTopDesigner);
-router.delete("/desinger/:desinger_id", landingCtrl.deleteTopDesigner);
+router.post("/designer", catchErrors(landingCtrl.addTopDesigner));
+router.delete(
+  "/desinger/:desinger_id",
+  catchErrors(landingCtrl.deleteTopDesigner)
+);
 
 router.post(
   "/customer-review",
   uploadSingleFile(["video/mp4"], "reviewVideo"),
-  landingCtrl.addCustomerReview
+  catchErrors(landingCtrl.addCustomerReview)
 );
 
-router.delete("/customer-review/:public_id", landingCtrl.deleteCustomerReview);
+router.delete(
+  "/customer-review/:public_id",
+  catchErrors(landingCtrl.deleteCustomerReview)
+);
 
 export default router;

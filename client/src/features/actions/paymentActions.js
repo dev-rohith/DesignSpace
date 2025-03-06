@@ -5,7 +5,7 @@ export const onPayment = createAsyncThunk(
   "payment/onPayment",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("payment/create-subcription", {
+      const response = await axiosInstance.post("payment/subcription", {
         plan: data,
       });
       return response.data;

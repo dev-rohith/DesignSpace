@@ -10,12 +10,13 @@ import {
 import InputField from "./InputField";
 
 const AddressSection = ({
-  formData,
+  address,
   handleInputChange,
   isEditing = true,
   error,
+  className = ""
 }) => (
-  <>
+  <div className={className}>
     <div className="flex items-center mb-6 py-1 rounded-4xl justify-center bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 ">
       <MapPin className="w-4 h-4 mr-1 text-white" />
       <h2 className="text-lg font-semibold text-gray-50">Address Details</h2>
@@ -26,10 +27,10 @@ const AddressSection = ({
         <InputField
           label="house/door no."
           icon={<DoorOpen className="w-5 h-5 text-violet-600 mr-2" />}
-          value={formData?.address?.house_number}
+          value={address?.house_number}
           onChange={(e) =>
             handleInputChange("address", {
-              ...formData?.address,
+              ...address,
               house_number: e.target.value,
             })
           }
@@ -37,12 +38,12 @@ const AddressSection = ({
         />
 
         <InputField
-          label="Street Address *"
+          label="Address Street/Locality*"
           icon={<Home className="w-5 h-5 text-violet-600 mr-2" />}
-          value={formData?.address?.street}
+          value={address?.street}
           onChange={(e) =>
             handleInputChange("address", {
-              ...formData?.address,
+              ...address,
               street: e.target.value,
             })
           }
@@ -53,10 +54,10 @@ const AddressSection = ({
         <InputField
           label="City *"
           icon={<Building className="w-5 h-5 text-violet-600 mr-2" />}
-          value={formData?.address?.city}
+          value={address?.city}
           onChange={(e) =>
             handleInputChange("address", {
-              ...formData?.address,
+              ...address,
               city: e.target.value,
             })
           }
@@ -69,10 +70,10 @@ const AddressSection = ({
         <InputField
           label="State/Province *"
           icon={<Map className="w-5 h-5 text-violet-600 mr-2" />}
-          value={formData?.address?.state}
+          value={address?.state}
           onChange={(e) =>
             handleInputChange("address", {
-              ...formData?.address,
+              ...address,
               state: e.target.value,
             })
           }
@@ -83,10 +84,10 @@ const AddressSection = ({
         <InputField
           label="Country *"
           icon={<Globe className="w-5 h-5 text-violet-600 mr-2" />}
-          value={formData?.address?.country}
+          value={address?.country}
           onChange={(e) =>
             handleInputChange("address", {
-              ...formData?.address,
+              ...address,
               country: e.target.value,
             })
           }
@@ -97,10 +98,10 @@ const AddressSection = ({
         <InputField
           label="Postal Code *"
           icon={<Navigation className="w-5 h-5 text-violet-600 mr-2" />}
-          value={formData?.address?.postal_code}
+          value={address?.postal_code}
           onChange={(e) =>
             handleInputChange("address", {
-              ...formData?.address,
+              ...address,
               postal_code: e.target.value,
             })
           }
@@ -109,7 +110,7 @@ const AddressSection = ({
         />
       </div>
     </div>
-  </>
+  </div>
 );
 
 export default AddressSection;

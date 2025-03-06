@@ -18,7 +18,7 @@ const UserReviewItem = ({ name, review, video, deleteUserReview }) => {
           </button>
         )}
         {video.url ? (
-          <video className="w-full h-full object-cover" controls>
+          <video className="w-full h-50 object-cover" controls>
             <source src={video.url} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
@@ -28,7 +28,7 @@ const UserReviewItem = ({ name, review, video, deleteUserReview }) => {
           </div>
         )}
       </div>
-      <div className="text-xl font-bold text-gray-900 my-2">{name}</div>
+      <div className="text-xl font-bold font-sansita text-gray-900 mb-2 first-letter:uppercase">{name}</div>
       <p className="text-gray-700 text-sm leading-relaxed px-4 italic">
         {review}
       </p>

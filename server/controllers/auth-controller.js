@@ -9,7 +9,7 @@ import User from "../models/user-model.js";
 import { TokenManager } from "../services/redis-service.js";
 import { Token } from "../services/token-service.js";
 import AppError from "../utils/app-error-util.js";
-import catchAsync from "../utils/catch-async-util.js";
+import catchErrors from "../utils/catch-async-util.js";
 import Email from "../utils/send-email.js";
 import {
   deviceIdValidator,
@@ -26,7 +26,7 @@ const authController = {};
 
 //---------------------------------------------------Normal-login-flow----------------------------------------------------//
 
-authController.signup = catchAsync(async (req, res, next) => {
+authController.signup = async (req, res, next) => {
   const { value, error } = signupValidator.validate(req.body);
   if (error) return next(new AppError(error.details[0].message, 422));
   // Generate OTP
@@ -50,9 +50,9 @@ authController.signup = catchAsync(async (req, res, next) => {
   }
   req.params.user_id = user._id;
   next();
-});
+}
 
-authController.sendOtpVerfication = catchAsync(async (req, res, next) => {
+authController.sendOtpVerfication = async (req, res, next) => {
   const { user_id } = req.params; //user_id is coming from previous middleware
   const user = await User.findById(user_id);
   if (!user) return next(new AppError("user not found", 404));
@@ -81,9 +81,9 @@ authController.sendOtpVerfication = catchAsync(async (req, res, next) => {
       )
     );
   }
-});
+}
 
-authController.verifyAccount = catchAsync(async (req, res, next) => {
+authController.verifyAccount = async (req, res, next) => {
   const { error, value } = otpValidator.validate({
     ...req.params,
     ...req.body,
@@ -122,9 +122,9 @@ authController.verifyAccount = catchAsync(async (req, res, next) => {
       message: `Incorrect Otp you have ${userOtp.otp_chances} chances left`,
     });
   }
-});
+}
 
-authController.resendVerification = catchAsync(async (req, res, next) => {
+authController.resendVerification = async (req, res, next) => {
   const { value, error } = userIdValidator.validate(req.params);
   if (error) return next(new AppError(error.details[0].message, 422));
   const userOtp = await Otp.findOne({ user: value.user_id });
@@ -151,9 +151,9 @@ authController.resendVerification = catchAsync(async (req, res, next) => {
     status: "success",
     message: "A new OTP has been sent to your registered email.",
   });
-});
+}
 
-authController.login = catchAsync(async (req, res, next) => {
+authController.login = async (req, res, next) => {
   const { value, error } = loginValidator.validate(req.body);
   if (error) return next(new AppError(error.details[0].message, 422));
   const { email, password } = value;
@@ -235,9 +235,9 @@ authController.login = catchAsync(async (req, res, next) => {
   res.json({
     accessToken: accessToken,
   });
-});
+}
 
-authController.forgotPassword = catchAsync(async (req, res, next) => {
+authController.forgotPassword = async (req, res, next) => {
   const { value, error } = forgotPasswordValidator.validate(req.body);
   if (error) return next(new AppError(error.details[0].message, 422));
   const { email } = value;
@@ -269,9 +269,9 @@ authController.forgotPassword = catchAsync(async (req, res, next) => {
       500
     );
   }
-});
+}
 
-authController.resetPassword = catchAsync(async (req, res, next) => {
+authController.resetPassword = async (req, res, next) => {
   const { value, error } = resetPasswordValidator.validate({
     ...req.params,
     ...req.body,
@@ -301,9 +301,9 @@ authController.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   res.json({ message: "Your password has been reseted successfully" });
-});
+}
 
-authController.logoutDevice = catchAsync(async (req, res, next) => {
+authController.logoutDevice = async (req, res, next) => {
   const { value, error } = deviceIdValidator.validate(req.params);
   if (error) return next(new AppError(error.details[0].message, 422));
   const { deviceId } = value;
@@ -341,9 +341,9 @@ authController.logoutDevice = catchAsync(async (req, res, next) => {
       });
     }
   );
-});
+}
 
-authController.logoutUser = catchAsync(async (req, res, next) => {
+authController.logoutUser = async (req, res, next) => {
   const refreshToken = req.cookies.jwt;
 
   res.clearCookie("jwt");
@@ -376,6 +376,6 @@ authController.logoutUser = catchAsync(async (req, res, next) => {
   await user.save();
 
   return res.json({ message: "Logout successful" });
-});
+}
 
 export default authController;

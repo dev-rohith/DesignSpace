@@ -67,6 +67,7 @@ const projectSlice = createSlice({
       state.currentProject.title = action.payload.data.title;
       state.currentProject.minimumDays = action.payload.data.minimumDays;
       state.currentProject.budget = action.payload.data.budget;
+      state.currentProject.location = action.payload.data.location
       state.isUpdating = false;
     });
     builder.addCase(updateProjectDetails.pending, (state, action) => {

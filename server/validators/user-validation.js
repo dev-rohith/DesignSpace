@@ -23,7 +23,11 @@ const userStatusChangeValidator = joi.object({
     .required()
     .custom(customObjectId, "custom validation")
     .messages({ "string.custom": "Invalid user ID" }),
-    status: joi.string().required().valid('active','suspended').messages({ "any.only": "Invalid action" })
+  status: joi
+    .string()
+    .required()
+    .valid("active", "suspended")
+    .messages({ "any.only": "Invalid action" }),
 });
 
 export { userPasswordValidator, userStatusChangeValidator };

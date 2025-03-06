@@ -2,118 +2,93 @@ import { ChevronUp } from "lucide-react";
 
 const Faq = () => {
   return (
-    <>
-      <h2 className="md-6 text-2xl font-semibold text-center md:text-3xl">
+    <div className="relative py-14">
+       <video
+        autoPlay
+        loop
+        muted
+        className="absolute inset-0 -z-10 w-full h-full object-cover grayscale-50"
+      >
+        <source
+          src="https://res.cloudinary.com/dlbyxcswi/video/upload/f_auto:video,q_auto/v1/product_uploads/wcmlzlarzctp8wknfmu6"
+          type="video/mp4"
+        />
+      </video>
+
+      <div className="absolute inset-0 -z-10 bg-white opacity-70 backdrop-blur-md"></div>
+      <h2 className="md-6 font-montserrat  text-2xl mt-14 font-semibold text-center md:text-3xl">
         Frequently Asked Questions
       </h2>
-      <section>
-        {/* <!-- Main Container --> */}
-        <div className="container mx-auto px-6 mb-32">
-          {/* <!-- Accordion Container --> */}
+      <section >
+        <div className="container mx-auto px-6">
           <div className="max-w-6xl m-8 mx-auto overflow-hidden">
-            {/* <!-- Tab 1 --> */}
             <div className="py-1 border-b outline-none group" tabIndex={1}>
-              {/* <!-- Tab Flex Container --> */}
-              <div className="flex items-center justify-between py-3 text-gray-500 transition duration-500 cursor-pointer group ease">
-                {/* <!-- Tab Title --> */}
-                <div className="transition duration-500 ease group-hover:text-red-500">
-                  What is Bookmark?
+              <div className="flex items-center justify-between py-3 text-gray-700 transition duration-500 cursor-pointer group ease">
+                <div className=" font-sansita transition duration-500 ease group-hover:text-violet-500">
+                  How does the Design Space work?
                 </div>
-                {/* <!-- Arrow --> */}
-                <div className="transition duration-500 ease group-focus:-rotate-180 group-focus:text-red-500">
+                <div className="transition duration-500 ease group-focus:-rotate-180 group-focus:text-violet-500">
                   <ChevronUp />
                 </div>
               </div>
-
-              {/* <!-- Tab Inner Content --> */}
               <div className="overflow-hidden transition duration-500 group-focus:max-h-screen max-h-0 ease">
-                <p className="py-2 text-justify text-gray-400">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Fugiat, repellat amet doloribus consequuntur eos similique
-                  provident tempora voluptates iure quia fuga dicta voluptatibus
-                  culpa mollitia recusandae delectus id suscipit labore?
+                <p className="py-2 text-justify font-raleway text-gray-600">
+                  The Design Space is a collaborative platform where clients can connect with top designers to bring their creative ideas to life. Designers create projects, and clients must accept and pay before work begins. Premium users get full access to the chat feature, while free users have limited interactions.
                 </p>
               </div>
             </div>
 
-            {/* <!-- Tab 2 --> */}
             <div className="py-1 border-b outline-none group" tabIndex={2}>
-              {/* <!-- Tab Flex Container --> */}
               <div className="flex items-center justify-between py-3 text-gray-500 transition duration-500 cursor-pointer group ease">
-                {/* <!-- Tab Title --> */}
-                <div className="transition duration-500 ease group-hover:text-red-500">
-                  How can I request a new browser?
+                <div className="font-sansita transition duration-500 ease group-hover:text-violet-500">
+                  What is the free user message limit?
                 </div>
-                {/* <!-- Arrow --> */}
-                <div className="transition duration-500 ease group-focus:-rotate-180 group-focus:text-red-500">
+                <div className="transition duration-500 ease group-focus:-rotate-180 group-focus:text-violet-500">
                   <ChevronUp />
                 </div>
               </div>
-
-              {/* <!-- Tab Inner Content --> */}
               <div className="overflow-hidden transition duration-500 group-focus:max-h-screen max-h-0 ease">
-                <p className="py-2 text-justify text-gray-400">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Fugiat, repellat amet doloribus consequuntur eos similique
-                  provident tempora voluptates iure quia fuga dicta voluptatibus
-                  culpa mollitia recusandae delectus id suscipit labore?
+                <p className="py-2 text-justify font-raleway text-gray-600">
+                  Free users can send up to 20 messages in total as a trial. After reaching the limit, upgrading to a premium subscription is required to continue chatting with designers.
                 </p>
               </div>
             </div>
 
-            {/* <!-- Tab 3 --> */}
             <div className="py-1 border-b outline-none group" tabIndex={3}>
-              {/* <!-- Tab Flex Container --> */}
               <div className="flex items-center justify-between py-3 text-gray-500 transition duration-500 cursor-pointer group ease">
-                {/* <!-- Tab Title --> */}
-                <div className="transition duration-500 ease group-hover:text-red-500">
-                  Is ther a mobile app?
+                <div className="font-sansita transition duration-500 ease group-hover:text-violet-500">
+                  What are the benefits of a premium subscription?
                 </div>
-                {/* <!-- Arrow --> */}
-                <div className="transition duration-500 ease group-focus:-rotate-180 group-focus:text-red-500">
+                <div className="transition duration-500 ease group-focus:-rotate-180 group-focus:text-violet-500">
                   <ChevronUp />
                 </div>
               </div>
-
-              {/* <!-- Tab Inner Content --> */}
               <div className="overflow-hidden transition duration-500 group-focus:max-h-screen max-h-0 ease">
-                <p className="py-2 text-justify text-gray-400">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Fugiat, repellat amet doloribus consequuntur eos similique
-                  provident tempora voluptates iure quia fuga dicta voluptatibus
-                  culpa mollitia recusandae delectus id suscipit labore?
+                <p className="py-2 text-justify font-raleway text-gray-600">
+                  A premium subscription unlocks unlimited messaging with designers, priority access to top-rated professionals, and additional tools to streamline the design process.
                 </p>
               </div>
             </div>
 
-            {/* <!-- Tab 4 --> */}
-            <div className="py-1 border-b outline-none group" tabIndex={6}>
-              {/* <!-- Tab Flex Container --> */}
+            <div className="py-1 border-b outline-none group" tabIndex={4}>
               <div className="flex items-center justify-between py-3 text-gray-500 transition duration-500 cursor-pointer group ease">
-                {/* <!-- Tab Title --> */}
-                <div className="transition duration-500 ease group-hover:text-red-500">
-                  What about other Chromium browsers
+                <div className="font-sansita transition duration-500 ease group-hover:text-violet-500">
+                  How do designers receive tasks?
                 </div>
-                {/* <!-- Arrow --> */}
-                <div className="transition duration-500 ease group-focus:-rotate-180 group-focus:text-red-500">
+                <div className="transition duration-500 ease group-focus:-rotate-180 group-focus:text-violet-500">
                   <ChevronUp />
                 </div>
               </div>
-
-              {/* <!-- Tab Inner Content --> */}
               <div className="overflow-hidden transition duration-500 group-focus:max-h-screen max-h-0 ease">
-                <p className="py-2 text-justify text-gray-400">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Fugiat, repellat amet doloribus consequuntur eos similique
-                  provident tempora voluptates iure quia fuga dicta voluptatibus
-                  culpa mollitia recusandae delectus id suscipit labore?
+                <p className="py-2 text-justify font-raleway text-gray-600">
+                  Designers create projects, and clients must approve and pay before the work begins. Associates can view and accept tasks assigned by designers to collaborate effectively.
                 </p>
               </div>
             </div>
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 export default Faq;

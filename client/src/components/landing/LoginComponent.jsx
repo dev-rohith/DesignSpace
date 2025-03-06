@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, Loader } from "lucide-react";
 import { useSelector } from "react-redux";
+import { loginValidation } from "../../utils/validation";
 
 const LoginComponent = ({ handleLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -9,32 +10,9 @@ const LoginComponent = ({ handleLogin }) => {
   const [clientErrors, setClientErrors] = useState({});
   const { isLoading } = useSelector((store) => store.auth);
 
-  function runValidations() {
-    const error = {};
-    if (!formData.email) {
-      error.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      error.email = "Invalid email format";
-    }
-    if (!formData.password) {
-      error.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      error.password = "Password must be at least 8 characters long";
-    } else if (!/[A-Z]/.test(formData.password)) {
-      error.password = "Password must contain at least one uppercase letter";
-    } else if (!/[a-z]/.test(formData.password)) {
-      error.password = "Password must contain at least one lowercase letter";
-    } else if (!/[0-9]/.test(formData.password)) {
-      error.password = "Password must contain at least one number";
-    } else if (!/[^A-Za-z0-9]/.test(formData.password)) {
-      error.password = "Password must contain at least one special character";
-    }
-    return error;
-  }
-
   function handleSubmit(e) {
     e.preventDefault();
-    const Errors = runValidations();
+    const Errors = loginValidation(formData);
     if (Object.keys(Errors).length !== 0) {
       setClientErrors(Errors);
     } else {
@@ -44,9 +22,7 @@ const LoginComponent = ({ handleLogin }) => {
 
   return (
     <section className="bg-gray-50 min-h-screen flex items-center justify-center">
-      {/* <!-- login container --> */}
       <div className="bg-(--background) flex rounded-2xl shadow-lg max-w-3xl overflow-hidden items-center max-h-[600px]">
-        {/* <!-- image --> */}
         <div className="md:block hidden  w-1/2 ">
           <img src="https://res.cloudinary.com/dlbyxcswi/image/upload/v1738742215/ch16juqp73u68mb0nwyw.jpg" />
         </div>
@@ -57,7 +33,6 @@ const LoginComponent = ({ handleLogin }) => {
             If you are already a member, easily log in
           </p>
 
-          {/* <!-- form --> */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <input

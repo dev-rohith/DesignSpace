@@ -19,6 +19,7 @@ const DesignerCard = ({
   designStyle,
   aboutMe,
   experience,
+  handleChat
 }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm px-2 pt-2 border border-violet-50">
@@ -55,9 +56,11 @@ const DesignerCard = ({
 
         <div className="flex items-center justify-between py-0.5">
           <div className="flex items-center text-base font-medium text-gray-800">
-            <span className="text-sm text-gray-600">From</span>
-            <IndianRupee className="w-4 h-4 mx-1 text-violet-500" />
-            <span>{starting_price}/hr</span>
+            <span className="text-sm text-gray-600">Starts From :</span>
+            <div className="flex items-center">
+              <IndianRupee className="w-4 h-4 ml-1 text-violet-500" />
+              <span>{starting_price}/hr</span>
+            </div>
           </div>
           <div className="flex items-center bg-amber-50 px-2 py-0.5 rounded-full">
             <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
@@ -111,14 +114,16 @@ const DesignerCard = ({
             </div>
           </div>
         </div>
-
-        <p className="text-xs text-gray-600 leading-relaxed">{aboutMe}</p>
-        <div></div>
       </div>
-      <div className="flex justify-end mb-4">
-        <button className="bg-gradient-to-tl from-violet-600 to-fuchsia-600 text-white px-8 mr-4 ring-2 ring-gray-600 rounded hover:scale-105 cursor-pointer">
-          chat
-        </button>
+      <div className="flex justify-between mt-1">
+        <p className="text-xs text-gray-600 leading-relaxed">{aboutMe}</p>
+        <div className="flex justify-end mb-4 p-2">
+          <button 
+          onClick={() => handleChat(user._id)}
+          className=" self-end h-full bg-gradient-to-tl from-violet-600 to-fuchsia-600 text-white px-8 mr-4 ring-2 ring-gray-600 rounded hover:scale-105 cursor-pointer">
+            chat
+          </button>
+        </div>
       </div>
     </div>
   );

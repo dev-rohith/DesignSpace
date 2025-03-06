@@ -21,7 +21,7 @@ const DesignerApplication = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const steps = ["Process","Resume", "INtruduction", "Complete"];
+  const steps = ["Process", "Resume", "INtruduction", "Complete"];
   const formComponents = [
     DesignerApplicationProcess,
     DesignerAppStepOne,
@@ -53,20 +53,20 @@ const DesignerApplication = () => {
 
   return (
     <LandingLayout>
-      <div className="min-h-screen bg-gray-100 py-8">
-        <div className="max-w-4xl mx-auto">
-          <MultiFormProvider steps={steps} formComponents={formComponents}>
-            <div className="rounded-lg shadow-lg p-8 bg-gradient-to-br from-violet-100 via-white to-green-50">
-              <Stepper />
-              <div className="mt-8">
-                <FormContent />
-              </div>
-              <StepperControl handleFormSubmit={handleFormSubmit} />
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-6xl mx-auto ">
+        <MultiFormProvider steps={steps} formComponents={formComponents}>
+          <div className="rounded-lg shadow-lg p-8 bg-gradient-to-br from-fuchsia-100 via-white to-green-100">
+            <Stepper />
+            <div className="mt-8">
+              <FormContent />
             </div>
-          </MultiFormProvider>
-        </div>
+            <StepperControl handleFormSubmit={handleFormSubmit} />
+          </div>
+        </MultiFormProvider>
       </div>
-    </LandingLayout>
+    </div>
+  </LandingLayout>
   );
 };
 export default DesignerApplication;

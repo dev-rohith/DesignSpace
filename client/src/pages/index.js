@@ -16,7 +16,7 @@ export { default as ClientInprogressProjects } from "./client/project/ClientInpr
 export { default as ClientInReviewProjects } from "./client/project/ClientInReviewProjects";
 export { default as ClientCompletedProjects } from "./client/project/ClientCompletedProjects";
 
-export { default as AdmindDashboard } from "./admin/AdmindDashboard";
+export { default as AdminDashboard } from "./admin/AdminDashboard";
 export { default as ManageUsers } from "./admin/ManageUsers";
 export { default as PendingApplications } from "./admin/PendingApplications";
 export { default as NonePendingApplications } from "./admin/NonePendingApplications";

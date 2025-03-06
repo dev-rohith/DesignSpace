@@ -2,19 +2,18 @@ import jwt from "jsonwebtoken";
 
 import { TokenManager } from "../services/redis-service.js";
 import AppError from "../utils/app-error-util.js";
-import catchAsync from "../utils/catch-async-util.js";
+import catchErrors from "../utils/catch-async-util.js";
 import { Token } from "../services/token-service.js";
 
 const authMiddleWare = {};
 
-//protect middleware
-authMiddleWare.protect = catchAsync(async (req, res, next) => {
+authMiddleWare.protect = catchErrors(async (req, res, next) => {
   if (!req.headers["authorization"])
     return next(new AppError("token is required", 401));
   const accessToken = req.headers["authorization"].split(" ")[1];
   if (!accessToken) return next(new AppError("token is required", 400));
   jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-    if (err) return next(new AppError("invalid token", 401)); //important for the refresh token rotation
+    if (err) return next(new AppError("invalid token", 401)); //!important
     if (decoded.userStatus === "suspended")
       next(new AppError("Your account is suspended", 403));
     req.user = decoded;
@@ -22,8 +21,7 @@ authMiddleWare.protect = catchAsync(async (req, res, next) => {
   });
 });
 
-//refresh token rotation
-authMiddleWare.refreshToken_rotation = catchAsync(async (req, res, next) => {
+authMiddleWare.refreshToken_rotation = catchErrors(async (req, res, next) => {
   const cookie = req.cookies;
   if (!cookie?.jwt) return next(new AppError("token is required", 400));
 
@@ -33,7 +31,7 @@ authMiddleWare.refreshToken_rotation = catchAsync(async (req, res, next) => {
     refreshToken,
     process.env.REFRESH_TOKEN_SECRET,
     async (err, decodedRefresh) => {
-      if (err) return next(new AppError("invalid token", 403));
+      if (err) return next(new AppError("invalid token", 403)); //!forbidden
 
       const foundRefreshToken = await TokenManager.validateRefreshToken(
         decodedRefresh.userId,
@@ -71,7 +69,6 @@ authMiddleWare.refreshToken_rotation = catchAsync(async (req, res, next) => {
   );
 });
 
-//authorize middleware
 authMiddleWare.authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.userRole)) {

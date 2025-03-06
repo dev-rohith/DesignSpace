@@ -30,7 +30,6 @@ const ManageLanding = () => {
   }, [dispatch]);
 
   const deleteCarouselItem = async (id) => {
-
     const actionResult = await dispatch(deleteCaroseulItem(id));
     if (deleteCaroseulItem.fulfilled.match(actionResult)) {
       toast.success(actionResult.payload.message);
@@ -62,7 +61,7 @@ const ManageLanding = () => {
 
   return (
     <div className="flex-1 overflow-y-auto px-6 py-4">
-      {/* Carousel Section */}
+      {/* carousel Section */}
       <section className="mb-12">
         <div className="flex flex-wrap gap-4 ">
           <div className="flex-1 min-w-[calc(33.33%-16px)]  ">
@@ -83,7 +82,7 @@ const ManageLanding = () => {
         </div>
       </section>
 
-      {/* Designers Section */}
+      {/* designers section */}
       <section className="mb-12">
         <div className="flex flex-wrap gap-4">
           <div className="flex-1 min-w-[calc(33.33%-16px)]">
@@ -109,7 +108,7 @@ const ManageLanding = () => {
         </div>
       </section>
 
-      {/* Reviews Section */}
+      {/* reviews section */}
       <section className="mb-12">
         <div className="flex flex-wrap gap-4">
           <div className="flex-1 min-w-[calc(33.33%-16px)]">

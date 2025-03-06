@@ -96,12 +96,16 @@ const MyAccount = () => {
     }
   };
 
-  if (isSaving) return <SavingSpinner />;
 
   return (
     <div className="flex h-screen bg-gray-50">
       {user.role === "client" ? <Sidebar /> : <InternalSidebar />}
-      <div className="flex-1 overflow-y-auto">
+      <div
+        className={`flex-1 overflow-y-auto ${
+          isSaving ? "overflow-y-hidden" : ""
+        }`}
+      >
+        {isSaving && <SavingSpinner />}
         <div className="px-4 md:px-6 py-6 md:py-10 h-full">
           <div className="flex items-center justify-between max-w-3xl mx-auto mb-8">
             <h5 className="text-xl uppercase">My profile</h5>
@@ -112,12 +116,12 @@ const MyAccount = () => {
               Logout
             </button>
           </div>
-          {/* Profile Picture Section */}
+          {/* Profile Picture */}
           <UserProfilePicture
             profilePicture={user.profilePicture}
             handleProfileChange={handleProfileChange}
           />
-          {/* Update Profile Section */}
+          {/* Update name */}
           <div className="flex flex-col md:flex-row items-start justify-between max-w-3xl mx-auto mb-8 gap-6">
             <h2 className="text-xl uppercase md:ml-2 font-medium tracking-wide text-gray-800 transform hover:scale-105 transition-transform">
               Update Profile Details :
@@ -184,7 +188,7 @@ const MyAccount = () => {
             </div>
           </div>
 
-          {/* Password Section */}
+          {/* Password section */}
           <div className="flex flex-col md:flex-row items-start justify-between max-w-3xl mx-auto pb-8 gap-6">
             <h2 className="text-xl uppercase font-medium tracking-wide text-gray-800 transform hover:scale-105 transition-transform">
               Update Password :

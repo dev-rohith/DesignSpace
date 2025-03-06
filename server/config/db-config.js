@@ -1,9 +1,8 @@
-import chalk from "chalk";
+import chalk from "chalk";  //light weight maybe remove
 import mongoose from "mongoose";
 
-
+      //need to change later
 const DB_URI =  'mongodb://127.0.0.1:27017/navora'
-//  process.env.DB_URI.replace( '' ,  '')
 
 
 const connectDB = async () => {

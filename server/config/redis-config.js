@@ -14,11 +14,10 @@ const connectRedis = async () => {
   redisClient.on("error", (err) => console.log("Redis Client Error", err));
   try {
     await redisClient.connect();
-    console.log(chalk.cyan("Redis is connected"));
+    console.log(chalk.magenta("Redis is connected"));
   } catch (error) {
     console.log(`Error while connecting Redis: ${error.messge}`);
   }
 };
 
 export default connectRedis;
-

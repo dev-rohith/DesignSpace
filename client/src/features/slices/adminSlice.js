@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   changeUserStatus,
   deleteNonePendingApplication,
+  getAdminAnalytics,
   getNonePendingApplications,
   getPendingApplications,
   getUsers,
@@ -12,6 +13,7 @@ const adminSlice = createSlice({
   initialState: {
     users: null,
     applications: null,
+    analytics: null,
     isLoading: false,
   },
   reducers: {},
@@ -62,6 +64,17 @@ const adminSlice = createSlice({
         (application) => application._id !== action.payload.application._id
       );
     });
+     //analytics logic
+    builder.addCase(getAdminAnalytics.fulfilled, (state, action)=>{
+      state.analytics = action.payload
+      state.isLoading = false
+    })
+    builder.addCase(getAdminAnalytics.pending, (state, action)=>{
+      state.isLoading = true
+    })
+    builder.addCase(getAdminAnalytics.rejected, (state, action)=>{
+      state.isLoading = false
+    })
   },
 });
 

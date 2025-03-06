@@ -1,6 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../apis/axiosIntance";
-import { setIsLoading, setIsUpdatingTask } from "../slices/taskSlice";
+import {
+  setIsCompletingTask,
+  setIsLoading,
+  setIsUpdatingTask,
+} from "../slices/taskSlice";
 
 export const createTask = createAsyncThunk(
   "task/createTask",
@@ -17,16 +21,18 @@ export const createTask = createAsyncThunk(
   }
 );
 
-export const updateTask = createAsyncThunk("task/updateTask", async (data) => {
+
+
+export const updateTask = createAsyncThunk("task/updateTask", async (formData, {dispatch, rejectWithValue}) => {
   try {
+    console.log('hitting here')
     dispatch(setIsUpdatingTask(true));
     const response = await axiosInstance.put(
-      `/tasks/${data.id}`,
-      data.formData
+      `/tasks/${formData._id}`,
+      formData
     );
     return response.data;
   } catch (error) {
-    console.log(error.response.data);
     return rejectWithValue(error.response.data);
   } finally {
     dispatch(setIsUpdatingTask(false));
@@ -35,7 +41,7 @@ export const updateTask = createAsyncThunk("task/updateTask", async (data) => {
 
 export const getDesignerPendingTasks = createAsyncThunk(
   "task/getDesignerPendingTasks",
-  async (url, {dispatch, rejectWithValue }) => {
+  async (url, { dispatch, rejectWithValue }) => {
     dispatch(setIsLoading(true));
     try {
       const response = await axiosInstance.get(url);
@@ -84,42 +90,47 @@ export const getLiveTasks = createAsyncThunk(
   async (_, { dispatch, rejectWithValue }) => {
     dispatch(setIsLoading(true));
     try {
-      const response = await axiosInstance.get('/tasks/live');
+      const response = await axiosInstance.get("/tasks/live");
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     } finally {
       dispatch(setIsLoading(false));
     }
-  });
+  }
+);
 
 export const getTaskDetailsDesigner = createAsyncThunk(
   "/task/getTaskDetails",
-  async (id) => {
+  async (id, { dispatch, rejectWithValue }) => {
+    dispatch(setIsLoading(true));
     try {
-      const response = await axiosInstance.get(`/tasks/${id}`);
+      const response = await axiosInstance.get(`tasks/designer/mytask/${id}`);
       return response.data;
     } catch (error) {
       console.log(error.response.data);
       return rejectWithValue(error.response.data);
+    } finally {
+      dispatch(setIsLoading(false));
     }
   }
 );
-
 
 export const getTaskDetailsAssocaite = createAsyncThunk(
   "/task/getTaskDetailsAssocaite",
   async (id) => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(`/tasks/associate/details/${id}`);
-      console.log(response.data)
+      const response = await axiosInstance.get(
+        `/tasks/associate/details/${id}`
+      );
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.log(error.response.data);
       return rejectWithValue(error.response.data);
-    }finally{
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
   }
 );
@@ -134,26 +145,26 @@ export const acceptTaskAssociate = createAsyncThunk(
     } catch (error) {
       console.log(error.response.data);
       return rejectWithValue(error.response.data);
-    }finally{
-      setIsUpdatingTask(false) 
+    } finally {
+      setIsUpdatingTask(false);
     }
-  })
+  }
+);
 
-
-  export const getAssocaiteTasks = createAsyncThunk(
-    "task/getRunningTasks",
-    async (url, { dispatch, rejectWithValue }) => {
-      dispatch(setIsLoading(true));
-      try {
-        const response = await axiosInstance.get(url);
-        return response.data;
-      } catch (error) {
-        return rejectWithValue(error.response.data);
-      } finally {
-        dispatch(setIsLoading(false));
-      }
+export const getAssocaiteTasks = createAsyncThunk(
+  "task/getRunningTasks",
+  async (url, { dispatch, rejectWithValue }) => {
+    dispatch(setIsLoading(true));
+    try {
+      const response = await axiosInstance.get(url);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    } finally {
+      dispatch(setIsLoading(false));
     }
-  );
+  }
+);
 
 export const getAssociateTask = createAsyncThunk(
   "task/getAssociateTask",
@@ -165,7 +176,80 @@ export const getAssociateTask = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response.data);
     } finally {
-      dispatch(setIsLoading(false));    
+      dispatch(setIsLoading(false));
     }
   }
 );
+
+export const updateTaskProgress = createAsyncThunk(
+  "task/updateTaskProgress",
+  async (data, { dispatch, rejectWithValue }) => {
+    dispatch(setIsUpdatingTask(true));
+    try {
+      const response = await axiosInstance.put(
+        `/tasks/progress/${data.id}`,
+        data.formData
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    } finally {
+      dispatch(setIsUpdatingTask(false));
+    }
+  }
+);
+
+export const deleteTaskProgress = createAsyncThunk(
+  "task/deleteTaskProgress",
+  async ({ id, itemId }, { dispatch, rejectWithValue }) => {
+    console.log(id, itemId)
+    dispatch(setIsUpdatingTask(true));
+    try {
+      const response = await axiosInstance.delete(
+        `/tasks/${id}/delete/${itemId}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    } finally {
+      dispatch(setIsUpdatingTask(false));
+    }
+  }
+);
+
+export const completeTheTask = createAsyncThunk(
+  "task/completeTheTask",
+  async (id, { dispatch, rejectWithValue }) => {
+    dispatch(setIsCompletingTask(true));
+
+    try {
+      const response = await axiosInstance.put(`/tasks/${id}/complete`);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    } finally {
+      dispatch(setIsCompletingTask(true));
+    }
+  }
+);
+
+export const assignAssociateToTheTask = createAsyncThunk(
+  "task/assignAssociateToTheTask",
+  async ({taskId, associateId}, { dispatch, rejectWithValue }) => {
+    dispatch(setIsUpdatingTask(true));
+    try {
+      const response = await axiosInstance.put(
+        `/tasks/${taskId}/assign/${associateId}`
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error.response.data);
+      return rejectWithValue(error.response.data);
+    } finally {
+      dispatch(setIsUpdatingTask(false));
+    }
+  }
+)

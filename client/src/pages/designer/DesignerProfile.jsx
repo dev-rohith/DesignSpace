@@ -18,7 +18,7 @@ import {
   getMyProfileDesigner,
   updateProfileDesigner,
 } from "../../features/actions/designerActions";
-import validateDesignerProfileData from "../../utils/DesingerProfileValidation";
+import { designerProfileDataValidation } from "../../utils/validation";
 
 
 const initialState = {
@@ -73,7 +73,7 @@ const DesignerProfile = () => {
   }, [profile]);
 
   const handleCreateProfile = async () => {
-    const errors = validateDesignerProfileData(formData);
+    const errors = designerProfileDataValidation(formData);
     if (Object.keys(errors).length !== 0) {
       setErrors(errors);
       console.log(errors);
@@ -92,12 +92,13 @@ const DesignerProfile = () => {
   };
 
   const handleSave = async () => {
-    const errors = validateDesignerProfileData(formData);
+    const errors = designerProfileDataValidation(formData);
     if (Object.keys(errors).length !== 0) {
       setErrors(errors);
       console.log(errors);
       return;
     }
+    
     const actionResult = await dispatch(updateProfileDesigner(formData));
     if (updateProfileDesigner.fulfilled.match(actionResult)) {
       console.log("ksdhflkh");

@@ -73,7 +73,7 @@ const ApplicationDetails = () => {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="bg-indigo-300">
+      <div className="border-y">
         <div className="flex justify-between pb-4">
           <h2 className="text-xl uppercase mt-4 ml-4 font-semibold text-gray-700">
             Application Details
@@ -81,13 +81,13 @@ const ApplicationDetails = () => {
           <div className="flex gap-3 items-center pt-4 mr-8">
             <button
               onClick={() => handleApprove(details._id)}
-              className="bg-green-400 text-white px-4 py-1 rounded-xl hover:bg-green-600 cursor-pointer"
+              className="bg-green-400 text-white px-4 py-1 border border-black hover:bg-green-600 cursor-pointer"
             >
               Approve
             </button>
             <button
               onClick={() => handleReject(details._id)}
-              className="bg-red-400 text-white px-4 py-1 rounded-xl hover:bg-red-500 cursor-pointer"
+              className="bg-red-400 text-white px-4 py-1 border border-black hover:bg-red-500 cursor-pointer"
             >
               Reject
             </button>
@@ -95,32 +95,35 @@ const ApplicationDetails = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 bg-indigo-200">
-        <div className="flex gap-4 bg-violet-300  hover:-translate-x-0.5 hover:shadow-sm  p-4 mx-3 mt-3 rounded-xl">
+      <div className="grid grid-cols-2 gap-4">
+        <div className=" col-span-2 flex gap-4 justify-between  border hover:-translate-x-0.5 hover:shadow-sm  p-4 mx-3 mt-3">
+        <div className="flex gap-4">
           <img
             src={details.requestedBy.profilePicture}
             alt="Profile"
-            className="w-16 h-16 rounded-full"
+            className="w-17 h-17 border-1 border-black p-0.5 "
           />
-          <div>
-            <h3>
+          <div >
+            <h3 className="first-letter:uppercase">
               {details.requestedBy.firstName} {details.requestedBy.lastName}
             </h3>
-            <p className="text-blue-600">{details.requestedRole}</p>
-            <p>{new Date(details.createdAt).toLocaleDateString()}</p>
+            <p className="text-gray-600 text-sm">{details.requestedRole}</p>
+            <p className=" text-sm" >{new Date(details.createdAt).toLocaleDateString()}</p>
+          </div>
+          </div>
+          <div className="w-3xl border-l pl-4">
+            <h3 className="text-lg font-semibold underline ">Description :</h3>
+            <p className="first-letter:uppercase italic text-gray-600">{details.description}</p>
           </div>
         </div>
 
-        <div className="bg-violet-300  hover:-translate-x-0.5 hover:shadow-sm  p-4 mx-3 mt-3 rounded-xl">
-          <h3 className="text-lg font-semibold ">Description</h3>
-          <p>{details.description}</p>
-        </div>
 
-        <div className="bg-violet-300  hover:-translate-x-0.5 hover:shadow-sm  p-4 mx-3 rounded-xl">
-          <h3 className="text-lg font-semibold ">Resume</h3>
+
+        <div className="border hover:-translate-x-0.5 hover:shadow-sm  p-4 mx-3">
+          <h3 className="text-lg font-semibold ">Resume :</h3>
           <a
-            href=""
-            className="underline  text-blue-600 upp underline-offset-2 "
+            href={details.resume.url}
+            className="underline  text-violet-600 upp underline-offset-2 "
           >
             view resume in full screen
           </a>
@@ -132,11 +135,13 @@ const ApplicationDetails = () => {
           ></iframe>
         </div>
 
-        <div className="bg-violet-300  hover:-translate-x-0.5 hover:shadow-sm  p-4 mx-3 rounded-xl">
-          <h3 className="text-lg font-semibold mb-8">Introduction Video</h3>
+        <div className=" border hover:-translate-x-0.5 hover:shadow-sm p-4 mx-3 ">
+          <h3 className="text-lg font-semibold mb-6 ml-4 mt-2">
+            Introduction Video
+          </h3>
           <video
             controls
-            className="w-full h-screen object-cover"
+            className="w-full h-[700px] p-4 object-cover"
             poster={details.introduction_video.thumbnail || ""}
           >
             <source src={details.introduction_video.url} type="video/mp4" />

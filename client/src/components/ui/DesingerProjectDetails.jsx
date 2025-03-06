@@ -5,15 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { completeTheProject, deletePedingProject, getProjectDetails, sentProjectToReview, updateProjectDetails, updateProjectProgress} from "../../features/actions/projectActions";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import validatePendigProjectUpdate from "../../utils/pendingProjectUpdateValidation";
 import NotFound from "../../pages/NotFound";
 import Spinner from "../common/Spinner";
-import { projectProgressUpdateValidation } from "../../utils/projectValidations";
 import UpdateProjectProgress from "./UpdateProjectProgress";
 import DesignerProjectDetailsHeader from "./DesignerProjectDetailsHeader";
 import BeforeAndAfterProject from "./BeforeAndAfterProject";
 import LocationMap from "../common/LocationMap";
 import { format, formatDistanceToNow } from "date-fns";
+import { projectProgressUpdateValidation, validatePendigProjectUpdate } from "../../utils/validation";
 
 const initialFormData = {title: "",description: "",status: "",minimumDays: 0,budget: 0,isPaid: false,completion_percentage: 0,address: {  street: "",  house_number: "",  city: "",  state: "",  country: "",
     postal_code: "",
@@ -69,12 +68,14 @@ const DesignerProjectDetails = () => {
         toast.error(actionResult.payload.message);
       }
     })();
-
+  }, [dispatch, project_id]);
+  
+  useEffect(() => {
     if (currentProject) {
       setFormData(currentProject);
     }
-  }, [project_id, currentProject]);
-
+  }, [currentProject]);
+  
   useEffect(() => {
     if (formData.location?.lat && formData.location?.lng) {
       setLocations([
@@ -84,11 +85,12 @@ const DesignerProjectDetails = () => {
         },
       ]);
     }
-  }, [formData]);
+  }, [formData]); 
+  
 
   const { _id, title, client, designer, status, isPaid, completion_percentage, milestones, beforePictures, afterPictures, createdAt, updatedAt } = formData;
 
-  const handleSave = async () => {
+  const handleEdit = async () => {
     const errors = validatePendigProjectUpdate(formData);
     if (Object.keys(errors).length !== 0) {
       setErrors(errors);
@@ -104,6 +106,7 @@ const DesignerProjectDetails = () => {
     } else if (updateProjectDetails.rejected.match(actionResult)) {
       toast.error(actionResult.payload.message);
     }
+    setErrors({})
     setIsEditing(false);
   };
 
@@ -249,7 +252,7 @@ const DesignerProjectDetails = () => {
             {status === "pending" && (
               <div className="flex items-center gap-4">
                 <button
-                  onClick={isEditing ? handleSave : handleDelete}
+                  onClick={isEditing ? handleEdit : handleDelete}
                   disabled={isUpdating}
                   className={`flex items-center gap-2 px-4 py-1 text-sm disabled:bg-gray-500  text-white  rounded-lg ${
                     isEditing

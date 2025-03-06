@@ -28,7 +28,7 @@ const LocationMap = ({
         center={center}
         zoom={zoom}
         scrollWheelZoom={scrollWheelZoom}
-        style={{ height: "100%", width: "100%", borderRadius: "8px" }}
+        style={{ height: "100%", width: "100%", borderRadius: "8px"  }}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

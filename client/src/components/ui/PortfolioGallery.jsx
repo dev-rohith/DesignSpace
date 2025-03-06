@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import ImagesModal from "../common/ImagesModal";
+import { ChevronRight, Camera, ExternalLink, Eye } from "lucide-react";
 
 const PortfolioGallery = ({ data }) => {
   const [selectedImages, setSelectedImages] = useState(null);
@@ -32,60 +32,125 @@ const PortfolioGallery = ({ data }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 pt-7 bg-gray-50 border-b">
-      {data.map((designer) => (
-        <div key={designer._id} className="mb-10 ">
-          <div className="flex items-center gap-4 mb-6 p-2 bg-opacity-60 bg-gray-100 backdrop-blur-md border-2 border-gray-400 rounded-xl w-fit shadow-lg hover:shadow-2xl transition-all duration-300">
-            <img
-              src={designer.user.profilePicture}
-              alt={`${designer.user.firstName} ${designer.user.lastName}`}
-              className="w-16 h-16 rounded-full border-4 border-violet-400 object-cover shadow-md"
-            />
-            <div className="pr-4 text-gray-800">
-              <h2 className="text-lg font-semibold uppercase text-violet-900">
-                {designer.user.firstName} {designer.user.lastName}
-              </h2>
-            </div>
-          </div>
+    <div className="bg-gradient-to-b from-gray-50 to-white">
+      <div className="container mx-auto px-4 pb-10 pt-6">
+        <h1 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-indigo-600">
+            Featured Designers
+          </span>
+        </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {designer.portfolio.map((item) => (
-              <div
-                key={item._id}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
-                <div className="p-4">
-                  <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                  <p className="text-gray-600 mb-4">{item.description}</p>
+        <div className="space-y-16">
+          {data.map((designer) => (
+            <div key={designer._id} className="border-b border-gray-200 pb-12">
+              {/* designer */}
+              <div className="flex items-center gap-4 mb-8">
+                <div className="relative">
+                  <img
+                    src={designer.user.profilePicture}
+                    alt={`${designer.user.firstName} ${designer.user.lastName}`}
+                    className="w-8 h-8 md:w-18 md:h-18 rounded-full p-1 object-cover  shadow-fuchsia-500/50 shadow-md hover:shadow-lg transition-shadow duration-300"
+                  />
                 </div>
+                <div>
+                  <h2 className="font-bold md:text-lg  text-gray-800 first-letter:uppercase">
+                    {designer.user.firstName} {designer.user.lastName}
+                  </h2>
+                  <p className="text-gray-600 font-medium text-xs md:text-sm">
+                    {designer.portfolio.length} Projects
+                  </p>
+                </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-2 p-4">
-                  {item.images.slice(0, 4).map((image, index) => (
-                    <div
-                      key={image._id}
-                      className="relative cursor-pointer group"
-                      onClick={() => openGallery(item.images)}
-                    >
-                      <img
-                        src={image.url}
-                        alt={`Portfolio ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg border"
-                      />
-                      {index === 3 && item.images.length > 4 && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
-                          <span className="text-white text-lg">
-                            +{item.images.length - 4}
-                          </span>
+              {/* Portfolio */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                {designer.portfolio.map((item) => (
+                  <div
+                    key={item._id}
+                    className="bg-white overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100"
+                  >
+                    {item.images.length > 0 && (
+                      <div className="relative h-48 overflow-hidden group">
+                        <img
+                          src={item.images[0].url}
+                          alt={item.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <button
+                              onClick={() => {
+                                openGallery(item.images);
+                              }}
+                              className="flex items-center gap-2  text-white border border-gray-200  px-4 py-2 rounded-md text-sm font-medium cursor-pointer"
+                            >
+                              <Eye className="w-4 h-4" />
+                              View Gallery ({item.images.length})
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="p-5">
+                      <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        {item.title}
+                      </h3>
+                      <p className="text-gray-600 mb-4 line-clamp-2">
+                        {item.description}
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {item.tags &&
+                          item.tags.map((tag, index) => (
+                            <span
+                              key={index}
+                              className="bg-violet-100 text-violet-800 text-xs px-2 py-1 rounded-full"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                      </div>
+
+                      {item.images.length > 1 && (
+                        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                          {item.images.slice(1, 5).map((image, index) => (
+                            <div
+                              key={image._id}
+                              className="flex-shrink-0 cursor-pointer"
+                              onClick={() => {
+                                openGallery(item.images);
+                                setCurrentImageIndex(index + 1);
+                              }}
+                            >
+                              <img
+                                src={image.url}
+                                alt={`Preview ${index + 1}`}
+                                className="w-16 h-16 object-cover rounded-md border border-gray-200"
+                              />
+                            </div>
+                          ))}
+                          {item.images.length > 5 && (
+                            <div
+                              className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center text-gray-500 cursor-pointer"
+                              onClick={() => {
+                                openGallery(item.images);
+                              }}
+                            >
+                              +{item.images.length - 5}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
+
       {selectedImages && (
         <ImagesModal
           prevImage={prevImage}

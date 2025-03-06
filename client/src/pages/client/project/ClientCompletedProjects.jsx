@@ -37,7 +37,8 @@ const PendingProjects = () => {
 
   if (!projects) return <ErrorState error="Error while fetching data" />;
   if (isLoading) return <Spinner />;
-  if (projects.data.length === 0) return <NoProjectsFound message="No completed projects found" />;
+  if (projects.data.length === 0)
+    return <NoProjectsFound message="No completed projects found" />;
 
   return (
     <div className="flex h-screen  overflow-hidden">

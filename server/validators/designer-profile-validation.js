@@ -34,9 +34,9 @@ const desingerProfile = Joi.object({
   starting_price: Joi.number().min(1).max(1000000).required(),
 
   address: addressSchema.required(),
-}).options({ abortEarly: false });
-
-
+})
+  .options({ abortEarly: false })
+  .unknown(true);
 
 export const validateDesingerProfile = (req, res, next) => {
   const { error } = desingerProfile.validate(req.body, { abortEarly: false });

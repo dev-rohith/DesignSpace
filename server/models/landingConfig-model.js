@@ -8,7 +8,7 @@ const landingConfigSchema = new Schema({
         required: true,
       },
       url: {
-        type: String, //file upload -- image
+        type: String, 
         required: true,
       },
       resource_type: {
@@ -33,7 +33,7 @@ const landingConfigSchema = new Schema({
           required: true,
         },
         url: {
-          type: String, //file upload -- video
+          type: String, 
           required: true,
         },
         resource_type: {

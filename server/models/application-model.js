@@ -1,6 +1,5 @@
 import { Schema, model } from "mongoose";
 
-// Application status for role upgrades
 const applicationSchema = new Schema(
   {
     requestedBy: {
@@ -13,7 +12,7 @@ const applicationSchema = new Schema(
         required: true,
       },
       url: {
-        type: String, //file upload  -- pdf
+        type: String, 
         required: true,
       },
     },
@@ -24,7 +23,7 @@ const applicationSchema = new Schema(
         required: true,
       },
       url: {
-        type: String, //file upload -- video
+        type: String, 
         required: true,
       },
     },

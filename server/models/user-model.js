@@ -2,64 +2,69 @@ import { model, Schema } from "mongoose";
 import bcryptjs from "bcryptjs";
 import crypto from "crypto";
 
-const userSchema = new Schema({
-  // Basic user information
-  googleId: String,
-  email: String,
-  password: { type: String, select: false },
-  firstName: String,
-  lastName: String,
-  profilePicture: {
-    type: String,
-    default:
-      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-  },
-  isVerified: {
-    type: Boolean,
-    default: false,
-  },
-
-  // Role and status
-  role: {
-    type: String,
-    enum: ["admin", "designer", "associate", "client"],
-    default: "client",
-  },
-  status: {
-    type: String,
-    enum: ["active", "suspended"],
-    default: "active",
-  },
-
-  lastLoginOn: [Date],
-
-  // Device management
-  devices: [
-    {
-      deviceId: String,
-      deviceName: String,
-    },
-  ],
-  maxDevices: { type: Number, default: 3 },
-
-  // Subscription
-  subscription: {
-    plan: {
+const userSchema = new Schema(
+  {
+    googleId: String,
+    email: String,
+    password: { type: String, select: false },
+    firstName: String,
+    lastName: String,
+    profilePicture: {
       type: String,
-      enum: ["free", "monthly", "yearly"],
-      default: "free",
+      default:
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     },
-    active: { type: Boolean, default: false },
-    expiryDate: Date,
-    lastPaymentDate: Date,
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    role: {
+      type: String,
+      enum: ["admin", "designer", "associate", "client"],
+      default: "client",
+    },
+    status: {
+      type: String,
+      enum: ["active", "suspended"],
+      default: "active",
+    },
+
+    lastLoginOn: [Date],
+
+    devices: [
+      {
+        deviceId: String,
+        deviceName: String,
+      },
+    ],
+    maxDevices: { type: Number, default: 3 },
+
+    subscription: {
+      plan: {
+        type: String,
+        enum: ["free", "monthly", "yearly"],
+        default: "free",
+      },
+      active: { type: Boolean, default: false },
+      expiryDate: Date,
+      lastPaymentDate: Date,
+    },
+    freeChatRemaining: {
+      type: Number,
+      default: 20,
+    },
+    isOnline: {
+      type: Boolean,
+      default: false,
+    },
+    lastActive: { type: Date, default: Date.now },
+
+    passwordResetToken: String,
+    passwordResetExpires: Date,
   },
-
-  // Security
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-});
-
-//pre hooks
+  { timestamps: true }
+);
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
@@ -67,8 +72,6 @@ userSchema.pre("save", async function (next) {
   this.password = await bcryptjs.hash(this.password, salt);
   next();
 });
-
-//mongoose userdefined methods
 
 userSchema.methods.correctPassword = async function (
   candidatePassword,

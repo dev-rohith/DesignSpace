@@ -5,14 +5,13 @@ import CloudinaryService from "../services/cloudinary-service.js";
 import { getCoordinates } from "../services/georeverse-coding.js";
 import { getIpInfo } from "../services/getIpInfo-service.js";
 import AppError from "../utils/app-error-util.js";
-import catchAsync from "../utils/catch-async-util.js";
-import APIFeatures from "../utils/api-features.js";
+import catchErrors from "../utils/catch-async-util.js";
+import QueryHelper from "../utils/query-helper.js";
 
 const taskCtrl = {};
 
-taskCtrl.createTask = catchAsync(async (req, res, next) => {
+taskCtrl.createTask = async (req, res, next) => {
   const {
-    project_id,
     name,
     description,
     priority,
@@ -23,7 +22,6 @@ taskCtrl.createTask = catchAsync(async (req, res, next) => {
   } = req.body;
 
   const taskData = {
-    project_id,
     name,
     description,
     priority,
@@ -44,13 +42,12 @@ taskCtrl.createTask = catchAsync(async (req, res, next) => {
   if (!task) return next(new AppError("Error while creating the task", 400));
 
   res.json({ message: "Task created successfully" });
-});
+}
 
-taskCtrl.updateTask = catchAsync(async (req, res, next) => {
+taskCtrl.updateTask = async (req, res, next) => {
   const { task_id } = req.params;
 
   const {
-    project_id,
     name,
     description,
     priority,
@@ -61,7 +58,6 @@ taskCtrl.updateTask = catchAsync(async (req, res, next) => {
   } = req.body;
 
   const taskData = {
-    project_id,
     name,
     description,
     priority,
@@ -69,8 +65,9 @@ taskCtrl.updateTask = catchAsync(async (req, res, next) => {
     dueDate,
     isVisibleToClient,
     address,
-    status: "inprogress",
   };
+
+  const hey = await Task.findOne({ _id: task_id, status: "pending" });
 
   const { lat, lng } = await getCoordinates(address);
 
@@ -84,7 +81,7 @@ taskCtrl.updateTask = catchAsync(async (req, res, next) => {
     {
       new: true,
     }
-  ).lean();
+  );
 
   if (!task)
     return next(
@@ -94,39 +91,41 @@ taskCtrl.updateTask = catchAsync(async (req, res, next) => {
       )
     );
 
-  res.json(task);
-});
+  res.json({
+    message: "Task updated successfully",
+    data: task,
+  });
+}
 
-taskCtrl.getDesignerTasks = catchAsync(async (req, res, next) => {
+taskCtrl.getDesignerTasks = async (req, res, next) => {
   const { status } = req.params;
-    const features = new APIFeatures(
-      Task.find({
-        designer: req.user.userId,
-        status,
-      }),
-      req.query
-    )
-      .filterAndSearch("title")
-      .paginate(6)
-      .sort();
-  
-    const finalQuery = features.query
+  const features = new QueryHelper(
+    Task.find({
+      designer: req.user.userId,
+      status,
+    }),
+    req.query
+  )
+    .filterAndSearch("title")
+    .paginate(6)
+    .sort();
+
+  const finalQuery = features.query
     .select("-address -isVisibleToClient -location -designer -workUpdates")
     .populate("associate", "firstName lastName profilePicture status")
     .lean();
 
-    const myPendingTasks = await finalQuery;
-  
-    const total = await Task.countDocuments({ status });
-    const perPage = parseInt(req.query.limit) || 6;
-    const totalPages = Math.ceil(total / perPage);
-    const page = parseInt(req.query.page) || 1;
-  
-    res.json({ page, perPage, totalPages, total, data: myPendingTasks });
+  const myPendingTasks = await finalQuery;
 
-});
+  const total = await Task.countDocuments({ status });
+  const perPage = parseInt(req.query.limit) || 6;
+  const totalPages = Math.ceil(total / perPage);
+  const page = parseInt(req.query.page) || 1;
 
-taskCtrl.getMyTaskDesinger = catchAsync(async (req, res, next) => {
+  res.json({ page, perPage, totalPages, total, data: myPendingTasks });
+}
+
+taskCtrl.getMyTaskDesinger = async (req, res, next) => {
   const { task_id } = req.params;
   const task = await Task.findOne({
     _id: task_id,
@@ -134,9 +133,9 @@ taskCtrl.getMyTaskDesinger = catchAsync(async (req, res, next) => {
   }).lean();
   if (!task) return next(new AppError("task was not found", 400));
   res.json(task);
-});
+}
 
-taskCtrl.assignAssociateToTheTask = catchAsync(async (req, res, next) => {
+taskCtrl.assignAssociateToTheTask = async (req, res, next) => {
   const { task_id, associate_id } = req.params;
   const associate = await User.findOne({
     _id: associate_id,
@@ -149,22 +148,25 @@ taskCtrl.assignAssociateToTheTask = catchAsync(async (req, res, next) => {
 
   const updatedTask = await Task.findByIdAndUpdate(
     task_id,
-    { associate: associate_id, status: "in_progress" },
+    { associate: associate_id, status: "inprogress" },
     { new: true }
-  ).select('-designer').populate("associate", "firstName lastName profilePicture").lean();
+  )
+    .select("-designer")
+    .populate("associate", "firstName lastName profilePicture");
   if (!updatedTask)
-    return next(new AppError("Error while updating the project", 400));
-  // mail need to send to the associate email saying that project is assingned with prject info ------------------------------------------------
+    return next(new AppError("Error while updating the task", 400));
+  // mail need to send to the associate email saying that task is assingned with prject info ------------------------------------------------
   res.json({
-    message: "Associate assigned to task successfully",
+    message:
+      "Associate assigned to task successfully. You can find the task in your progress task section",
     data: updatedTask,
   });
-});
+}
 
-////////////////////---associate-actions------/////////////////////////////////////////////////////////
+//--------------------------------------------------------associate-actions-----------------------------------------------------------------//
 
-taskCtrl.getAllLiveTasks = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(
+taskCtrl.getAllLiveTasks = async (req, res, next) => {
+  const features = new QueryHelper(
     Task.find({
       status: "pending",
     }),
@@ -175,23 +177,23 @@ taskCtrl.getAllLiveTasks = catchAsync(async (req, res, next) => {
     .sort();
 
   const finalQuery = features.query
-  .select("-isVisibleToClient -location -associate -workUpdates")
-  .populate("designer", "firstName lastName profilePicture status")
-  .lean();
+    .select("-isVisibleToClient -location -associate -workUpdates")
+    .populate("designer", "firstName lastName profilePicture status")
+    .lean();
 
   const myPendingTasks = await finalQuery;
 
-  const total = await Task.countDocuments({ status: 'pending' });
+  const total = await Task.countDocuments({ status: "pending" });
   const perPage = parseInt(req.query.limit) || 6;
   const totalPages = Math.ceil(total / perPage);
   const page = parseInt(req.query.page) || 1;
 
   res.json({ page, perPage, totalPages, total, data: myPendingTasks });
-});
+}
 
-taskCtrl.getAssociateTasks = catchAsync(async (req, res, next) => {
+taskCtrl.getAssociateTasks = async (req, res, next) => {
   const { status } = req.params;
-  const features = new APIFeatures(
+  const features = new QueryHelper(
     Task.find({
       associate: req.user.userId,
       status,
@@ -203,9 +205,9 @@ taskCtrl.getAssociateTasks = catchAsync(async (req, res, next) => {
     .sort();
 
   const finalQuery = features.query
-  .select("-address -isVisibleToClient -location -associate -workUpdates")
-  .populate("designer", "firstName lastName profilePicture status")
-  .lean();
+    .select("-address -isVisibleToClient  -associate -workUpdates")
+    .populate("designer", "firstName lastName profilePicture status")
+    .lean();
 
   const myTasks = await finalQuery;
 
@@ -215,40 +217,43 @@ taskCtrl.getAssociateTasks = catchAsync(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
 
   res.json({ page, perPage, totalPages, total, data: myTasks });
-});
+}
 
-taskCtrl.getTaskDettails = catchAsync(async (req, res, next) => {
+taskCtrl.getTaskDettails = async (req, res, next) => {
   const { task_id } = req.params;
-  const task = await Task.findOne({ _id: task_id, status: "pending" }).select('-workUpdates').populate('designer', 'firstName lastName profilePicture').lean();
+  console.log("tesitng");
+  const task = await Task.findOne({ _id: task_id, status: "pending" })
+    .select("-workUpdates")
+    .populate("designer", "firstName lastName profilePicture")
+    .lean();
   if (!task) return next(new AppError("task was not found", 400));
   res.json(task);
-});
+}
 
-taskCtrl.getMyTaskAssociate = catchAsync(async (req, res, next) => {
+taskCtrl.getMyTaskAssociate = async (req, res, next) => {
   const { task_id } = req.params;
   const task = await Task.findOne({ associate: req.user.userId, _id: task_id })
     .populate("designer", "firstName lastName profilePicture")
-    .populate("project")
     .lean();
   res.json(task);
-});
+}
 
-taskCtrl.acceptByAssociate = catchAsync(async (req, res, next) => {
+taskCtrl.acceptByAssociate = async (req, res, next) => {
   const { task_id } = req.params;
-  const updatedProject = await Task.findByIdAndUpdate(
+  const updatedtask = await Task.findByIdAndUpdate(
     task_id,
     { associate: req.user.userId, status: "inprogress" },
     { new: true }
   ).lean();
-  if (!updatedProject)
-    return next(new AppError("Error while updating the project", 400));
+  if (!updatedtask)
+    return next(new AppError("Error while updating the task", 400));
   res.json({
     message: "You assigned to task successfully",
-    data: updatedProject,
+    data: updatedtask,
   });
-});
+}
 
-taskCtrl.updateTaskProgress = catchAsync(async (req, res, next) => {
+taskCtrl.updateTaskProgress = async (req, res, next) => {
   if (!req.files) return next(new AppError("Files are required", 400));
 
   const { task_id } = req.params;
@@ -293,15 +298,18 @@ taskCtrl.updateTaskProgress = catchAsync(async (req, res, next) => {
 
   await task.save();
 
-  const updatedWork = task.workUpdates[task.workUpdates.length - 1];
+  const updatedWork = JSON.parse(
+    JSON.stringify(task.workUpdates[task.workUpdates.length - 1])
+  );
+  delete updatedWork.updateLocation;
 
   res.status(200).json({
-    status: "success",
+    message: "work updated successfully",
     data: updatedWork,
   });
-});
+}
 
-taskCtrl.deleteProgressItem = catchAsync(async (req, res, next) => {
+taskCtrl.deleteProgressItem = async (req, res, next) => {
   const { task_id, delete_id } = req.params;
   const task = await Task.findOne({
     _id: task_id,
@@ -328,8 +336,17 @@ taskCtrl.deleteProgressItem = catchAsync(async (req, res, next) => {
 
   res.json({
     message: "item deleted successfully",
-    data: deleteItem,
+    data: { deletedItemId: delete_id },
   });
-});
+}
+
+taskCtrl.completeTask = async (req, res, next) => {
+  const { task_id } = req.params;
+  const task = await Task.findOne({ _id: task_id, status: "inprogress" });
+  if (!task) return next(new AppError("task was not found", 400));
+  task.status = "completed";
+  await task.save();
+  res.json({ message: "task completed successfully" });
+}
 
 export default taskCtrl;

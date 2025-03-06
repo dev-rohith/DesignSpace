@@ -31,7 +31,7 @@ export const getSubscriptionsDetails = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
-        "payment/get-subcription-prices"
+        "payment/subcription-pricing"
       );
       return response.data.subscription;
     } catch (error) {

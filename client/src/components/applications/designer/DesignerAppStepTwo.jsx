@@ -25,11 +25,11 @@ const DesignerAppStepTwo = () => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'video/mp4': ['.mp4']
+      "video/mp4": [".mp4"],
     },
     maxFiles: 1,
     multiple: false,
-    maxSize: 100 * 1024 * 1024 
+    maxSize: 100 * 1024 * 1024,
   });
 
   useEffect(() => {
@@ -67,7 +67,9 @@ const DesignerAppStepTwo = () => {
         <input {...getInputProps()} />
         <div className="flex flex-col items-center text-center space-y-2">
           <svg
-            className={`w-12 h-12 ${isDragActive ? "text-blue-500" : "text-gray-400"}`}
+            className={`w-12 h-12 ${
+              isDragActive ? "text-blue-500" : "text-gray-400"
+            }`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -123,9 +125,9 @@ const DesignerAppStepTwo = () => {
               </svg>
             </button>
           </div>
-          <video 
-            src={videoPreview} 
-            className="w-full max-h-[600px]" 
+          <video
+            src={videoPreview}
+            className="w-full max-h-[600px]"
             controls
             controlsList="nodownload"
           >

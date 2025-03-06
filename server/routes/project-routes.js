@@ -2,6 +2,7 @@ import { Router } from "express";
 import projectCtrl from "../controllers/project-controller.js";
 import authMiddleWare from "../middleware/auth-middleware.js";
 import { uploadSingleFile } from "../middleware/multer-middleware.js";
+import catchErrors from "../utils/catch-async-util.js";
 
 const router = Router();
 
@@ -11,63 +12,63 @@ router.use(authMiddleWare.protect);
 router.get(
   "/:project_id",
   authMiddleWare.authorize("client", "designer"),
-  projectCtrl.getProject
-);
+  catchErrors(projectCtrl.getProject
+))
 
 router.put(
   "/accept/:project_id",
   authMiddleWare.authorize("client"),   //payment here ---------------------------------
-  projectCtrl.acceptProject
-);
+  catchErrors(projectCtrl.acceptProject
+))
 
 router.put(
   "/review/:project_id",
   authMiddleWare.authorize("client"),
-  projectCtrl.clientRating
-)
+  catchErrors(projectCtrl.clientRating
+))
 
 router.get(
   "/client/:status",
   authMiddleWare.authorize("client"),
-  projectCtrl.getMyProjectsClient
-);
+  catchErrors(projectCtrl.getMyProjectsClient
+))
 
-router.use(authMiddleWare.authorize("designer"));
+router.use(authMiddleWare.authorize("designer"))
 
-router.post("/", projectCtrl.createProject);
-router.get("/designer/:status", projectCtrl.getMyProjectsDesigner);
+router.post("/", catchErrors(projectCtrl.createProject))
+router.get("/designer/:status", catchErrors(projectCtrl.getMyProjectsDesigner))
 
 router
   .route("/:project_id")
-  .put(projectCtrl.editProject)
-  .delete(projectCtrl.deleteProject);
+  .put(catchErrors(projectCtrl.editProject))
+  .delete(catchErrors(projectCtrl.deleteProject))
 
-router.put("/:project_id/sent-review", projectCtrl.sentProjectToReview);
+router.put("/:project_id/sent-review", catchErrors(projectCtrl.sentProjectToReview))
 
-router.put("/progress/:project_id", projectCtrl.updateProjectProgress);
+router.put("/progress/:project_id", catchErrors(projectCtrl.updateProjectProgress))
 
 router.put(
   "/before/:project_id",
   uploadSingleFile(["image/png", "image/jpeg"], "image", 1024 * 1024 * 10),
-  projectCtrl.addBeforeProjectToPortfolio
-);
+  catchErrors(projectCtrl.addBeforeProjectToPortfolio
+))
 
 router.delete(
   "/before/:project_id/item/:Item_id",
-  projectCtrl.deleteBeforeProjectToPortifolio
-);
+  catchErrors(projectCtrl.deleteBeforeProjectToPortifolio
+))
 
 router.put(
   "/after/:project_id",
   uploadSingleFile(["image/png", "image/jpeg"], "image", 1024 * 1024 * 10),
-  projectCtrl.addAfterProjectToPortfolio
-);
+  catchErrors(projectCtrl.addAfterProjectToPortfolio
+))
 
 router.delete(
   "/after/:project_id/item/:Item_id",
-  projectCtrl.deleteAfterProjectToPortifolio
-);
+  catchErrors(projectCtrl.deleteAfterProjectToPortifolio
+))
 
-router.put("/:project_id/complete", projectCtrl.complete);
+router.put("/:project_id/complete", catchErrors(projectCtrl.complete))
 
 export default router;

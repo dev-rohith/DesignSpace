@@ -63,7 +63,7 @@ const DesingerPendingProjectEdit = ({
       {/* Address Section */}
       <div className="pb-4">
         <AddressSection
-          formData={formData}
+          address={formData.address}
           handleInputChange={handleInputChange}
           isEditing={isEditing}
           error={errors?.address}

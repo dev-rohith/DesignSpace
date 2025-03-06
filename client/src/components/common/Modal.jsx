@@ -1,12 +1,11 @@
 import { X } from "lucide-react";
 
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children , width = "full", height = "max"}) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl mx-4 relative">
-        {/* Header */}
+      <div className={`bg-white rounded-xl shadow-lg w-${width} h-${height} max-w-2xl mx-4 relative`}>
         <div className="p-4">
           {title && (
             <h2 className="text-xl font-semibold text-gray-900 pr-8">

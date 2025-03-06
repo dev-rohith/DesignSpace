@@ -1,9 +1,9 @@
 import User from "../models/user-model.js";
 import CloudinaryService from "../services/cloudinary-service.js";
 import { TokenManager } from "../services/redis-service.js";
-import APIFeatures from "../utils/api-features.js";
+import QueryHelper from "../utils/query-helper.js";
 import AppError from "../utils/app-error-util.js";
-import catchAsync from "../utils/catch-async-util.js";
+import catchErrors from "../utils/catch-async-util.js";
 import fs from "fs";
 import {
   userPasswordValidator,
@@ -12,20 +12,21 @@ import {
 
 const userCtrl = {};
 
-userCtrl.getUser = catchAsync(async (req, res, next) => {
-  let filterSting = "email lastLoginOn status role profilePicture lastName firstName";
+userCtrl.getUser = async (req, res, next) => {
+  let filterSting =
+    "email lastLoginOn status role profilePicture lastName firstName";
   if (req.user.userRole === "client") filterSting += " subscription";
   const user = await User.findOne({ _id: req.user?.userId })
     .select(filterSting)
     .lean();
   res.json(user);
-});
+}
 
 
-
-userCtrl.updatePassword = catchAsync(async (req, res, next) => {
+userCtrl.updatePassword = async (req, res, next) => {
   const { value, error } = userPasswordValidator.validate(req.body);
   if (error) return next(new AppError(error.details[0].message, 422));
+  
   const { currentPassword, newPassword } = value;
 
   const user = await User.findOne({ _id: req.user?.userId }).select(
@@ -44,9 +45,9 @@ userCtrl.updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   res.json({ message: "Password updated successfully" });
-});
+}
 
-userCtrl.updateProfilePic = catchAsync(async (req, res, next) => {
+userCtrl.updateProfilePic = async (req, res, next) => {
   if (!req.file) return next(new AppError("image must needed to update", 400));
   const upload = await CloudinaryService.uploadFile(req.file);
   const profilePicture = upload.secure_url;
@@ -64,9 +65,9 @@ userCtrl.updateProfilePic = catchAsync(async (req, res, next) => {
     message: "your profile picture has been updated successfully",
     new_pic: user.profilePicture,
   });
-});
+}
 
-userCtrl.updateMe = catchAsync(async (req, res, next) => {
+userCtrl.updateMe = async (req, res, next) => {
   const { firstName, lastName } = req.body;
   const user = await User.findByIdAndUpdate(
     req.user.userId,
@@ -77,10 +78,10 @@ userCtrl.updateMe = catchAsync(async (req, res, next) => {
     message: "name has been changed successfully",
     data: { firstName, lastName },
   });
-});
+}
 
-userCtrl.getUsers = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(User, req.query)
+userCtrl.getUsers = async (req, res, next) => {
+  const features = new QueryHelper(User, req.query)
     .filterAndSearch()
     .sort()
     .paginate();
@@ -95,10 +96,10 @@ userCtrl.getUsers = catchAsync(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
 
   res.json({ page, perPage, totalPages, total, data: users });
-});
+}
 
-userCtrl.getClients = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(User.find({ role: "client" }), req.query)
+userCtrl.getClients = async (req, res, next) => {
+  const features = new QueryHelper(User.find({ role: "client" }), req.query)
     .filterAndSearch("firstName")
     .paginate();
   const finalQuery = features.query
@@ -106,10 +107,10 @@ userCtrl.getClients = catchAsync(async (req, res, next) => {
     .lean();
   const users = await finalQuery;
   res.json(users);
-});
+}
 
-userCtrl.getDesigners = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(User.find({ role: "designer" }), req.query)
+userCtrl.getDesigners = async (req, res, next) => {
+  const features = new QueryHelper(User.find({ role: "designer" }), req.query)
     .filterAndSearch("firstName")
     .paginate();
   const finalQuery = features.query
@@ -117,10 +118,10 @@ userCtrl.getDesigners = catchAsync(async (req, res, next) => {
     .lean();
   const desinger = await finalQuery;
   res.json(desinger);
-});
+}
 
-userCtrl.getAssociates = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(User.find({ role: "associate" }), req.query)
+userCtrl.getAssociates = async (req, res, next) => {
+  const features = new QueryHelper(User.find({ role: "associate" }), req.query)
     .filterAndSearch("firstName")
     .paginate();
   const finalQuery = features.query
@@ -128,9 +129,9 @@ userCtrl.getAssociates = catchAsync(async (req, res, next) => {
     .lean();
   const desinger = await finalQuery;
   res.json(desinger);
-});
+}
 
-userCtrl.UserStatusController = catchAsync(async (req, res, next) => {
+userCtrl.UserStatusController = async (req, res, next) => {
   const { value, error } = userStatusChangeValidator.validate({
     ...req.body,
     ...req.params,
@@ -152,9 +153,9 @@ userCtrl.UserStatusController = catchAsync(async (req, res, next) => {
     message: "user account status changed successfully",
     user: deactivatedUser,
   });
-});
+}
 
-userCtrl.logoutAllUsers = catchAsync(async (req, res, next) => {
+userCtrl.logoutAllUsers = async (req, res, next) => {
   const userId = req.user.userId;
   const user = await User.findById(userId);
   if (!user) return next(new AppError("user is not found in db", 404));
@@ -165,6 +166,6 @@ userCtrl.logoutAllUsers = catchAsync(async (req, res, next) => {
   user.devices = [];
   user.save();
   res.json({ message: "successfully logouted from all the devices" });
-});
+}
 
 export default userCtrl;

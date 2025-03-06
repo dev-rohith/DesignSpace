@@ -11,17 +11,8 @@ import { Plus, Minus } from "lucide-react";
 const geoUrl =
   "https://raw.githubusercontent.com/lotusms/world-map-data/main/world.json";
 
-const colors = {
-  primary: "#2563eb",
-  highlight: "#1d4ed8",
-  background: "#f8fafc",
-  muted: "#cbd5e1",
-  text: "#0f172a",
-  light: "#ffffff",
-};
-
 const DesignersMap = ({ locations }) => {
-  const [zoom, setZoom] = useState(5);
+  const [zoom, setZoom] = useState(2);
   const [center, setCenter] = useState([77.5, 12.9]);
 
   const handleZoomIn = () => {
@@ -32,22 +23,24 @@ const DesignersMap = ({ locations }) => {
     if (zoom > 1) setZoom(zoom - 1);
   };
 
+  console.log(locations)
+
   return (
-    <div className="w-full md:max-w-2xl  border h-86 relative bg-slate-50 rounded-xl overflow-hidden shadow-sm">
+    <div className="w-xl md:max-w-2xl  h-80 relative ring-3 ring-offset-3 ring-gray-400 border-2 border-violet-500 overflow-hidden shadow-md">
       <div className="absolute right-4 bottom-4 z-10 flex flex-col gap-2">
         <button
           onClick={handleZoomIn}
-          className="p-2 bg-white rounded-lg shadow-md hover:bg-slate-50 transition-colors disabled:bg-slate-100 disabled:opacity-50"
+          className="p-2 bg-white rounded-lg shadow-md hover:bg-violet-50 transition-colors disabled:bg-violet-100 disabled:opacity-50"
           disabled={zoom > 8}
         >
-          <Plus size={20} className="text-slate-600" />
+          <Plus size={20} className="text-violet-600" />
         </button>
         <button
           onClick={handleZoomOut}
-          className="p-2 bg-white rounded-lg shadow-md hover:bg-slate-50 transition-colors disabled:bg-slate-100 disabled:opacity-50"
+          className="p-2 bg-white rounded-lg shadow-md hover:bg-violet-50 transition-colors disabled:bg-violet-100 disabled:opacity-50"
           disabled={zoom < 2}
         >
-          <Minus size={20} className="text-slate-600" />
+          <Minus size={20} className="text-violet-600" />
         </button>
       </div>
 
@@ -56,7 +49,7 @@ const DesignersMap = ({ locations }) => {
         projectionConfig={{
           scale: 100,
         }}
-        className="w-full h-full"
+        className="w-full h-full bg-blue-100"
       >
         <ZoomableGroup
           center={center}
@@ -76,27 +69,20 @@ const DesignersMap = ({ locations }) => {
                   geography={geo}
                   style={{
                     default: {
-                      fill:
-                        geo.properties.name === "India"
-                          ? colors.primary
-                          : colors.muted,
-                      stroke: colors.light,
+                      fill: geo.properties.name === "India" ? "#438526" : "#dffae0",
+                      stroke: "#1E3A8A",
                       strokeWidth: 0.5,
                       outline: "none",
                     },
                     hover: {
-                      fill:
-                        geo.properties.name === "India"
-                          ? colors.highlight
-                          : "#94a3b8",
-                      stroke: colors.light,
+                      fill: geo.properties.name === "India" ? "#6d28d9" : "#c4b5fd",
+                      stroke: "#ffffff",
                       strokeWidth: 0.5,
                       outline: "none",
                     },
                     pressed: {
-                      fill:
-                        geo.properties.name === "India" ? "#1e40af" : "#cbd5e1",
-                      stroke: colors.light,
+                      fill: geo.properties.name === "India" ? "#5b21b6" : "#ddd6fe",
+                      stroke: "#ffffff",
                       strokeWidth: 0.5,
                       outline: "none",
                     },
@@ -114,23 +100,30 @@ const DesignersMap = ({ locations }) => {
                 marker.location.coordinates[0],
               ]}
             >
-              <circle
-                r={4}
-                fill={colors.primary}
-                stroke={colors.light}
-                strokeWidth={2}
-                className="cursor-pointer hover:fill-blue-700 transition-colors"
-              />
+              <g transform="translate(-8, -8)">
+                <circle
+                  r={5}
+                  fill="#8b5cf6"
+                  stroke="#ffffff"
+                  strokeWidth={2}
+                  className="cursor-pointer hover:fill-violet-700 transition-colors"
+                />
+                <circle
+                  r={2}
+                  fill="#ffffff"
+                  className="cursor-pointer"
+                />
+              </g>
               <text
                 textAnchor="middle"
-                y={-8}
+                y={-16}
                 style={{
                   fontFamily: "system-ui",
-                  fill: colors.text,
-                  fontSize: "8px",
-                  fontWeight: "500",
-                  stroke: colors.light,
-                  strokeWidth: 0.5,
+                  fill: "#4c1d95",
+                  fontSize: "10px",
+                  fontWeight: "600",
+                  stroke: "#ffffff",
+                  strokeWidth: 0.4,
                   paintOrder: "stroke",
                 }}
               >

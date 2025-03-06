@@ -12,12 +12,12 @@ const multerStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const extension = path.extname(file.originalname); // Extracts the extension like .jpg, .png, etc.
+    const extension = path.extname(file.originalname);
     cb(null, file.fieldname + "-" + uniqueSuffix + extension);
   },
 });
 
-// Custom file filter based on allowed MIME types
+// Custom filter based on allowed MIME types
 const customFileFilter = (allowedTypes) => {
   return (req, file, cb) => {
     if (!allowedTypes.includes(file.mimetype)) {
@@ -39,20 +39,20 @@ export const uploadAvatar = (allowedTypes) => {
 export const uploadSingleFile = (allowedTypes, fileName, maxFileSize) => {
   return multer({
     storage: multerStorage,
-    fileFilter: customFileFilter(allowedTypes), // Apply custom filter here
+    fileFilter: customFileFilter(allowedTypes),
     limits: {
       fileSize: maxFileSize,
-    }, // Example file size limit of 5MB
+    },
   }).single(fileName);
 };
 
 export const uploadMultipleFiles = (allowedTypes, maxFileSize, maxFiles) => {
   return multer({
-    storage: multerStorage, // using closure here
+    storage: multerStorage,
     fileFilter: customFileFilter(allowedTypes),
     limits: {
-      fileSize: maxFileSize, // Maximum file size
-      files: maxFiles, // Maximum files
+      fileSize: maxFileSize,
+      files: maxFiles,
     },
   }).array("files", maxFiles);
 };

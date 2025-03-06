@@ -46,12 +46,13 @@ const OtpVerification = ({ length = 4, handleOtpSubmit, handleResendOtp }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="p-8 bg-white rounded-lg shadow-lg">
-        <h1 className="text-2xl font-bold mb-6 text-gray-800">
+    <div className="flex items-center justify-center w-full h-screen bg-gray-100 ">
+      <div className="p-8 bg-white  shadow-lg w-full  max-w-xl ">
+        <h1 className="text-2xl font-semibold text-center text-gray-900 mb-6">
           Enter OTP to Continue
         </h1>
-        <div className="flex gap-4 justify-center">
+
+        <div className="flex justify-center gap-3">
           {otp.map((value, index) => (
             <input
               key={index}
@@ -61,24 +62,29 @@ const OtpVerification = ({ length = 4, handleOtpSubmit, handleResendOtp }) => {
               onChange={(e) => handleChange(index, e)}
               onClick={() => handleClick(index)}
               onKeyDown={(e) => handleKeyDown(index, e)}
-              className="w-12 h-12 text-center text-xl border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 ease-in-out transform focus:scale-105"
+              className="w-12 h-12 text-center text-xl font-semibold border border-gray-400 rounded-lg focus:outline-none focus:border-black focus:ring-2 focus:ring-gray-900 transition-all duration-200 ease-in-out"
               maxLength={1}
             />
           ))}
         </div>
+
         <button
           disabled={isLoading}
-          className="disabled:text-gray-600 block text-start pl-3 mt-2 lowercase font-semibold text-red-500 hover:cursor-pointer"
+          className="block mt-3 text-sm font-medium italic text-gray-700 hover:text-gray-900 transition-all duration-200 hover:bg-gray-200 px-2 py-1  cursor-pointer"
           onClick={handleResendOtp}
         >
-          Resend Otp
+          Resend OTP
         </button>
+
         <button
           disabled={isLoading}
           onClick={() => handleOtpSubmit(otp.join(""))}
-          className=" mt-2 px-6 py-2 ml-40 bg-purple-600 text-white rounded-lg border border-violet-800 disabled:bg-gray-400 disabled:border-none  hover:bg-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-500 ftransition-all duration-200 ease-in-out hover:cursor-pointer "
+          className="w-full mt-4 px-6 py-2 border-1 text-lg font-medium hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-700 transition-all duration-200 ease-in-out disabled:bg-gray-400 cursor-pointer relative overflow-hidden group"
         >
-          Submit
+          <span className="absolute inset-0 bg-gray-700 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></span>
+          <span className="relative z-10">
+            {isLoading ? "Verifying..." : "Submit"}
+          </span>
         </button>
       </div>
     </div>

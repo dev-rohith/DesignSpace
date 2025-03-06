@@ -7,9 +7,7 @@ const SidebarItem = ({ icon, text, to, children }) => {
   const { expanded, dropDown, updateDropDown } = useContext(SidebarContext);
 
   const handleDropDown = (e) => {
-    // Prevent navigation if item has children
     if (children) {
-      e.preventDefault();
       if (dropDown === text) {
         updateDropDown(null);
       } else {
@@ -21,13 +19,13 @@ const SidebarItem = ({ icon, text, to, children }) => {
   const hasChildren = Boolean(children);
 
   return (
-    <div className="relative">
+    <div>
       <li className="relative">
         <Link
           to={to}
           onClick={handleDropDown}
           className={`
-            flex items-center py-2.5 px-4 my-1 rounded-lg cursor-pointer
+            flex items-center py-2 px-4 my-1 rounded-lg cursor-pointer
             transition-colors duration-200
             hover:bg-violet-50 hover:text-violet-700
             ${

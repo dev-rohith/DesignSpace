@@ -1,7 +1,6 @@
 import React from "react";
 import { Calendar, Clock, AlertCircle, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
-import { useNavigate } from "react-router-dom";
 
 const TaskFeedItem = ({
   _id,
@@ -19,9 +18,9 @@ const TaskFeedItem = ({
 
   return (
     <div className="w-full p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-all">
-      <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
+      <div className="flex flex-col  lg:flex-row items-start lg:items-center gap-6">
         <div className="flex-1 space-y-4">
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-3 ">
             <h3 className="text-xl font-semibold text-gray-900">{name}</h3>
             <span
               className={`px-3 py-1 rounded-full text-xs font-medium capitalize

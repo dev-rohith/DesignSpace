@@ -46,7 +46,7 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 flex items-center justify-between font-bold text-white bg-gradient-to-b from-white/70 to-white/60 backdrop-blur-md backdrop-saturate-150 border-b border-white/10 shadow-sm">
       <Link to="/">
-        <img className="bg-balck w-30 ml-3" src="/logo.svg" alt="" />{" "}
+        <img className="bg-balck w-30 ml-3" src="/logo.svg" alt="" />
       </Link>
       <ul className="flex space-x-2 md:flex items-center md:space-x-5 mr-6 uppercase text-sm font-medium text-(--dark)">
         <Link to="/our-work">

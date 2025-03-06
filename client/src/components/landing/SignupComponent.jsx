@@ -2,6 +2,7 @@ import { Loader } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { signupValidation } from "../../utils/validation";
 
 const SignupComponent = ({ handleSignup }) => {
   const [formData, setFormData] = useState({
@@ -15,57 +16,9 @@ const SignupComponent = ({ handleSignup }) => {
   const [clientErrors, setClientErrors] = useState({});
   const { isLoading } = useSelector((store) => store.auth);
 
-  function runValidations() {
-    const errors = {};
-
-    if (!formData.firstName) {
-      errors.firstName = "First name is required";
-    } else if (formData.firstName.length < 2) {
-      errors.firstName = "First name must be at least 2 characters";
-    } else if (!/^[A-Za-z]+$/.test(formData.firstName)) {
-      errors.firstName = "First name must contain only letters";
-    }
-
-    if (!formData.lastName) {
-      errors.lastName = "Last name is required";
-    } else if (formData.lastName.length < 2) {
-      errors.lastName = "Last name must be at least 2 characters";
-    } else if (!/^[A-Za-z]+$/.test(formData.lastName)) {
-      errors.lastName = "Last name must contain only letters";
-    }
-
-    if (!formData.email) {
-      errors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = "Invalid email format";
-    }
-
-    if (!formData.password) {
-      errors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      errors.password = "Password must be at least 8 characters long";
-    } else if (!/[A-Z]/.test(formData.password)) {
-      errors.password = "Password must contain at least one uppercase letter";
-    } else if (!/[a-z]/.test(formData.password)) {
-      errors.password = "Password must contain at least one lowercase letter";
-    } else if (!/[0-9]/.test(formData.password)) {
-      errors.password = "Password must contain at least one number";
-    } else if (!/[^A-Za-z0-9]/.test(formData.password)) {
-      errors.password = "Password must contain at least one special character";
-    }
-
-    if (!formData.confirmPassword) {
-      errors.confirmPassword = "Confirm password is required";
-    } else if (formData.confirmPassword !== formData.password) {
-      errors.confirmPassword = "Passwords do not match";
-    }
-
-    return errors;
-  }
-
   function handleSubmit(e) {
     e.preventDefault();
-    const Errors = runValidations();
+    const Errors = signupValidation(formData);
     if (Object.keys(Errors).length !== 0) {
       setClientErrors(Errors);
     } else {
@@ -76,13 +29,10 @@ const SignupComponent = ({ handleSignup }) => {
 
   return (
     <section className="bg-gray-50 min-h-screen flex items-center justify-center">
-      {/* <!-- login container --> */}
       <div className="bg-(--background) flex rounded-2xl shadow-lg max-w-3xl items-center overflow-hidden max-h-[600px]">
-        {/* <!-- image --> */}
         <div className="md:block hidden w-1/2">
           <img src="https://res.cloudinary.com/dlbyxcswi/image/upload/v1738742215/kxnoiqgszkxxffture5y.jpg" />
         </div>
-        {/* <!-- form --> */}
         <div className="md:w-1/2 px-8 md:px-15">
           <h2 className="font-bold text-2xl text-(--primary)">Signup Now</h2>
           <p className="text-xs mt-2 text-(--primary)">
@@ -171,7 +121,7 @@ const SignupComponent = ({ handleSignup }) => {
               )}
             </div>
             <button className="bg-(--primary) rounded-xl text-white py-2 hover:scale-105 duration-300">
-            {isLoading ? (
+              {isLoading ? (
                 <span className="flex items-center text-sm justify-center space-x-2">
                   <Loader className="w-4 h-6 animate-spin" />
                   <span>SignUping...</span>

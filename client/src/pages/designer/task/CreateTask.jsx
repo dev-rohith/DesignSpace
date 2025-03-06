@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar, AlertCircle, Flag } from "lucide-react";
 import InputField from "../../../components/common/InputField";
 import { AddressSection } from "../../../components";
 import { useDispatch, useSelector } from "react-redux";
-import { TaskFormValidation } from "../../../utils/taskValidataions";
-import { createTask } from "../../../features/actions/taskActions";
+import {
+  createTask,
+  getTaskDetailsDesigner,
+} from "../../../features/actions/taskActions";
 import toast from "react-hot-toast";
+import { TaskFormValidation } from "../../../utils/validation";
 
 const initialState = {
   name: "",
@@ -25,10 +28,19 @@ const initialState = {
 };
 
 const CreateTask = () => {
+  const { editId, currentTask } = useSelector((store) => store.task);
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
   const { isUpdating } = useSelector((store) => store.task);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (editId) {
+      (async () => {
+        const actionResult = await dispatch(getTaskDetailsDesigner(editId));
+      })();
+    }
+  }, [editId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,18 +67,21 @@ const CreateTask = () => {
 
   return (
     <div className="min-h-screen overflow-y-auto w-screen">
-      <div className="max-w-7xl md:mt-8 mx-auto bg-white rounded-lg shadow-lg">
+      <div className="flex items-center justify-center mt-6">
+        <h5 className="font-bold text-3xl ">Create Task</h5>
+      </div>
+      <div className="max-w-7xl md:mt-8 mx-auto bg-white rounded-lg shadow-xl">
         <div className="p-4 md:p-6">
           <form
             onSubmit={handleSubmit}
             className="flex flex-col lg:flex-row gap-6"
           >
-            <div className="flex flex-col md:gap-24 w-full lg:w-1/2 lg:pr-6 lg:border-r-2 border-gray-100">
+            <div className="flex flex-col w-full gap-6 lg:w-1/2 lg:pr-6 lg:border-r-4 border-indigo-800">
               <div className="flex items-center py-1 rounded-4xl justify-center bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600">
                 <AlertCircle className="w-4 h-4 mr-1 text-white" />
-                <h2 className="text-lg font-semibold text-gray-50">
+                <h4 className="text-lg font-semibold text-gray-50">
                   Task Details
-                </h2>
+                </h4>
               </div>
 
               <div className="space-y-6">
@@ -144,14 +159,22 @@ const CreateTask = () => {
             </div>
 
             <div className="flex flex-col gap-6 w-full lg:w-1/2">
-              <div className="flex-1 overflow-y-auto">
-                <AddressSection
-                  formData={formData}
-                  handleInputChange={handleInputChange}
-                  error={errors}
-                />
+              <AddressSection
+                className="w-full"
+                address={formData.address}
+                handleInputChange={handleInputChange}
+                error={errors}
+              />
+              <div className="italic">
+                <h6 className="font-medium">Instruction :</h6>
+                <p className="tracking-tight">
+                  Please check the address information before creating the task.
+                  Assocaite partners need accurate location to react the task
+                  location cross check once after creating task in pending task
+                  section.
+                </p>
               </div>
-              <div className="mt-auto pt-4">
+              <div className=" pt-4">
                 <button
                   type="submit"
                   disabled={isUpdating}

@@ -48,10 +48,8 @@ export const changeApplicationStatus = createAsyncThunk(
       const response = await axiosInstance.put(`application/${applicationId}`, {
         status: action,
       });
-      console.log(response.data);
       return response.data;
     } catch (error) {
-      console.log(error.response.data);
       return rejectWithValue(error.response.data);
     }
   }
@@ -64,7 +62,6 @@ export const getNonePendingApplications = createAsyncThunk(
       const response = await axiosInstance.get(url);
       return response.data;
     } catch (error) {
-      console.log(error.response.data);
       return rejectWithValue(
         "their was an error while feching pending appications"
       );
@@ -91,7 +88,6 @@ export const addCaroseulItem = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("landing/carousel", data);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -104,7 +100,6 @@ export const deleteCaroseulItem = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.delete(`/landing/carousel/${id}`);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -134,7 +129,6 @@ export const deleteCustomerReviewItem = createAsyncThunk(
       const response = await axiosInstance.delete(
         `/landing/customer-review/${id}`
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -147,7 +141,6 @@ export const addTopDesingerItem = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/landing/designer", data);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       console.log(error.response.data);
@@ -162,7 +155,6 @@ export const deleteTopDesignerItem = createAsyncThunk(
     console.log(id);
     try {
       const response = await axiosInstance.delete(`/landing/desinger/${id}`);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       console.log(error.response);
@@ -171,4 +163,26 @@ export const deleteTopDesignerItem = createAsyncThunk(
   }
 );
 
-//------------------------------------ not worked ones
+export const getAdminAnalytics = createAsyncThunk(
+  "admin/getAdminAnalytics",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/analytics/admin");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+); 
+
+export const getSubsciptionPricing = createAsyncThunk(
+  "admin/getSubsciptionPricing",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/subscription/pricing");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);

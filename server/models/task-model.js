@@ -2,7 +2,6 @@ import { Schema, model } from "mongoose";
 
 const taskSchema = new Schema(
   {
-    project: { type: Schema.Types.ObjectId, ref: "Project" },
     name: {
       type: String,
       required: true,
@@ -13,11 +12,11 @@ const taskSchema = new Schema(
     },
     associate: {
       type: Schema.Types.ObjectId,
-      ref: "User", // Assigned associate
+      ref: "User",
     },
     designer: {
       type: Schema.Types.ObjectId,
-      ref: "User", // designer associate
+      ref: "User", 
     },
     status: {
       type: String,
@@ -53,7 +52,7 @@ const taskSchema = new Schema(
         enum: ["Point"],
       },
       coordinates: {
-        type: [Number], // [longitude, latitude]
+        type: [Number], 
         required: true,
       },
     },

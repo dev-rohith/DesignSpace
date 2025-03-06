@@ -39,20 +39,33 @@ const PendingApplications = () => {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="flex justify-between items-center bg-violet-300 p-1 ">
-        <PageLimit size={5} step={2} />
-        <Filter
+       <div className="bg-white  shadow-sm p-4 ">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="w-full sm:w-auto flex flex-col sm:flex-row justify-center items-center gap-4">
+            <div className=" flex items-center gap-2 ">
+              <span className="text-md ">Show :</span>
+              <div className="border">
+              <PageLimit size={5} step={2} />
+              </div>
+            </div>
+            <div className="w-full sm:w-auto border-1  py-1">
+            <Filter
           filters={[
             { title: "requestedRole", options: ["associate", "designer"] },
           ]}
         />
-        <Sort
+            </div>
+          </div>
+          <div className="w-full sm:w-auto border">
+          <Sort
           options={[
             { name: "Relevence", value: "" },
             { name: "newest", value: "requestedDate" },
             { name: "oldest", value: "-requestedDate" },
           ]}
         />
+          </div>
+        </div>
       </div>
       <PendingApplicationsTable />
       <Pagination data={applications} />

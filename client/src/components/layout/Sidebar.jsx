@@ -28,7 +28,7 @@ const Sidebar = () => {
         <SidebarItem
           icon={<MessageCircle />}
           text="mychat"
-          to="/design-space/chat"
+          to="/chat"
         />
       )}
 

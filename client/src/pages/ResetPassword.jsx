@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { passwordResetValidation } from "../utils/passwordResetValidation";
 import { useState } from "react";
 import { Loader, Sparkles } from "lucide-react";
 import axiosInstance from "../apis/axiosIntance";
 import toast from "react-hot-toast";
+import { passwordResetValidation } from "../utils/validation";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -13,7 +13,6 @@ const ResetPassword = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    console.log("triggering");
     e.preventDefault();
     const errors = passwordResetValidation(formData);
     if (Object.keys(errors).length !== 0) {

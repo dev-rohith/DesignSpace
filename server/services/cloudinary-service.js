@@ -10,7 +10,6 @@ cloudinary.config({
 export const CloudinaryService = {
   async uploadFile(file, type) {
     try {
-      // Check if the file path is valid and exists
       if (!file || !file.path) {
         throw new Error("Invalid file path");
       }
@@ -18,8 +17,8 @@ export const CloudinaryService = {
       if (!fs.existsSync(file.path)) {
         throw new Error("File does not exist at path: " + file.path);
       }
-      
-      console.log('cloudianry hit')
+
+      console.log("cloudianry hit");
 
       const result = await cloudinary.uploader.upload(file.path, {
         resource_type: type || "auto",
@@ -46,4 +45,3 @@ export const CloudinaryService = {
 };
 
 export default CloudinaryService;
-

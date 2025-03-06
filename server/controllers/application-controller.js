@@ -4,8 +4,8 @@ import Application from "../models/application-model.js";
 import User from "../models/user-model.js";
 import CloudinaryService from "../services/cloudinary-service.js";
 import AppError from "../utils/app-error-util.js";
-import catchAsync from "../utils/catch-async-util.js";
-import APIFeatures from "../utils/api-features.js";
+import catchErrors from "../utils/catch-async-util.js";
+import QueryHelper from "../utils/query-helper.js";
 
 import {
   applicationIdValidator,
@@ -87,8 +87,8 @@ applicationCtrl.createApplication = async (req, res, next) => {
   res.json({ message: "Application sent successfully" });
 };
 
-applicationCtrl.getPendingApplications = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(
+applicationCtrl.getPendingApplications = async (req, res, next) => {
+  const features = new QueryHelper(
     Application.find({ status: "pending" }),
     req.query
   )
@@ -108,10 +108,10 @@ applicationCtrl.getPendingApplications = catchAsync(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
 
   res.json({ page, perPage, totalPages, total, data: applications });
-});
+}
 
-applicationCtrl.getAllApplications = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(
+applicationCtrl.getAllApplications = async (req, res, next) => {
+  const features = new QueryHelper(
     Application.find({ $or: [{ status: "approved" }, { status: "rejected" }] }),
     req.query
   )
@@ -133,9 +133,9 @@ applicationCtrl.getAllApplications = catchAsync(async (req, res, next) => {
   const totalPages = Math.ceil(total / perPage);
   const page = parseInt(req.query.page) || 1;
   res.json({ page, perPage, totalPages, total, data: applications });
-});
+}
 
-applicationCtrl.updateApplication = catchAsync(async (req, res, next) => {
+applicationCtrl.updateApplication = async (req, res, next) => {
   const { value, error } = updateApplicationValidator.validate({
     ...req.body,
     ...req.params,
@@ -163,9 +163,9 @@ applicationCtrl.updateApplication = catchAsync(async (req, res, next) => {
   await application.save();
 
   res.json({ message: "Application updated successfully", application });
-});
+}
 
-applicationCtrl.deleteApplication = catchAsync(async (req, res, next) => {
+applicationCtrl.deleteApplication = async (req, res, next) => {
   const { value, error } = applicationIdValidator.validate(req.params);
   if (error) return next(new AppError(error.message, 422));
   const { id } = value;
@@ -200,9 +200,9 @@ applicationCtrl.deleteApplication = catchAsync(async (req, res, next) => {
     message: "application deleted successfully",
     application: deletedApplication,
   });
-});
+}
 
-applicationCtrl.getApplicationDetails = catchAsync(async (req, res, next) => {
+applicationCtrl.getApplicationDetails = async (req, res, next) => {
   const { value, error } = applicationIdValidator.validate(req.params);
   if (error) return next(new AppError(error.message, 422));
   const { id } = value;
@@ -213,6 +213,6 @@ applicationCtrl.getApplicationDetails = catchAsync(async (req, res, next) => {
     .lean();
   if (!application) return next(new AppError("application not found", 404));
   res.status(200).json({ data: application });
-});
+}
 
 export default applicationCtrl;

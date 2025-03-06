@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 const Sort = ({ options = [] }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const handleChange = (e) => {
-    if (e.target.value === "") return;
+    
     const selectedValue = e.target.value;
     searchParams.set("sort", selectedValue);
     setSearchParams(searchParams);

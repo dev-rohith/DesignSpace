@@ -1,17 +1,17 @@
 import DesignerProfile from "../models/designer-profile-model.js";
 import CloudinaryService from "../services/cloudinary-service.js";
 import { getCoordinates } from "../services/georeverse-coding.js";
-import APIFeatures from "../utils/api-features.js";
+import QueryHelper from "../utils/query-helper.js";
 
 import AppError from "../utils/app-error-util.js";
-import catchAsync from "../utils/catch-async-util.js";
+import catchErrors from "../utils/catch-async-util.js";
 import fs from "fs";
 
 const designerProfileCtrl = {};
 
 ////////////////////--public--////////////////////////////////////////
 
-designerProfileCtrl.getDesingerProfile = catchAsync(async (req, res, next) => {
+designerProfileCtrl.getDesingerProfile = async (req, res, next) => {
   const { designer_id } = req.params;
   console.log(req.query.select);
   const desingerProfile = await DesignerProfile.findOne({ user: designer_id })
@@ -19,13 +19,13 @@ designerProfileCtrl.getDesingerProfile = catchAsync(async (req, res, next) => {
     .select(req.query.select || "-location -portfolio")
     .lean();
   res.json(desingerProfile);
-});
+}
 
-designerProfileCtrl.getAllDesingers = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(DesignerProfile, req.query)
+designerProfileCtrl.getAllDesingers = async (req, res, next) => {
+  const features = new QueryHelper(DesignerProfile, req.query)
     .filterAndSearch()
     .sort()
-    .paginate(8);
+    .paginate(16);
 
   const finalQuery = features.query
     .select("-portfolio -address -location")
@@ -33,16 +33,16 @@ designerProfileCtrl.getAllDesingers = catchAsync(async (req, res, next) => {
     .lean();
 
   const desingers = await finalQuery;
-  
-const total = await DesignerProfile.countDocuments();
-const perPage = parseInt(req.query.limit) || 6;
-const totalPages = Math.ceil(total / perPage);
-const page = parseInt(req.query.page) || 1;
 
-res.json({ page, perPage, totalPages, total, data: desingers });
-});
+  const total = await DesignerProfile.countDocuments();
+  const perPage = parseInt(req.query.limit) || 6;
+  const totalPages = Math.ceil(total / perPage);
+  const page = parseInt(req.query.page) || 1;
 
-designerProfileCtrl.getAllPortfolios = catchAsync(async (req, res, next) => {
+  res.json({ page, perPage, totalPages, total, data: desingers });
+}
+
+designerProfileCtrl.getAllPortfolios = async (req, res, next) => {
   const portifolios = await DesignerProfile.find({
     $expr: { $gt: [{ $size: "$portfolio" }, 0] },
   })
@@ -54,11 +54,11 @@ designerProfileCtrl.getAllPortfolios = catchAsync(async (req, res, next) => {
     .lean();
 
   res.json(portifolios);
-});
+}
 
 //////////////////////////--private--/////////////////////////////////
 
-designerProfileCtrl.createMyProfile = catchAsync(async (req, res, next) => {
+designerProfileCtrl.createMyProfile = async (req, res, next) => {
   const { address } = req.body;
   const { lat, lng } = await getCoordinates(address);
 
@@ -83,9 +83,9 @@ designerProfileCtrl.createMyProfile = catchAsync(async (req, res, next) => {
     .lean();
 
   res.json(createdDesignerProfile);
-});
+}
 
-designerProfileCtrl.getMyProfile = catchAsync(async (req, res, next) => {
+designerProfileCtrl.getMyProfile = async (req, res, next) => {
   const myProfile = await DesignerProfile.findOne({
     user: req.user.userId,
   })
@@ -93,17 +93,17 @@ designerProfileCtrl.getMyProfile = catchAsync(async (req, res, next) => {
     .lean();
   if (!myProfile) return next(new AppError("Profile not found", 404));
   res.json(myProfile);
-});
+}
 
-designerProfileCtrl.getMyPortfolio = catchAsync(async (req, res, next) => {
+designerProfileCtrl.getMyPortfolio = async (req, res, next) => {
   const portifolio = await DesignerProfile.findOne({ user: req.user.userId })
     .select("portfolio")
     .lean();
   if (!portifolio) return next(new AppError("Profile not found", 404));
   res.json(portifolio);
-});
+}
 
-designerProfileCtrl.editMyProfile = catchAsync(async (req, res, next) => {
+designerProfileCtrl.editMyProfile = async (req, res, next) => {
   const { address } = req.body;
 
   const { lat, lng } = await getCoordinates(address);
@@ -129,9 +129,9 @@ designerProfileCtrl.editMyProfile = catchAsync(async (req, res, next) => {
   }
 
   res.json({ message: "Profile updated successfully", data: updatedProfile });
-});
+}
 
-designerProfileCtrl.addItemToPortfolio = catchAsync(async (req, res, next) => {
+designerProfileCtrl.addItemToPortfolio = async (req, res, next) => {
   const { title, description } = req.body;
 
   const designer = await DesignerProfile.findOne({ user: req.user.userId });
@@ -158,7 +158,6 @@ designerProfileCtrl.addItemToPortfolio = catchAsync(async (req, res, next) => {
   };
 
   const fileUploadPromises = req.files.map((file) => {
-    // Upload file to Cloudinary
     return CloudinaryService.uploadFile(file);
   });
   const uploadResults = await Promise.all(fileUploadPromises);
@@ -176,7 +175,6 @@ designerProfileCtrl.addItemToPortfolio = catchAsync(async (req, res, next) => {
     });
   });
 
-  // Add to the portfolio array
   designer.portfolio.push(newPortfolioItem);
   await designer.save();
 
@@ -186,9 +184,9 @@ designerProfileCtrl.addItemToPortfolio = catchAsync(async (req, res, next) => {
     message: "Portfolio item added successfully",
     data: addedItem,
   });
-});
+}
 
-designerProfileCtrl.deleteItemFromPortfolio = catchAsync(
+designerProfileCtrl.deleteItemFromPortfolio = 
   async (req, res, next) => {
     const { item_id } = req.params;
     const userProfile = await DesignerProfile.findOneAndUpdate(
@@ -210,9 +208,8 @@ designerProfileCtrl.deleteItemFromPortfolio = catchAsync(
       data: deletedItem,
     });
   }
-);
 
-designerProfileCtrl.editItemFromPortfolio = catchAsync(
+designerProfileCtrl.editItemFromPortfolio = 
   async (req, res, next) => {
     const { item_id } = req.params;
     const { title, description } = req.body;
@@ -269,6 +266,5 @@ designerProfileCtrl.editItemFromPortfolio = catchAsync(
     const editedItem = designer.portfolio[designer.portfolio.length - 1];
     res.status(200).json({ message: "updated sucessfully", data: editedItem });
   }
-);
 
 export default designerProfileCtrl;

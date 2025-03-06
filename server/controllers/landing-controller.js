@@ -1,4 +1,4 @@
-import catchAsync from "../utils/catch-async-util.js";
+import catchErrors from "../utils/catch-async-util.js";
 import LandingConfig from "../models/landingConfig-model.js";
 import CloudinaryService from "../services/cloudinary-service.js";
 
@@ -9,7 +9,7 @@ import DesignerProfile from "../models/designer-profile-model.js";
 
 const landingCtrl = {};
 
-landingCtrl.getLanding = catchAsync(async (req, res, next) => {
+landingCtrl.getLanding = async (req, res, next) => {
   let config = await RedisDataManager.getItemFromRedis("landingConfig");
 
   if (!config) {
@@ -41,7 +41,7 @@ landingCtrl.getLanding = catchAsync(async (req, res, next) => {
   }
 
   res.status(200).json(config);
-});
+}
 
 landingCtrl.createCarouselItem = async (req, res, next) => {
   let filePath = req.file?.path;
@@ -61,7 +61,7 @@ landingCtrl.createCarouselItem = async (req, res, next) => {
       { upsert: true, new: true }
     );
     //delete the item from the redis for persistance
-    await RedisDataManager.removeItemToRedis("landingConfig");
+    await RedisDataManager.removeItemFromRedis("landingConfig");
 
     res.status(201).json({
       message: "New Carousel ttem has been added successfully",
@@ -78,7 +78,7 @@ landingCtrl.createCarouselItem = async (req, res, next) => {
   }
 };
 
-landingCtrl.addTopDesigner = catchAsync(async (req, res, next) => {
+landingCtrl.addTopDesigner = async (req, res, next) => {
   const { name, profilePicture, aboutMe } = req.body;
   if (!name || !profilePicture || !aboutMe)
     return next(new AppError("desinger details is needed", 400));
@@ -97,14 +97,14 @@ landingCtrl.addTopDesigner = catchAsync(async (req, res, next) => {
 
   const addedDesigner = updatedDoc?.designers?.slice(-1)[0];
 
-  await RedisDataManager.removeItemToRedis("landingConfig");
+  await RedisDataManager.removeItemFromRedis("landingConfig");
   res.json({
     message: "Designer added successfully",
     data: addedDesigner,
   });
-});
+}
 
-landingCtrl.addCustomerReview = catchAsync(async (req, res, next) => {
+landingCtrl.addCustomerReview = async (req, res, next) => {
   const { name, review } = req.body;
   if (!name || !review)
     return next(new AppError("video review must need to upload", 400));
@@ -131,7 +131,7 @@ landingCtrl.addCustomerReview = catchAsync(async (req, res, next) => {
       { upsert: true, new: true }
     );
     //delete the item from the redis for persistance
-    await RedisDataManager.removeItemToRedis("landingConfig");
+    await RedisDataManager.removeItemFromRedis("landingConfig");
 
     res.status(201).json({
       message: "review uploaded successfully",
@@ -146,9 +146,9 @@ landingCtrl.addCustomerReview = catchAsync(async (req, res, next) => {
       console.error("Error while deleting the file:", unlinkError.message);
     }
   }
-});
+}
 
-landingCtrl.deleteCarouselItem = catchAsync(async (req, res, next) => {
+landingCtrl.deleteCarouselItem = async (req, res, next) => {
   const { public_id } = req.params;
 
   const config = await LandingConfig.findOne({
@@ -172,16 +172,16 @@ landingCtrl.deleteCarouselItem = catchAsync(async (req, res, next) => {
   await config.save();
 
   await CloudinaryService.deleteFile(public_id);
-  await RedisDataManager.removeItemToRedis("landingConfig");
+  await RedisDataManager.removeItemFromRedis("landingConfig");
 
   res.json({
     message: "carousel item deleted successfully",
     data: deletedItem,
   });
   // await CloudinaryService.deleteFile()
-});
+}
 
-landingCtrl.deleteTopDesigner = catchAsync(async (req, res, next) => {
+landingCtrl.deleteTopDesigner = async (req, res, next) => {
   const { desinger_id } = req.params;
 
   const config = await LandingConfig.findOne({ "designers._id": desinger_id });
@@ -201,15 +201,15 @@ landingCtrl.deleteTopDesigner = catchAsync(async (req, res, next) => {
   // Save the updated document
   await config.save();
 
-  await RedisDataManager.removeItemToRedis("landingConfig");
+  await RedisDataManager.removeItemFromRedis("landingConfig");
 
   res.status(200).json({
     message: "Designer removed from the landing configuration successfully.",
     data: deletedItem,
   });
-});
+}
 
-landingCtrl.deleteCustomerReview = catchAsync(async (req, res, next) => {
+landingCtrl.deleteCustomerReview = async (req, res, next) => {
   const { public_id } = req.params;
 
   const config = await LandingConfig.findOne({
@@ -231,13 +231,13 @@ landingCtrl.deleteCustomerReview = catchAsync(async (req, res, next) => {
   config.save();
 
   await CloudinaryService.deleteFile(public_id);
-  await RedisDataManager.removeItemToRedis("landingConfig");
+  await RedisDataManager.removeItemFromRedis("landingConfig");
 
   res.status(200).json({
     message:
       "customer review removed from the landing configuration successfully.",
     data: deletedItem,
   });
-});
+}
 
 export default landingCtrl;

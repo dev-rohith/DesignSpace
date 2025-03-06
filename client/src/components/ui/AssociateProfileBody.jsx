@@ -82,7 +82,7 @@ const AssociateProfileBody = ({
       {/* Address Section */}
 
       <AddressSection
-        formData={formData}
+        address={formData.address}
         handleInputChange={handleInputChange}
         isEditing={isEditing}
         error={errors.address}

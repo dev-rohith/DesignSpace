@@ -13,8 +13,6 @@ import InputField from "../common/InputField";
 import AddressSection from "../common/AddressSection";
 import MultiInput from "../common/MultiInput";
 
-
-
 const DesignerProfileBody = ({
   errors,
   isEditing,
@@ -67,10 +65,10 @@ const DesignerProfileBody = ({
         </label>
         {errors.aboutMe && (
           <div className="animate-in fade-in slide-in-from-top-1 duration-200">
-          <span className="flex items-center gap-1 text-sm text-red-500">
-            {errors.aboutMe}
-          </span>
-        </div>
+            <span className="flex items-center gap-1 text-sm text-red-500">
+              {errors.aboutMe}
+            </span>
+          </div>
         )}
         <textarea
           value={formData?.aboutMe || ""}
@@ -100,11 +98,11 @@ const DesignerProfileBody = ({
           Starting Price
         </label>
         {errors.starting_price && (
-           <div className="animate-in fade-in slide-in-from-top-1 duration-200">
-           <span className="flex items-center gap-1 text-sm text-red-500">
-             {errors.starting_price}
-           </span>
-         </div>
+          <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+            <span className="flex items-center gap-1 text-sm text-red-500">
+              {errors.starting_price}
+            </span>
+          </div>
         )}
         <input
           type="number"
@@ -116,7 +114,7 @@ const DesignerProfileBody = ({
       </div>
 
       <AddressSection
-        formData={formData}
+        address={formData.address}
         handleInputChange={handleInputChange}
         isEditing={isEditing}
         error={errors.address}

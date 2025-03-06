@@ -14,14 +14,14 @@ import desingerRouter from "./routes/desinger-routes.js";
 import projectRouter from "./routes/project-routes.js";
 import associateRouter from "./routes/associate-routes.js";
 import paymentRouter from "./routes/payment-routes.js";
+import chatRouter from "./routes/chatRoutes.js";
+import analyticsRouter from './routes/analytics-routes.js'
 
 import globalErrorHandler from "./controllers/error-controller.js";
 
 const app = express();
 
 app.use(express.json());
-
-// app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
@@ -38,22 +38,16 @@ app.use(morgan("dev", { stream: logStream }));
 //routing api middleware
 
 app.use("/api/v1/auth", authRouter);
-
 app.use("/api/v1/user", userRouter);
-
 app.use("/api/v1/payment", paymentRouter);
-
 app.use("/api/v1/landing", landingRouter);
-
 app.use("/api/v1/application", applicationRouter);
-
 app.use("/api/v1/tasks", taskRouter);
-
 app.use("/api/v1/designer", desingerRouter);
-
 app.use("/api/v1/associate", associateRouter);
-
 app.use("/api/v1/projects", projectRouter);
+app.use("/api/v1/chat", chatRouter);
+app.use('/api/v1/analytics', analyticsRouter)
 
 app.use(globalErrorHandler);
 

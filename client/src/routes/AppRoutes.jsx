@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import DesignSpaceLayout from "../layout/DesignSpaceLayout";
 
 import {
-  AdmindDashboard,
+  AdminDashboard,
   AssociateApplication,
   AssociateDashboard,
   ClientCompletedProjects,
@@ -51,6 +51,8 @@ import LiveTasks from "../pages/associate/task/LiveTasks";
 import RunningTasks from "../pages/associate/task/RunningTasks";
 import CompletedTasks from "../pages/associate/task/CompletedTasks";
 import MyTaskDetails from "../pages/associate/MyTaskDetails";
+import { SocketProvider } from "../context/SocketContext";
+import PaymentSucess from "../pages/PaymentSucess";
 
 const AppRoutes = () => {
   return (
@@ -106,6 +108,17 @@ const AppRoutes = () => {
         }
       />
 
+      <Route
+        path="/chat"
+        element={
+          <PrivateRoute>
+            <SocketProvider>
+              <Mychat />
+            </SocketProvider>
+          </PrivateRoute>
+        }
+      />
+
       <Route path="/design-space" element={<DesignSpaceLayout />}>
         <Route index element={<Navigate to="designers" replace />} />
         <Route path="designers" element={<DesingersFeedOperations />} />
@@ -142,14 +155,20 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
-
-        <Route path="chat" element={<Mychat />} />
+        <Route
+          path="payment-sucess"
+          element={
+            <PrivateRoute allowedRoles={["client"]}>
+              <PaymentSucess />
+            </PrivateRoute>
+          }
+        />
       </Route>
 
       {/* Admin Routes */}
       <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
         <Route path="/admin" element={<InternalSpaceLayout />}>
-          <Route path="dashboard" element={<AdmindDashboard />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="manage-users" element={<ManageUsers />} />
           <Route
             path="manage-pending-applications"

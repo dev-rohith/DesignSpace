@@ -9,13 +9,14 @@ import TaskFeedItem from "../../../components/common/TaskFeedItem";
 import Pagination from "../../../components/common/Pagination";
 import ErrorState from "../../../components/common/placeholders/ErrorState";
 import { Inbox } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Filter from "../../../components/common/Filter";
 
 const DesignerCompletedTasks = () => {
   const { tasks, isLoading } = useSelector((state) => state.task);
-  const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -26,6 +27,10 @@ const DesignerCompletedTasks = () => {
       }
     })();
   }, [searchParams]);
+
+  const handleView = (taskId) => {
+    navigate(`/task/${taskId}`)
+  }
 
   if (isLoading) return <Spinner />;
   if(!tasks) return <ErrorState error="Error while fetching tasks" />
@@ -77,7 +82,7 @@ const DesignerCompletedTasks = () => {
           <>
             <div className="grid gap-4">
               {tasks.data.map((task) => (
-                <TaskFeedItem key={task._id} {...task} />
+                <TaskFeedItem key={task._id} {...task} handleView={handleView} />
               ))}
             </div>
             <div className="mt-6">

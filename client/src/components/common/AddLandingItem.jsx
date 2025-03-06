@@ -6,28 +6,28 @@ import { useDispatch, useSelector } from "react-redux";
 
 const AddLandingCarouselItem = () => {
   const { isCarouselUpdating } = useSelector((store) => store.landing);
-  const [image, setImage] = useState(null);
+  const [item, setItem] = useState(null);
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
     return () => {
-      if (image) URL.revokeObjectURL(image);
+      if (item) URL.revokeObjectURL(item);
     };
-  }, [image]);
+  }, [item]);
 
-  const handleImageChange = (event) => {
+  const handleItemChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
-      return () => URL.revokeObjectURL(imageUrl);
+      const itemUrl = URL.createObjectURL(file);
+      setItem(itemUrl);
+      return () => URL.revokeObjectURL(itemUrl);
     }
   };
 
-  const handleImageAdd = async (file) => {
+  const handleitemAdd = async (file) => {
     if (!file) {
-      toast.error("Pick an image first to add");
+      toast.error("Pick an item first to add");
     }
     const Form = new FormData();
     Form.append("carousel", file);
@@ -35,7 +35,7 @@ const AddLandingCarouselItem = () => {
     const actionResult = await dispatch(addCaroseulItem(Form));
     if (addCaroseulItem.fulfilled.match(actionResult)) {
       toast.success(actionResult.payload.message);
-      setImage(null);
+      setItem(null);
     } else if (addCaroseulItem.rejected.match(actionResult)) {
       console.log(actionResult.payload);
       toast.error(actionResult.payload?.message || actionResult.payload.error);
@@ -48,12 +48,20 @@ const AddLandingCarouselItem = () => {
         onClick={() => fileInputRef.current.click()}
         className=" border-2 h-100 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors group bg-gray-50 overflow-hidden"
       >
-        {image ? (
-          <img
-            src={image}
-            alt="Preview"
-            className="w-full h-full object-cover rounded-lg"
-          />
+        {item ? (
+          fileInputRef.current.files[0].type.startsWith("image/") ? (
+            <img
+              src={item}
+              alt="Preview"
+              className="w-full h-full object-cover rounded-lg"
+            />
+          ) : (
+            <video
+              src={item}
+              controls
+              className="w-full h-full object-cover"
+            ></video>
+          )
         ) : (
           <div className="flex flex-col items-center gap-2 text-gray-500 group-hover:text-gray-600">
             <Plus className="w-8 h-8" />
@@ -63,22 +71,22 @@ const AddLandingCarouselItem = () => {
 
         <input
           type="file"
-          accept="image/*"
+          accept="image/*, video/mp4"
           ref={fileInputRef}
           className="hidden"
-          onChange={handleImageChange}
+          onChange={handleItemChange}
         />
       </div>
-      {image && (
+      {item && (
         <button
           onClick={() => {
-            handleImageAdd(fileInputRef.current.files[0]);
+            handleitemAdd(fileInputRef.current.files[0]);
           }}
           disabled={isCarouselUpdating}
           className="w-full bg-green-400 py-2 mt-2  text-white font-semibold hover:bg-green-500 cursor-pointer disabled:bg-gray-600"
         >
           {isCarouselUpdating ? (
-            <Loader2Icon className="h-5 w-5 mx-auto animate-spin" />
+          <Loader2Icon className="h-5 w-5 mx-auto animate-spin" />
           ) : (
             "Add Carousel Item"
           )}

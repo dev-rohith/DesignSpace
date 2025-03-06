@@ -20,9 +20,7 @@ const OurWork = () => {
 
   return (
     <LandingLayout>
-      <div>
         <PortfolioGallery data={portfolios} />
-      </div>
     </LandingLayout>
   );
 };

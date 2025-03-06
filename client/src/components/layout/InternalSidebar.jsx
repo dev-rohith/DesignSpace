@@ -12,6 +12,7 @@ import {
   ContactRound,
   FilePlus2,
   Images,
+  MessageCircle,
   MousePointerClick,
   PanelsTopLeft,
   Snail,
@@ -75,6 +76,11 @@ const InternalSidebar = () => {
           to="/designer/profile"
         />
       )}
+
+      {user?.role === "designer" && (
+        <SidebarItem icon={<MessageCircle />} text="My Chat" to="/chat" />
+      )}
+
       {user?.role === "designer" && (
         <SidebarItem
           icon={<Images />}
@@ -138,19 +144,19 @@ const InternalSidebar = () => {
               to="/designer/pending-tasks"
               className="px-2 py-1 hover:bg-gray-100"
             >
-              Pending &#10132;
+              My Pending Tasks &#10132;
             </Link>
             <Link
               to="/designer/inprogress-tasks"
               className="px-2 py-1 hover:bg-gray-100"
             >
-              in review &#10132;
+              In progress Tasks &#10132;
             </Link>
             <Link
               to="/designer/completed-tasks"
               className="px-2 py-1 hover:bg-gray-100"
             >
-              completed &#10132;
+              Completed Tasks &#10132;
             </Link>
           </nav>
         </SidebarItem>

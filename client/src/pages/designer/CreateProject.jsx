@@ -10,12 +10,12 @@ import {
   Loader,
 } from "lucide-react";
 import InputField from "../../components/common/InputField";
-import { validateCreateProjectData } from "../../utils/createProjectFormValidation";
 import { AddressSection, Modal } from "../../components";
 import { useSearchParams } from "react-router-dom";
 import axiosInstance from "../../apis/axiosIntance";
 import Search from "../../components/common/Search";
 import toast from "react-hot-toast";
+import { createProjectDataValidation } from "../../utils/validation";
 
 const initialState = {
   title: "",
@@ -57,7 +57,7 @@ const CreateProject = () => {
   const handleSubmit = async (e) => {
     console.log(formData);
     e.preventDefault();
-    const errors = validateCreateProjectData(formData);
+    const errors = createProjectDataValidation(formData);
     if (Object.keys(errors).length !== 0) {
       setErrors(errors);
       return;
@@ -237,7 +237,7 @@ const CreateProject = () => {
 
             <div className="w-1/2 min-h-[calc(100vh-130px)] p-4 bg-white rounded-xl shadow-xs ">
               <AddressSection
-                formData={formData}
+                address={formData.address}
                 error={errors.address}
                 handleInputChange={handleInputChange}
               />

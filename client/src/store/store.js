@@ -7,6 +7,7 @@ import designerReducer from "../features/slices/designerSlice.js";
 import associateReducer from "../features/slices/associateSlice.js";
 import projectReducer from '../features/slices/projectSlice.js'
 import taskReducer from '../features/slices/taskSlice.js'
+import chatReducer from '../features/slices/chatSlice.js'
 
 const store = configureStore({
   reducer: {
@@ -17,7 +18,8 @@ const store = configureStore({
     designer: designerReducer,
     associate: associateReducer,
     project: projectReducer,
-    task: taskReducer
+    task: taskReducer,
+    chat: chatReducer,
   },
 });
 

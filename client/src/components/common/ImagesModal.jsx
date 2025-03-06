@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react"
 
 const ImagesModal = ({selectedImages, children , currentImageIndex, nextImage, prevImage, closeGallery}) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+    <div className="fixed  z-999999 inset-0 bg-black bg-opacity-90  flex items-center justify-center">
     <button
       onClick={closeGallery}
       className="absolute top-4 right-4 text-white hover:text-gray-300 cursor-pointer"

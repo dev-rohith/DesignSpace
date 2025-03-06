@@ -12,15 +12,14 @@ import {
   FilePlus2,
   Layout,
   Loader,
-  PenLine,
   Save,
   User,
 } from "lucide-react";
 import Spinner from "../../components/common/Spinner";
 import AssociateProfileBody from "../../components/ui/AssociateProfileBody";
 import toast from "react-hot-toast";
-import { validateAssociateProfileData } from "../../utils/associateProfileValidation";
 import { ErrorState } from "../../components";
+import { validateAssociateProfileData } from "../../utils/validation";
 
 const initialFormState = {
   address: {
@@ -219,7 +218,6 @@ const AssociateProfile = () => {
               </div>
             )}
 
-            {/* Body of the profile page */}
             <AssociateProfileBody
               errors={errors}
               formData={formData}
