@@ -28,8 +28,6 @@ export { default as Spinner } from "./common/Spinner";
 
 export { default as AddressSection } from "./common/AddressSection";
 export { default as Modal } from "./common/Modal";
-export { default as Stepper } from "./common/Stepper";
-export { default as ErrorState } from "./common/placeholders/ErrorState";
 
 export { default as PendingApplicationsTable } from "./ui/PendingApplicationsTable";
 export { default as NonePendingApplicationsTable } from "./ui/NonePendingApplicationsTable";
