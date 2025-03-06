@@ -2,8 +2,9 @@ import axios from "axios";
 import store from "../store/store";
 import { refreshToken } from "../features/actions/authActions";
 
+
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api/v1",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 

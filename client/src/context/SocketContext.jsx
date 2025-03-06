@@ -12,10 +12,10 @@ export const SocketProvider = ({ children }) => {
 
 
   useEffect(() => {
-    let socketInstance = null; //need to add on conditions if not thier then return 
+    let socketInstance = null;  
 
     if (isLoggedIn && user) {
-      socketInstance = io('http://localhost:3000', {
+      socketInstance = io(import.meta.env.VITE_SOCKET_URL, {
         auth: { userId: user._id },
         transports: ['websocket'],
         withCredentials: true
