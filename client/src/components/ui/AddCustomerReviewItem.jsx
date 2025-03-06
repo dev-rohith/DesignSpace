@@ -1,7 +1,7 @@
 import { Loader2Icon, Plus } from "lucide-react";
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addCustomerReviewItem } from "../../features/actions/adminactions";
+import { addCustomerReviewItem } from "../../features/actions/adminActions";
 import toast from "react-hot-toast";
 
 const AddCustomerReviewItem = () => {
@@ -10,7 +10,7 @@ const AddCustomerReviewItem = () => {
   const [errros, setErrors] = useState({});
   const [preview, setPreview] = useState(null);
   const fileInputRef = useRef(null);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const runInputErrors = () => {
     const error = {};
@@ -66,7 +66,7 @@ const AddCustomerReviewItem = () => {
           <iframe
             src={preview}
             className="w-full h-full object-cover rounded-lg"
-          ></iframe> 
+          ></iframe>
         ) : (
           <div className="flex flex-col items-center gap-2 text-gray-500 group-hover:text-gray-600">
             <Plus className="w-8 h-8" />
@@ -109,7 +109,9 @@ const AddCustomerReviewItem = () => {
       </div>
       {preview && (
         <button
-          onClick={()=>{AddCustomerReview(fileInputRef.current.files[0])}}
+          onClick={() => {
+            AddCustomerReview(fileInputRef.current.files[0]);
+          }}
           disabled={isReviewsUpdating}
           className="py-2 mt-2 text-gray-700  rounded-lg w-full bg-amber-300 cursor-pointer hover:border"
         >

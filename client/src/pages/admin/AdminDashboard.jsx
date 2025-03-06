@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAdminAnalytics } from "../../features/actions/adminactions";
+import { getAdminAnalytics } from "../../features/actions/adminActions";
 import { ErrorState, Spinner } from "../../components";
 import {
   BarChart,

@@ -6,7 +6,7 @@ import {
   getNonePendingApplications,
   getPendingApplications,
   getUsers,
-} from "../actions/adminactions";
+} from "../actions/adminActions";
 
 const adminSlice = createSlice({
   name: "admin",
@@ -64,17 +64,17 @@ const adminSlice = createSlice({
         (application) => application._id !== action.payload.application._id
       );
     });
-     //analytics logic
-    builder.addCase(getAdminAnalytics.fulfilled, (state, action)=>{
-      state.analytics = action.payload
-      state.isLoading = false
-    })
-    builder.addCase(getAdminAnalytics.pending, (state, action)=>{
-      state.isLoading = true
-    })
-    builder.addCase(getAdminAnalytics.rejected, (state, action)=>{
-      state.isLoading = false
-    })
+    //analytics logic
+    builder.addCase(getAdminAnalytics.fulfilled, (state, action) => {
+      state.analytics = action.payload;
+      state.isLoading = false;
+    });
+    builder.addCase(getAdminAnalytics.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getAdminAnalytics.rejected, (state, action) => {
+      state.isLoading = false;
+    });
   },
 });
 

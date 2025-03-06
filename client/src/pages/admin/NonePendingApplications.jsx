@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import { getNonePendingApplications } from "../../features/actions/adminactions";
+import { getNonePendingApplications } from "../../features/actions/adminActions";
 import PageLimit from "../../components/common/PageLimit";
 import Filter from "../../components/common/Filter";
 import Sort from "../../components/common/Sort";

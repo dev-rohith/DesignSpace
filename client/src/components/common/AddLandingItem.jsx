@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Loader2Icon, Plus } from "lucide-react";
 import toast from "react-hot-toast";
-import { addCaroseulItem } from "../../features/actions/adminactions";
+import { addCaroseulItem } from "../../features/actions/adminActions";
 import { useDispatch, useSelector } from "react-redux";
 
 const AddLandingCarouselItem = () => {
@@ -86,7 +86,7 @@ const AddLandingCarouselItem = () => {
           className="w-full bg-green-400 py-2 mt-2  text-white font-semibold hover:bg-green-500 cursor-pointer disabled:bg-gray-600"
         >
           {isCarouselUpdating ? (
-          <Loader2Icon className="h-5 w-5 mx-auto animate-spin" />
+            <Loader2Icon className="h-5 w-5 mx-auto animate-spin" />
           ) : (
             "Add Carousel Item"
           )}

@@ -1,7 +1,7 @@
 import { CheckCheck } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { deleteNonePendingApplication } from "../../features/actions/adminactions";
+import { deleteNonePendingApplication } from "../../features/actions/adminActions";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 

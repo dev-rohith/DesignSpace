@@ -3,7 +3,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../apis/axiosIntance";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { changeApplicationStatus } from "../../features/actions/adminactions";
+import { changeApplicationStatus } from "../../features/actions/adminActions";
 
 const ApplicationDetails = () => {
   const [details, setDetails] = useState(null);
@@ -97,27 +97,29 @@ const ApplicationDetails = () => {
 
       <div className="grid grid-cols-2 gap-4">
         <div className=" col-span-2 flex gap-4 justify-between  border hover:-translate-x-0.5 hover:shadow-sm  p-4 mx-3 mt-3">
-        <div className="flex gap-4">
-          <img
-            src={details.requestedBy.profilePicture}
-            alt="Profile"
-            className="w-17 h-17 border-1 border-black p-0.5 "
-          />
-          <div >
-            <h3 className="first-letter:uppercase">
-              {details.requestedBy.firstName} {details.requestedBy.lastName}
-            </h3>
-            <p className="text-gray-600 text-sm">{details.requestedRole}</p>
-            <p className=" text-sm" >{new Date(details.createdAt).toLocaleDateString()}</p>
-          </div>
+          <div className="flex gap-4">
+            <img
+              src={details.requestedBy.profilePicture}
+              alt="Profile"
+              className="w-17 h-17 border-1 border-black p-0.5 "
+            />
+            <div>
+              <h3 className="first-letter:uppercase">
+                {details.requestedBy.firstName} {details.requestedBy.lastName}
+              </h3>
+              <p className="text-gray-600 text-sm">{details.requestedRole}</p>
+              <p className=" text-sm">
+                {new Date(details.createdAt).toLocaleDateString()}
+              </p>
+            </div>
           </div>
           <div className="w-3xl border-l pl-4">
             <h3 className="text-lg font-semibold underline ">Description :</h3>
-            <p className="first-letter:uppercase italic text-gray-600">{details.description}</p>
+            <p className="first-letter:uppercase italic text-gray-600">
+              {details.description}
+            </p>
           </div>
         </div>
-
-
 
         <div className="border hover:-translate-x-0.5 hover:shadow-sm  p-4 mx-3">
           <h3 className="text-lg font-semibold ">Resume :</h3>

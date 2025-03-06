@@ -3,7 +3,7 @@ import UserTableRow from "./UserTableRow";
 import {
   changeUserStatus,
   getUsers,
-} from "../../features/actions/adminactions";
+} from "../../features/actions/adminActions";
 import toast from "react-hot-toast";
 import Pagination from "../common/Pagination";
 import { useEffect } from "react";

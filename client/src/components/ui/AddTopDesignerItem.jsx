@@ -5,7 +5,7 @@ import Search from "../common/Search";
 import { useSearchParams } from "react-router-dom";
 import axiosInstance from "../../apis/axiosIntance";
 import toast from "react-hot-toast";
-import { addTopDesingerItem } from "../../features/actions/adminactions";
+import { addTopDesingerItem } from "../../features/actions/adminActions";
 import { useDispatch } from "react-redux";
 
 const AddTopDesignerItem = () => {

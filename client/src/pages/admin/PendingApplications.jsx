@@ -5,7 +5,7 @@ import PageLimit from "../../components/common/PageLimit";
 import PendingApplicationsTable from "../../components/ui/PendingApplicationsTable";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getPendingApplications } from "../../features/actions/adminactions";
+import { getPendingApplications } from "../../features/actions/adminActions";
 import Filter from "../../components/common/Filter";
 
 const PendingApplications = () => {
@@ -39,31 +39,34 @@ const PendingApplications = () => {
 
   return (
     <div className="flex-1 overflow-y-auto">
-       <div className="bg-white  shadow-sm p-4 ">
+      <div className="bg-white  shadow-sm p-4 ">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="w-full sm:w-auto flex flex-col sm:flex-row justify-center items-center gap-4">
             <div className=" flex items-center gap-2 ">
               <span className="text-md ">Show :</span>
               <div className="border">
-              <PageLimit size={5} step={2} />
+                <PageLimit size={5} step={2} />
               </div>
             </div>
             <div className="w-full sm:w-auto border-1  py-1">
-            <Filter
-          filters={[
-            { title: "requestedRole", options: ["associate", "designer"] },
-          ]}
-        />
+              <Filter
+                filters={[
+                  {
+                    title: "requestedRole",
+                    options: ["associate", "designer"],
+                  },
+                ]}
+              />
             </div>
           </div>
           <div className="w-full sm:w-auto border">
-          <Sort
-          options={[
-            { name: "Relevence", value: "" },
-            { name: "newest", value: "requestedDate" },
-            { name: "oldest", value: "-requestedDate" },
-          ]}
-        />
+            <Sort
+              options={[
+                { name: "Relevence", value: "" },
+                { name: "newest", value: "requestedDate" },
+                { name: "oldest", value: "-requestedDate" },
+              ]}
+            />
           </div>
         </div>
       </div>

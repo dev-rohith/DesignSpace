@@ -10,7 +10,7 @@ import {
   deleteCaroseulItem,
   deleteCustomerReviewItem,
   deleteTopDesignerItem,
-} from "../../features/actions/adminactions";
+} from "../../features/actions/adminActions";
 import toast from "react-hot-toast";
 import AddTopDesignerItem from "../../components/ui/AddTopDesignerItem";
 import AddCustomerReviewItem from "../../components/ui/AddCustomerReviewItem";

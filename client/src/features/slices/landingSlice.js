@@ -11,7 +11,7 @@ import {
   deleteCaroseulItem,
   deleteCustomerReviewItem,
   deleteTopDesignerItem,
-} from "../actions/adminactions";
+} from "../actions/adminActions";
 
 const landingSlice = createSlice({
   name: "landing",
