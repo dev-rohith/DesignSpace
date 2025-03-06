@@ -57,7 +57,6 @@ import PaymentSucess from "../pages/PaymentSucess";
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public Routes */}
       <Route
         path="/"
         element={<PrivateRoute exculde={true} allowedRoles={["client"]} />}
@@ -66,7 +65,6 @@ const AppRoutes = () => {
         <Route path="/our-work" element={<OurWork />} />
         <Route path="/login" element={<Login />} />
         <Route path="/pricing" element={<Pricing />} />{" "}
-        {/*it should be the private after*/}
         <Route path="/signup" element={<SignUp />} />
         <Route path="/device-limit" element={<DeviceLimit />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

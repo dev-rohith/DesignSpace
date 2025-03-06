@@ -1,5 +1,5 @@
 import React from "react";
-import { Briefcase, ChevronRight, Star, Shield, Clock } from "lucide-react";
+import { Briefcase, Star, Shield } from "lucide-react";
 
 const AssociateApplicationProcess = () => {
   return (

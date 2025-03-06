@@ -9,11 +9,11 @@ import {
   setPeerUserStatus,
 } from "../../features/slices/chatSlice";
 import toast from "react-hot-toast";
-import Spinner from "../common/Spinner";
-import ErrorState from "../common/placeholders/ErrorState";
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
+import Spinner from "../common/Spinner";
+import ErrorState from "../common/placeholders/ErrorState";
 
 const ChatRoom = () => {
   const {

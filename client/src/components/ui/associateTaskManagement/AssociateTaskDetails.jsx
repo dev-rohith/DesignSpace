@@ -6,7 +6,6 @@ import {
 } from "../../../features/actions/taskActions";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import ErrorState from "../../common/placeholders/ErrorState";
 import Spinner from "../../common/Spinner";
 import {
   Calendar,
