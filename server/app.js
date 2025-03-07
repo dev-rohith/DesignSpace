@@ -2,6 +2,8 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { rateLimit } from 'express-rate-limit'
+import helmet from "helmet";
 
 import fs from "fs";
 
@@ -21,6 +23,8 @@ import globalErrorHandler from "./controllers/error-controller.js";
 
 const app = express();
 
+app.use(helmet());
+
 app.use(express.json());
 
 app.use(
@@ -31,6 +35,17 @@ app.use(
 );
 
 app.use(cookieParser());
+
+
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, 
+	limit: 100, 
+	standardHeaders: 'draft-8', 
+  message: 'Too many requests from this IP, please try again after an hour',
+	legacyHeaders: false, 
+})
+
+app.use(limiter)
 
 const logStream = fs.createWriteStream("./access.log", { flags: "a" });
 app.use(morgan("dev", { stream: logStream }));
