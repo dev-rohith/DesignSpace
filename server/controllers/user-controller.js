@@ -3,7 +3,6 @@ import CloudinaryService from "../services/cloudinary-service.js";
 import { TokenManager } from "../services/redis-service.js";
 import QueryHelper from "../utils/query-helper.js";
 import AppError from "../utils/app-error-util.js";
-import catchErrors from "../utils/catch-async-util.js";
 import fs from "fs";
 import {
   userPasswordValidator,
