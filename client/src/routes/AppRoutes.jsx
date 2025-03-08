@@ -64,7 +64,7 @@ const AppRoutes = () => {
         <Route index element={<Landing />} />
         <Route path="/our-work" element={<OurWork />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/pricing" element={<Pricing />} />{" "}
+        <Route path="/pricing" element={<Pricing />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/device-limit" element={<DeviceLimit />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -166,6 +166,7 @@ const AppRoutes = () => {
       {/* Admin Routes */}
       <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
         <Route path="/admin" element={<InternalSpaceLayout />}>
+          <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="manage-users" element={<ManageUsers />} />
           <Route

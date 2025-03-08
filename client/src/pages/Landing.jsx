@@ -62,35 +62,46 @@ const Landing = () => {
             </div>
 
             <div className="flex justify-around  items-center">
-              <div className="w-full h-full ml-10">
-                <div className="relative w-full h-[400px] md:h-[500px] flex items-center justify-center overflow-hidden">
+              <div className="w-full flex items-center justify-center p-6">
+                <div className="grid grid-cols-3 gap-6 group relative max-w-lg">
                   <img
                     src="https://res.cloudinary.com/dlbyxcswi/image/upload/f_auto,q_auto/v1/product_uploads/vydktky75po9kmh1saye"
-                    alt="Main"
-                    className="absolute w-64 h-48 md:w-80 md:h-60 rounded-lg shadow-lg z-10 animate-move-image1 brightness-110 contrast-90"
+                    alt="Image 1"
+                    className="w-full h-28 md:h-36 rounded-lg shadow-lg transform transition-all duration-500 group-hover:rotate-0 rotate-6"
                   />
+
                   <img
                     src="https://res.cloudinary.com/dlbyxcswi/image/upload/f_auto,q_auto/v1/product_uploads/dgkfkdooy6brl6ibiox0"
-                    alt="Right"
-                    className="absolute top-10 right-10 w-32 h-32 md:w-40 md:h-40 rounded-lg shadow-lg z-20 animate-move-image2"
+                    alt="Image 2"
+                    className="w-full h-28 md:h-36 rounded-lg shadow-lg transform transition-all duration-500 group-hover:rotate-0 -rotate-6"
                   />
+
                   <img
                     src="https://res.cloudinary.com/dlbyxcswi/image/upload/f_auto,q_auto/v1/product_uploads/btthbg4dxe3dldlwlysn"
-                    alt="Left"
-                    className="absolute object-cover bottom-10 left-10 w-40 h-40 md:w-54 md:h-44 rounded-lg shadow-lg z-20 animate-move-image3"
+                    alt="Image 3"
+                    className="w-full h-28 md:h-36 rounded-lg shadow-lg transform transition-all duration-500 group-hover:rotate-0 rotate-3"
                   />
+
                   <img
                     src="https://res.cloudinary.com/dlbyxcswi/image/upload/f_auto,q_auto/v1/product_uploads/fqwxhrt2yevysksk0cvy"
-                    alt="Top Left"
-                    className="absolute top-5 left-20 w-28 h-28 md:w-36 md:h-36 rounded-lg shadow-lg z-10 animate-move-image4"
+                    alt="Image 4"
+                    className="w-full h-28 md:h-36 rounded-lg shadow-lg transform transition-all duration-500 group-hover:rotate-0 -rotate-3"
                   />
+
                   <img
                     src="https://res.cloudinary.com/dlbyxcswi/image/upload/f_auto,q_auto/v1/product_uploads/outckqv0etzc5cedaxfr"
-                    alt="Bottom Right"
-                    className="absolute bottom-5 right-20 w-28 h-28 md:w-36 md:h-36 rounded-lg shadow-lg z-10 animate-move-image5"
+                    alt="Image 5"
+                    className="w-full h-28 md:h-36 rounded-lg shadow-lg transform transition-all duration-500 group-hover:rotate-0 rotate-2"
+                  />
+
+                  <img
+                    src="https://res.cloudinary.com/dlbyxcswi/image/upload/f_auto,q_auto/v1/product_uploads/dgkfkdooy6brl6ibiox0"
+                    alt="Image 6"
+                    className="w-full h-28 md:h-36 rounded-lg shadow-lg transform transition-all duration-500 group-hover:rotate-0 -rotate-2"
                   />
                 </div>
               </div>
+
               <div className="w-full">
                 <div className="text-center my-12 font-sansita">
                   <h3 className="uppercase text-3xl font-bold text-gray-700">
