@@ -120,7 +120,7 @@ const DesignerCard = ({
         <div className="flex justify-end mb-4">
           <button 
           onClick={() => handleChat(user._id)}
-          className="italic  self-end h-max bg-gradient-to-tl from-violet-600 to-fuchsia-600 text-white px-6 mr-4 ring-2 ring-gray-400 rounded hover:scale-105 cursor-pointer">
+          className="italic ml-2 self-end h-max bg-gradient-to-tl from-violet-600 to-fuchsia-600 text-white px-6 mr-4 ring-2 ring-gray-400 rounded hover:scale-105 cursor-pointer">
             chat
           </button>
         </div>
