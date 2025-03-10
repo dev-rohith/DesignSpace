@@ -116,8 +116,8 @@ const DesignerCard = ({
         </div>
       </div>
       <div className="flex justify-between mt-1">
-        <p className="text-xs text-gray-600 leading-relaxed h-18 line-clamp-3 first-letter:uppercase">{aboutMe}</p>
-        <div className="flex justify-end mb-4 p-2">
+        <p className="text-xs text-gray-600 pl-0.5 pb-0.5 leading-tight h-15 line-clamp-4 first-letter:uppercase">{aboutMe}</p>
+        <div className="flex justify-end mb-4">
           <button 
           onClick={() => handleChat(user._id)}
           className="italic  self-end h-max bg-gradient-to-tl from-violet-600 to-fuchsia-600 text-white px-6 mr-4 ring-2 ring-gray-400 rounded hover:scale-105 cursor-pointer">
