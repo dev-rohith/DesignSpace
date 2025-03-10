@@ -22,9 +22,9 @@ const DesignerCard = ({
   handleChat
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm px-2 pt-2 border border-violet-50">
-      <div className="flex flex-col space-y-3">
-        <div className="bg-gradient-to-r from-violet-50/80 to-fuchsia-50/80 rounded-lg p-2.5">
+    <div className="bg-white rounded-lg shadow-sm max-h-70 p-1 group  border hover:shadow-md hover:-translate-0.5 hover:bg-fuchsia hover:border hover:border-violet-500  border-violet-50">
+      <div className="flex flex-col space-y-2">
+        <div className="bg-gradient-to-r from-pink-50/90 to-fuchsia-50/8  group-hover:border group-hover:border-violet-500 group-hover:bg-white rounded-lg p-2.5">
           <div className="flex items-start gap-3">
             <div className="relative">
               <img
@@ -36,7 +36,7 @@ const DesignerCard = ({
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="font-medium text-gray-900">
+              <h3 className="font-raleway font-semibold text-gray-900 first-letter:uppercase">
                 {user.firstName} {user.lastName}
               </h3>
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-sm text-gray-600">
@@ -75,7 +75,7 @@ const DesignerCard = ({
             {softwareExpertise.map((skill) => (
               <span
                 key={skill}
-                className="px-2 py-0.5 bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 rounded-full text-xs"
+                className="px-2 py-0.3 bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 rounded-full text-xs"
               >
                 {skill}
               </span>
@@ -85,7 +85,7 @@ const DesignerCard = ({
             {languages_know.map((language) => (
               <span
                 key={language}
-                className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs"
+                className="px-2 py-0.3 bg-blue-50 text-blue-700 rounded-full text-xs"
               >
                 {language}
               </span>
@@ -93,7 +93,7 @@ const DesignerCard = ({
           </div>
         </div>
 
-        <div className="space-y-1.5 text-sm">
+        <div className="text-sm">
           <div className="flex items-start gap-1.5">
             <BookLock className="w-3.5 h-3.5 mt-0.5 text-violet-500" />
             <div>
@@ -116,11 +116,11 @@ const DesignerCard = ({
         </div>
       </div>
       <div className="flex justify-between mt-1">
-        <p className="text-xs text-gray-600 leading-relaxed">{aboutMe}</p>
+        <p className="text-xs text-gray-600 leading-relaxed h-18 line-clamp-3 first-letter:uppercase">{aboutMe}</p>
         <div className="flex justify-end mb-4 p-2">
           <button 
           onClick={() => handleChat(user._id)}
-          className=" self-end h-full bg-gradient-to-tl from-violet-600 to-fuchsia-600 text-white px-8 mr-4 ring-2 ring-gray-600 rounded hover:scale-105 cursor-pointer">
+          className="italic  self-end h-max bg-gradient-to-tl from-violet-600 to-fuchsia-600 text-white px-6 mr-4 ring-2 ring-gray-400 rounded hover:scale-105 cursor-pointer">
             chat
           </button>
         </div>

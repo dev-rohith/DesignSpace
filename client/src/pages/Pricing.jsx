@@ -1,5 +1,5 @@
 import { Key, TrendingDown } from "lucide-react";
-import { PricingCard } from "../components";
+import { PricingCard, Spinner } from "../components";
 import LandingLayout from "../layout/LandingLayout";
 import { useEffect } from "react";
 import { getSubscriptionsDetails } from "../features/actions/landingActions";
@@ -10,7 +10,9 @@ import axiosInstance from "../apis/axiosIntance";
 import { useNavigate } from "react-router-dom";
 
 const Pricing = () => {
-  const { subscriptions_prices } = useSelector((store) => store.landing);
+  const { subscriptions_prices, isLoading } = useSelector(
+    (store) => store.landing
+  );
   const { user } = useSelector((store) => store.auth);
 
   const dispatch = useDispatch();
@@ -56,12 +58,12 @@ const Pricing = () => {
       console.log(data.key);
       const options = {
         key: data.key,
-        amount: data.order.amount, 
+        amount: data.order.amount,
         currency: "INR",
-        name: "Acme Corp", 
-        description: "Test Transaction", 
-        image: "https://example.com/your_logo", 
-        order_id: data.order.id, 
+        name: "Acme Corp",
+        description: "Test Transaction",
+        image: "https://example.com/your_logo",
+        order_id: data.order.id,
         handler: function (response) {
           axiosInstance
             .post("payment/verify/subcription", {
@@ -74,7 +76,7 @@ const Pricing = () => {
             .then((res) => {
               toast.success(res.data.message);
 
-               navigate("/design-space/payment-sucess", {state: res.data});
+              navigate("/design-space/payment-sucess", { state: res.data });
             })
             .catch((err) => {
               toast.error(err.response.data.message);
@@ -103,58 +105,64 @@ const Pricing = () => {
     discounted_yearly_price,
   } = subscriptions_prices;
 
+  if (isLoading) return <Spinner />;
+
+  if (!subscriptions_prices)
+    return (
+      <LandingLayout>
+        <div className="flex justify-center items-center h-screen">
+          <h6 className="text-2xl font-semibold">
+            No subscriptions found At this moment
+          </h6>
+        </div>
+      </LandingLayout>
+    );
+
   return (
     <LandingLayout>
       <section className="mt-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
-            <h2 className="font-montserrat text-4xl text-center font-bold text-gray-800 mb-4">
+            <h2 className="font-montserrat text-3xl text-center font-bold text-gray-800 mb-1">
               Our pricing plans
             </h2>
-            <p className="text-gray-500  text-xl text-center font-raleway leading-6 mb-8">
-              15m free chat trial. No credit card required.
+            <p className="text-gray-500  text-lg text-center font-raleway  mb-2">
+              20 free messages as trial. You can always upgrade 100% secure
+              payments with Razorpay.
             </p>
-            <div className="mb-5 flex justify-center">
-              <span className="flex items-center space-x-6">
-                <span className="inline-block whitespace-nowrap text-xs leading-4 font-semibold tracking-wide bg-indigo-50 text-indigo-600 rounded-full py-2 px-4">
-                  Save 20%
-                </span>
-                <TrendingDown className="w-10 h-10 text-gray-500" />
-              </span>
-            </div>
 
-            <div className="tabs">
-              <div className="flex justify-center items-center bg-gray-100 rounded-full p-1 max-w-sm mx-auto">
-                <a className="inline-block w-1/2 text-center transition-all duration-500 rounded-full text-gray-400 font-semibold py-3 px-3 lg:px-11 hover:text-indigo-600 tab-active:bg-indigo-600 tab-active:rounded-full tab-active:text-white tablink whitespace-nowrap active">
-                  Bill Yearly
-                </a>
-                <a className="inline-block w-1/2 text-center transition-all duration-500 rounded-full text-gray-400 font-semibold py-3 px-3 lg:px-11 hover:text-indigo-600 tab-active:bg-indigo-600 tab-active:rounded-full tab-active:text-white tablink whitespace-nowrap">
-                  Bill Monthly
-                </a>
-              </div>
-
+            <div className="tabs mt-6">
               <div
                 id="tabs-with-background-1"
                 role="tabpanel"
-                className="tabcontent mt-12"
+                className="tabcontent mt-6"
               >
                 <div className="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-8 lg:space-y-0">
                   <PricingCard plan="Life time" heading="Free Plan" pricing="0">
-                    <span>Chat with the Designers Upto 20 messages</span>
-                    <span>Get Your personalized Interior Designs</span>
-                    <span className="line-through">
-                      Ask personalized Questions to the Designers
-                    </span>
-                    <span className="line-through">Dedicated Team Support from Design Space</span>
-                    <span className="line-through">Personalized project Support</span>
-                    <span className="line-through">Extra discount and cash coupons Upon purchase</span>
-                    <span className="line-through">
-                      End to End Interior crafting by design space assicate team
-                    </span>
-                    <span className="line-through">
-                      Dedicated Personal assistant from design space upto
-                      project completion
-                    </span>
+                    <ul className="text-left list-disc list-outside pl-5">
+                      <li>Chat with the Designers Upto 20 messages</li>
+                      <li>Get Your personalized Interior Designs</li>
+                      <li className="line-through">
+                        Ask personalized Questions to the Designers
+                      </li>
+                      <li className="line-through">
+                        Dedicated Team Support from Design Space
+                      </li>
+                      <li className="line-through">
+                        Personalized project Support
+                      </li>
+                      <li className="line-through">
+                        Extra discount and cash coupons Upon purchase
+                      </li>
+                      <li className="line-through">
+                        End to End Interior crafting by design space associate
+                        team
+                      </li>
+                      <li className="line-through">
+                        Dedicated Personal assistant from design space up to
+                        project completion
+                      </li>
+                    </ul>
                   </PricingCard>
 
                   <PricingCard
@@ -165,17 +173,22 @@ const Pricing = () => {
                     normalPrice={monthly_price}
                     discountedPrice={discounted_monthly_price}
                   >
-                    <span>Unlimited chat for 1 Year</span>
-                    <span>Dedicated Team Support from Design Space</span>
-                    <span>Personalized project Support</span>
-                    <span>Extra discount and cash coupons Upon purchase</span>
-                    <span>
-                      End to End Interior crafting by design space assicate team
-                    </span>
-                    <span>
-                      Dedicated Personal assistant from design space upto
-                      project completion
-                    </span>
+                    <ul className="text-left list-disc list-outside pl-5">
+                      <li>Unlimited chat for 1 Month</li>
+                      <li className="line-through">
+                        Dedicated Team Support from Design Space
+                      </li>
+                      <li>Personalized project Support</li>
+                      <li>Extra discount and cash coupons Upon purchase</li>
+                      <li className="line-through">
+                        End to End Interior crafting by design space associate
+                        team
+                      </li>
+                      <li className="line-through">
+                        Dedicated Personal assistant from design space up to
+                        project completion
+                      </li>
+                    </ul>
                   </PricingCard>
 
                   <PricingCard
@@ -185,19 +198,20 @@ const Pricing = () => {
                     normalPrice={yearly_price}
                     discountedPrice={discounted_yearly_price}
                   >
-                    <span>Unlimited chat for 1 Month</span>
-                    <span className="line-through">
-                      Dedicated Team Support from Design Space
-                    </span>
-                    <span>Personalized project Support</span>
-                    <span>Extra discount and cash coupons Upon purchase</span>
-                    <span className="line-through">
-                      End to End Interior crafting by design space assicate team
-                    </span>
-                    <span className="line-through">
-                      Dedicated Personal assistant from design space upto
-                      project completion
-                    </span>
+                    <ul className="text-left list-disc list-outside pl-5">
+                      <li>Unlimited chat for 1 Year</li>
+                      <li>Dedicated Team Support from Design Space</li>
+                      <li>Personalized project Support</li>
+                      <li>Extra discount and cash coupons Upon purchase</li>
+                      <li>
+                        End to End Interior crafting by design space associate
+                        team
+                      </li>
+                      <li>
+                        Dedicated Personal assistant from design space up to
+                        project completion
+                      </li>
+                    </ul>
                   </PricingCard>
                 </div>
               </div>

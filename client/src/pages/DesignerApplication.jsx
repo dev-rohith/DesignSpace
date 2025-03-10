@@ -53,20 +53,22 @@ const DesignerApplication = () => {
 
   return (
     <LandingLayout>
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto ">
-        <MultiFormProvider steps={steps} formComponents={formComponents}>
-          <div className="rounded-lg shadow-lg p-8 bg-gradient-to-br from-fuchsia-100 via-white to-green-100">
-            <Stepper />
-            <div className="mt-8">
-              <FormContent />
+      <div className="min-h-screen bg-slate-200 py-8">
+        <div className="max-w-6xl mx-auto ">
+          <MultiFormProvider steps={steps} formComponents={formComponents}>
+            <div className="rounded-lg shadow-lg bg-white p-4">
+              <div className="hidden md:block">
+                <Stepper />
+              </div>
+              <div className="mt-8">
+                <FormContent />
+              </div>
+              <StepperControl handleFormSubmit={handleFormSubmit} />
             </div>
-            <StepperControl handleFormSubmit={handleFormSubmit} />
-          </div>
-        </MultiFormProvider>
+          </MultiFormProvider>
+        </div>
       </div>
-    </div>
-  </LandingLayout>
+    </LandingLayout>
   );
 };
 export default DesignerApplication;

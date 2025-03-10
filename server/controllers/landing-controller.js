@@ -60,7 +60,7 @@ landingCtrl.createCarouselItem = async (req, res, next) => {
       { $push: { carousel: newCarouselItem } },
       { upsert: true, new: true }
     );
-    //delete the item from the redis for persistance
+    //deleting the item from the redis for persistance
     await RedisDataManager.removeItemFromRedis("landingConfig");
 
     res.status(201).json({
@@ -158,17 +158,14 @@ landingCtrl.deleteCarouselItem = async (req, res, next) => {
   if (!config) {
     return next(new AppError("Carousel item not found", 404));
   }
-  // Find the item to be deleted before removing it
   const deletedItem = config.carousel.find(
     (item) => item.public_id === public_id
   );
 
-  // Remove the carousel item from the array
   config.carousel = config.carousel.filter(
     (item) => item.public_id !== public_id
   );
 
-  // Save the updated config
   await config.save();
 
   await CloudinaryService.deleteFile(public_id);
@@ -178,7 +175,6 @@ landingCtrl.deleteCarouselItem = async (req, res, next) => {
     message: "carousel item deleted successfully",
     data: deletedItem,
   });
-  // await CloudinaryService.deleteFile()
 }
 
 landingCtrl.deleteTopDesigner = async (req, res, next) => {
@@ -193,12 +189,10 @@ landingCtrl.deleteTopDesigner = async (req, res, next) => {
     (item) => `${item._id}` === desinger_id
   );
 
-  // Remove the designer ID from the designers array using $pull
   config.designers = config.designers.filter(
     (item) => `${item._id}` !== desinger_id
   );
 
-  // Save the updated document
   await config.save();
 
   await RedisDataManager.removeItemFromRedis("landingConfig");
@@ -220,13 +214,9 @@ landingCtrl.deleteCustomerReview = async (req, res, next) => {
     return next(new AppError("customer not found in configuration", 404));
   }
 
-  const deletedItem = config.customer_reviews.find(
-    (review) => review.video.public_id === public_id
-  );
+  const deletedItem = config.customer_reviews.find((review) => review.video.public_id === public_id);
 
-  config.customer_reviews = config.customer_reviews.filter(
-    (review) => review.video.public_id !== public_id
-  );
+  config.customer_reviews = config.customer_reviews.filter((review) => review.video.public_id !== public_id);
 
   config.save();
 

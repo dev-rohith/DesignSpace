@@ -18,7 +18,6 @@ export const getPortfolios = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("designer/portfolios");
-      console.log(response.data);
       return response.data;
     } catch (error) {
       rejectWithValue(error.response.data);

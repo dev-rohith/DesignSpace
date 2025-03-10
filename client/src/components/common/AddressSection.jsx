@@ -14,14 +14,9 @@ const AddressSection = ({
   handleInputChange,
   isEditing = true,
   error,
-  className = ""
+  className = "",
 }) => (
   <div className={className}>
-    <div className="flex items-center mb-6 py-1 rounded-4xl justify-center bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 ">
-      <MapPin className="w-4 h-4 mr-1 text-white" />
-      <h2 className="text-lg font-semibold text-gray-50">Address Details</h2>
-    </div>
-
     <div className="grid grid-cols-1 ml-4 md:grid-cols-2 gap-6">
       <div className="space-y-4">
         <InputField

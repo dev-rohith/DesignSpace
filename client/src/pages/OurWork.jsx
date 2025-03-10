@@ -11,9 +11,8 @@ const OurWork = () => {
     (async () => {
       const actionResult = await dispatch(getPortfolios());
       if (getPortfolios.fulfilled.match(actionResult)) {
-        console.log(actionResult.payload);
       } else if (getPortfolios.rejected.match(actionResult)) {
-        console.log(actionResult.payload);
+         toast(actionResult.payload?.message);
       }
     })();
   }, []);

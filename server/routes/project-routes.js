@@ -17,7 +17,7 @@ router.get(
 
 router.put(
   "/accept/:project_id",
-  authMiddleWare.authorize("client"),   //payment here ---------------------------------
+  authMiddleWare.authorize("client"),   
   catchErrors(projectCtrl.acceptProject
 ))
 

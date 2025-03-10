@@ -65,8 +65,8 @@ const DesignerPortfolio = () => {
         </Modal>
       )}
       <header className="bg-white border-b">
-        <div className="max-w-7xl mx-auto p-6">
-          <h1 className="text-2xl font-semibold">Portfolio</h1>
+        <div className="max-w-7xl font-raleway mx-auto p-6">
+          <h1 className="text-2xl  font-semibold">Portfolio</h1>
           <p className="text-gray-600">
             Showcase your best work to potential clients
           </p>
@@ -75,14 +75,14 @@ const DesignerPortfolio = () => {
 
       <div className="bg-violet-50 border-b border-violet-100">
         <div className="max-w-7xl mx-auto p-4 flex gap-3">
-          <AlertCircle className="w-5 h-5 text-violet-600 mt-0.5" />
+          <AlertCircle className="w-5 h-5 text-violet-600 mt-1" />
           <div>
-            <h3 className="text-sm font-medium text-violet-900">
+            <h3 className="text-md font-medium text-violet-900">
               Portfolio Guidelines
             </h3>
             <p className="text-sm text-violet-700">
-              Maintain a maximum of 5 high-quality portfolios to highlight your
-              best work.
+              Maintain a maximum of 5 high-quality images on each portfolio item to highlight your
+              best work. to each potential.
             </p>
           </div>
         </div>

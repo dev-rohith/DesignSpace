@@ -7,7 +7,7 @@ const sendDevError = (err, res) => {
     status: err.status,
     error: err,
     message: err.message,
-    stack: err.stack, //optional
+    stack: err.stack, //optional for testing purpose
   });
 };
 
@@ -38,7 +38,7 @@ const sendProdError = (err, res) => {
 const globalErrorHandler = (err, req, res, next) => {
   if (process.env.NODE_ENV === "development") {
     sendDevError(err,  res);
-  } else if (process.env.NODE_ENV === "production") {
+  } else {   // it will automatically trigger in production 
     sendProdError(err, res);
   }
 };

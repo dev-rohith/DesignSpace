@@ -1,4 +1,4 @@
-import { CalendarDays, CircleDollarSign, DollarSign } from "lucide-react";
+import { CalendarDays, CircleDollarSign, IndianRupee } from "lucide-react";
 
 const DesignerProjectItem = ({
   _id,
@@ -11,81 +11,55 @@ const DesignerProjectItem = ({
   handleViewProject,
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg group transition-shadow duration-300 overflow-hidden">
-      <div className="p-4 border-b border-gray-100">
-        <div className="flex items-center justify-between">
-          <div className="flex gap-3 items-center">
-            <img
-              src={client.profilePicture}
-              alt={`${client.firstName}'s profile`}
-              className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100"
-            />
-            <div className="flex flex-col">
-              <span className="text-sm text-gray-600 font-medium">
-                Client :{" "}
-              </span>
-              <span className="text-sm font-semibold first-letter:uppercase">
-                {client.firstName} {client.lastName}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 bg-violet-50 px-3 py-1.5 rounded-full">
-            <CircleDollarSign
-              className={`w-4 h-4 ${
-                isPaid ? "text-green-500" : "text-orange-500"
-              }`}
-            />
-            <span
-              className={`text-sm font-medium ${
-                isPaid ? "text-green-500" : "text-orange-500"
-              }`}
-            >
-              {isPaid ? "Paid" : "Unpaid"}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-900 text-lg uppercase tracking-wide">
+    <div className="border p-4 rounded-lg shadow-sm bg-white group hover:shadow-md transition">
+      <div className="flex items-center gap-2 mb-1">
+      <span className="font-medium font-mono text-gray-800">Project name:</span>
+        <h5 className="text-md font-raleway font-semibold text-violet-700  first-letter:uppercase">
           {title}
-        </h3>
-        <p className="text-gray-600 text-sm line-clamp-2 mb-4">{description}</p>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-700">
-              <CalendarDays className="w-4 h-4 text-violet-500" />
-              <span className="text-sm font-medium">Minimum Duration</span>
-            </div>
-            <p className="text-gray-900 font-semibold mt-1">
-              {minimumDays} Days
-            </p>
-          </div>
-
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-700">
-              <DollarSign className="w-4 h-4 text-violet-500" />
-              <span className="text-sm font-medium">Budget</span>
-            </div>
-            <p className="text-gray-900 font-semibold mt-1">
-              ${budget.toLocaleString()}
-            </p>
-          </div>
+        </h5>
+      </div>
+      <div className="flex gap-3 items-center">
+        <span className="font-medium font-mono text-gray-800">Client:</span>
+        <div className="flex items-center gap-2 ">
+          <img
+            src={client.profilePicture}
+            alt={client.firstName}
+            className="w-6 h-6 rounded-full"
+          />
+          <p className="text-sm text-gray-600 capitalize">
+            {client.firstName} {client.lastName}
+          </p>
         </div>
       </div>
 
-      <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 flex justify-end group-hover:bg-violet-300">
-        <button
-          onClick={() => {
-            handleViewProject(_id);
-          }}
-          className="inline-flex items-center gap-2 px-4  text-violet-600 group-hover:bg-violet-500 group-hover:border h  group-hover:text-white hover:bg-gray-100 hover:text-gray-700 font-medium transition-colors cursor-pointer"
+      <p className="text-sm text-gray-700 mt-2">{description}</p>
+
+      <div className="flex justify-between items-center mt-3 text-sm">
+        <div className="flex items-center gap-1 text-gray-700">
+          <CalendarDays size={16} />
+          <span>{minimumDays} Days</span>
+        </div>
+
+        <div className="flex items-center gap-1 text-gray-700">
+          <IndianRupee size={16} />
+          <span>₹{budget.toLocaleString("en-IN")}</span>
+        </div>
+
+        <span
+          className={`px-2 py-1 text-xs font-semibold rounded ${
+            isPaid ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+          }`}
         >
-          View Details
-          <span className="text-lg">→</span>
-        </button>
+          {isPaid ? "Paid" : "Unpaid"}
+        </span>
       </div>
+
+      <button
+        onClick={() => handleViewProject(_id)}
+        className="mt-4 w-full text-center py-1 rounded-md border cursor-pointer hover:bg-gray-600 border-violet-600 text-violet-600 font-medium group-hover:bg-violet-600 group-hover:text-white transition"
+      >
+        View Details →
+      </button>
     </div>
   );
 };

@@ -62,6 +62,7 @@ const DesingerPendingProjectEdit = ({
 
       {/* Address Section */}
       <div className="pb-4">
+        <div className="font-semibold text-lg ml-4 mb-4 underline text-gray-700">Address and Location of the project :</div>
         <AddressSection
           address={formData.address}
           handleInputChange={handleInputChange}

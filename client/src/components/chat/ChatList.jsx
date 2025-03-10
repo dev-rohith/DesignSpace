@@ -21,6 +21,10 @@ const ChatList = () => {
         toast.error(actionResult.payload.message);
       }
     })();
+
+    return () => {
+      dispatch(setChatRoomId(null));  //clened it up because of the bug it will cause the infinite renders beacuse state in redux
+    };
   }, [dispatch]);
 
   const handleSetCurrentChat = (roomId) => {

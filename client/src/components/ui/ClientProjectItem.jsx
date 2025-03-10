@@ -30,7 +30,7 @@ const ClientProjectItem = ({
   const daysSinceUpdate = Math.abs(differenceInDays(lastUpdated, today));
 
   return (
-    <article className="group relative border bg-white rounded-xl overflow-hidden w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl h-auto hover:shadow-lg transition-shadow duration-200 flex flex-col p-3 sm:p-4 md:p-5">
+    <article className="group relative border bg-white overflow-hidden w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl h-auto hover:shadow-lg transition-shadow duration-200 flex flex-col p-3 sm:p-4 md:p-5">
       <div
         className={`absolute top-0 inset-x-0 h-1.5 ${
           isOverdue

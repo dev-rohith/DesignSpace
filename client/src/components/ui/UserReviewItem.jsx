@@ -5,7 +5,7 @@ const UserReviewItem = ({ name, review, video, deleteUserReview }) => {
   const { isReviewsUpdating } = useSelector((store) => store.landing);
   return (
     <div className="w-90 h-full bg-white rounded-xl shadow-lg overflow-hidden text-center ml-6 border border-gray-200 transition-transform transform hover:scale-105">
-      <div className="w-full h-56 overflow-hidden">
+      <div className="w-full max-h-60 overflow-hidden">
         {deleteUserReview && (
           <button
             onClick={() => {
@@ -28,8 +28,8 @@ const UserReviewItem = ({ name, review, video, deleteUserReview }) => {
           </div>
         )}
       </div>
-      <div className="text-xl font-bold font-sansita text-gray-900 mb-2 first-letter:uppercase">{name}</div>
-      <p className="text-gray-700 text-sm leading-relaxed px-4 italic">
+      <div className="text-xl font-bold font-sansita text-gray-900 mb-2 mt-1  first-letter:uppercase">{name}</div>
+      <p className="text-gray-700 text-sm  px-4 italic leading-tight">
         {review}
       </p>
     </div>

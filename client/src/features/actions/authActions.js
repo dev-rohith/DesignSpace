@@ -10,7 +10,6 @@ export const refreshToken = createAsyncThunk(
       const response = await axiosInstance.get("auth/refreshToken");
       return response.data.accessToken;
     } catch (error) {
-      console.log(error)
       return rejectWithValue(error.response.data.message || "Unknown error");
     }
   }
@@ -21,13 +20,12 @@ export const signup = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/auth/signup", data);
-      console.log(response);
+      // console.log(response);
       return {
         message: response.data.message,
         verifyId: response.data.verificationId,
       };
     } catch (error) {
-      console.log(error.response.data.message);
       return rejectWithValue(error.response.data.message);
     }
   }
@@ -61,7 +59,6 @@ export const logout = createAsyncThunk(
       const response = await axiosInstance.post("/auth/logout");
       return response.data.message;
     } catch (error) {
-      console.log(error.response.data.message);
       return rejectWithValue(error.response.data.message);
     }
   }
@@ -74,7 +71,6 @@ export const logoutDevice = createAsyncThunk(
       const response = await axiosInstance.post(`/auth/logout/${data}`);
       return response.data;
     } catch (error) {
-      console.log(error);
       return rejectWithValue(error.response.data.message);
     }
   }
@@ -131,7 +127,6 @@ export const logoutAll = createAsyncThunk(
       const response = await axiosInstance.post("auth/logoutall");
       return response.data.message;
     } catch (error) {
-      console.log(error);
       rejectWithValue(error.response.data.message);
     }
   }

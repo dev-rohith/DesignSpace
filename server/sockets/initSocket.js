@@ -1,12 +1,11 @@
 import ChatRoom from "../models/chatRoom-model.js";
 import User from "../models/user-model.js";
 
-
 const initSocket = (io) => {
   io.on("connection", (socket) => {
     const { userId } = socket.handshake.auth;
     if (!userId) {
-      console.log("No userId provided, disconnecting socket.");
+      // console.log("No userId provided, disconnecting socket.");
       socket.disconnect();
       return;
     }
@@ -14,12 +13,12 @@ const initSocket = (io) => {
 
     socket.on("join_room", async (roomId) => {
       socket.join(roomId);
-      console.log(`User ${socket.userId} joined room ${roomId}`);
+      // console.log(`User ${socket.userId} joined room ${roomId}`);
     });
 
     socket.on("leave_room", (roomId) => {
       socket.leave(roomId);
-      console.log(`User ${socket.userId} left room ${roomId}`);
+      // console.log(`User ${socket.userId} left room ${roomId}`);
     });
 
     socket.on("update_status", async (status) => {
@@ -41,7 +40,15 @@ const initSocket = (io) => {
       }
     });
 
-   
+    socket.on("update_read", async (roomId) => {
+      // console.log("testing here");
+      const chatRoom = await ChatRoom.findByIdAndUpdate(
+        roomId,
+        { read: true },
+        { new: true }
+      ).select("_id");
+      socket.to(roomId).emit("update_read", chatRoom);
+    });
 
     socket.on("typing", (data) => {
       const { roomId } = data;

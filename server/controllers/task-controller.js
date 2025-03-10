@@ -42,7 +42,7 @@ taskCtrl.createTask = async (req, res, next) => {
   if (!task) return next(new AppError("Error while creating the task", 400));
 
   res.json({ message: "Task created successfully" });
-}
+};
 
 taskCtrl.updateTask = async (req, res, next) => {
   const { task_id } = req.params;
@@ -95,7 +95,7 @@ taskCtrl.updateTask = async (req, res, next) => {
     message: "Task updated successfully",
     data: task,
   });
-}
+};
 
 taskCtrl.getDesignerTasks = async (req, res, next) => {
   const { status } = req.params;
@@ -123,7 +123,7 @@ taskCtrl.getDesignerTasks = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
 
   res.json({ page, perPage, totalPages, total, data: myPendingTasks });
-}
+};
 
 taskCtrl.getMyTaskDesinger = async (req, res, next) => {
   const { task_id } = req.params;
@@ -133,7 +133,7 @@ taskCtrl.getMyTaskDesinger = async (req, res, next) => {
   }).lean();
   if (!task) return next(new AppError("task was not found", 400));
   res.json(task);
-}
+};
 
 taskCtrl.assignAssociateToTheTask = async (req, res, next) => {
   const { task_id, associate_id } = req.params;
@@ -161,7 +161,7 @@ taskCtrl.assignAssociateToTheTask = async (req, res, next) => {
       "Associate assigned to task successfully. You can find the task in your progress task section",
     data: updatedTask,
   });
-}
+};
 
 //--------------------------------------------------------associate-actions-----------------------------------------------------------------//
 
@@ -189,7 +189,7 @@ taskCtrl.getAllLiveTasks = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
 
   res.json({ page, perPage, totalPages, total, data: myPendingTasks });
-}
+};
 
 taskCtrl.getAssociateTasks = async (req, res, next) => {
   const { status } = req.params;
@@ -217,7 +217,7 @@ taskCtrl.getAssociateTasks = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
 
   res.json({ page, perPage, totalPages, total, data: myTasks });
-}
+};
 
 taskCtrl.getTaskDettails = async (req, res, next) => {
   const { task_id } = req.params;
@@ -228,7 +228,7 @@ taskCtrl.getTaskDettails = async (req, res, next) => {
     .lean();
   if (!task) return next(new AppError("task was not found", 400));
   res.json(task);
-}
+};
 
 taskCtrl.getMyTaskAssociate = async (req, res, next) => {
   const { task_id } = req.params;
@@ -236,7 +236,7 @@ taskCtrl.getMyTaskAssociate = async (req, res, next) => {
     .populate("designer", "firstName lastName profilePicture")
     .lean();
   res.json(task);
-}
+};
 
 taskCtrl.acceptByAssociate = async (req, res, next) => {
   const { task_id } = req.params;
@@ -251,7 +251,7 @@ taskCtrl.acceptByAssociate = async (req, res, next) => {
     message: "You assigned to task successfully",
     data: updatedtask,
   });
-}
+};
 
 taskCtrl.updateTaskProgress = async (req, res, next) => {
   if (!req.files) return next(new AppError("Files are required", 400));
@@ -307,7 +307,7 @@ taskCtrl.updateTaskProgress = async (req, res, next) => {
     message: "work updated successfully",
     data: updatedWork,
   });
-}
+};
 
 taskCtrl.deleteProgressItem = async (req, res, next) => {
   const { task_id, delete_id } = req.params;
@@ -338,7 +338,7 @@ taskCtrl.deleteProgressItem = async (req, res, next) => {
     message: "item deleted successfully",
     data: { deletedItemId: delete_id },
   });
-}
+};
 
 taskCtrl.completeTask = async (req, res, next) => {
   const { task_id } = req.params;
@@ -347,6 +347,6 @@ taskCtrl.completeTask = async (req, res, next) => {
   task.status = "completed";
   await task.save();
   res.json({ message: "task completed successfully" });
-}
+};
 
 export default taskCtrl;

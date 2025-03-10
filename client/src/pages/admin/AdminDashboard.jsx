@@ -13,16 +13,12 @@ import {
   PieChart,
   Pie,
   Cell,
-  LineChart,
-  Line,
   RadarChart,
   Radar,
   PolarGrid,
   PolarAngleAxis,
   AreaChart,
   Area,
-  ScatterChart,
-  Scatter,
   ResponsiveContainer,
 } from "recharts";
 
@@ -110,7 +106,7 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         <header className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-slate-800">
-            Project Analytics Dashboard
+            Admin Dashboard & Platform Analytics
           </h1>
           <p className="text-slate-600 text-lg">
             Comprehensive Performance Insights

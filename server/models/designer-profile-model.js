@@ -98,7 +98,7 @@ const designerProfileSchema = new Schema({
       required: true,
     },
   },
-});
+}, { timestamps: true });
 
 designerProfileSchema.methods.updateAverageRating = async function () {
   if (this.ratings.length === 0) {
@@ -110,7 +110,6 @@ designerProfileSchema.methods.updateAverageRating = async function () {
   await this.save();
 };
 
-designerProfileSchema.index({ location: "2dsphere" });
 
 const DesignerProfile = model("DesignerProfile", designerProfileSchema);
 

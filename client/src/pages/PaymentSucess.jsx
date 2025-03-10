@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   BadgeCheck,
-  ArrowRight,
   Sparkles,
   LayoutDashboard,
   Smile,
   CalendarCheck,
   ShieldCheck,
+  ArrowLeft,
 } from "lucide-react";
 
 const PaymentSuccess = () => {
@@ -16,16 +16,25 @@ const PaymentSuccess = () => {
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gray-50 p-6">
-      <div className="relative w-full max-w-lg bg-white shadow-2xl border border-gray-300 p-8 rounded-2xl text-center animate-fade-in">
-        
-        <div className="flex items-center justify-center bg-violet-100 w-24 h-24 rounded-full mx-auto mb-6 shadow-lg">
+      <div className="relative w-full max-w-3xl bg-white shadow-2xl border border-gray-300 p-8 rounded-2xl text-center animate-fade-in">
+        <button
+          className=" absolute -top-4 right-4 mt-8 group bg-violet-500 hover:bg-violet-600 text-white font-semibold py-2 px-6 flex items-center justify-center gap-2 rounded-lg transition-all  shadow-md cursor-pointer"
+          onClick={() => navigate("/design-space")}
+        >
+          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 group-hover:scale-110 transition-all " />{" "}
+          Go to Design Space
+        </button>
+        <div className="flex items-center justify-center bg-violet-100 w-20 h-20 rounded-full mx-auto mb-3 shadow-lg">
           <BadgeCheck className="text-violet-500 w-16 h-16" />
         </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">Payment Successful!</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">
+          Payment Successful!
+        </h1>
         <p className="text-gray-600 text-lg">
-          Your subscription to{" "}
-          <span className="font-semibold text-violet-500">Design Space</span> is now active.
+          Your subscription to
+          <span className="font-semibold text-violet-500">Design Space</span> is
+          now active.
         </p>
 
         <div className="mt-6 p-6 bg-violet-50 border border-violet-200 rounded-lg space-y-4 text-left">
@@ -33,7 +42,9 @@ const PaymentSuccess = () => {
             <Sparkles className="w-6 h-6 text-violet-500" />
             <p className="text-gray-800">
               <span className="font-medium">Plan:</span>{" "}
-              <span className="text-violet-600">{data?.data?.plan.toUpperCase()}</span>
+              <span className="text-violet-600">
+                {data?.data?.plan.toUpperCase()}
+              </span>
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -60,7 +71,10 @@ const PaymentSuccess = () => {
             <Smile className="w-6 h-6 text-violet-500" />
             <p className="text-gray-700">
               Start creating amazing designs with{" "}
-              <span className="font-semibold text-violet-500">Design Space</span>.
+              <span className="font-semibold text-violet-500">
+                Design Space
+              </span>
+              .
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -70,13 +84,6 @@ const PaymentSuccess = () => {
             </p>
           </div>
         </div>
-
-        <button
-          className="mt-8 bg-violet-500 hover:bg-violet-600 text-white font-semibold py-3 px-6 flex items-center justify-center gap-2 rounded-lg transition-all transform hover:scale-105 shadow-md"
-          onClick={() => navigate("/design-space")}
-        >
-          Go to Design Space <ArrowRight className="w-5 h-5" />
-        </button>
       </div>
     </div>
   );

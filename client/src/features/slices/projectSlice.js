@@ -7,6 +7,7 @@ import {
 } from "../actions/designerActions";
 
 import {
+  acceptProjectByClient,
   addAfterProjectToPortfolio,
   addBeforeProjectToPortfolio,
   completeTheProject,
@@ -14,7 +15,6 @@ import {
   deleteBeforeProjectToPortifolio,
   deletePedingProject,
   getProjectDetails,
-  reviewProject,
   sentProjectToReview,
   updateProjectDetails,
   updateProjectProgress,
@@ -37,7 +37,6 @@ const projectSlice = createSlice({
   },
   reducers: {},
   extraReducers: (builder) => {
-    //get project
     builder.addCase(getProjectDetails.fulfilled, (state, action) => {
       state.currentProject = action.payload;
       state.isLoading = false;
@@ -49,7 +48,6 @@ const projectSlice = createSlice({
       state.isLoading = false;
     });
 
-    //deleting the project
     builder.addCase(deletePedingProject.fulfilled, (state, action) => {
       state.currentProject = null;
       state.isUpdating = false;
@@ -67,7 +65,7 @@ const projectSlice = createSlice({
       state.currentProject.title = action.payload.data.title;
       state.currentProject.minimumDays = action.payload.data.minimumDays;
       state.currentProject.budget = action.payload.data.budget;
-      state.currentProject.location = action.payload.data.location
+      state.currentProject.location = action.payload.data.location;
       state.isUpdating = false;
     });
     builder.addCase(updateProjectDetails.pending, (state, action) => {
@@ -77,87 +75,98 @@ const projectSlice = createSlice({
       state.isUpdating = false;
     });
 
-
     builder.addCase(completeTheProject.fulfilled, (state, action) => {
       state.currentProject.status = "completed";
       state.isUpdating = false;
-    })
+    });
     builder.addCase(completeTheProject.pending, (state, action) => {
       state.isUpdating = true;
-    })
+    });
     builder.addCase(completeTheProject.rejected, (state, action) => {
       state.isUpdating = false;
-    })
-
- 
+    });
 
     builder.addCase(updateProjectProgress.fulfilled, (state, action) => {
       state.currentProject.progress = action.payload.data.progress;
       state.currentProject.milestones = action.payload.data.milestones;
       state.isUpdating = false;
-    })
+    });
     builder.addCase(updateProjectProgress.pending, (state, action) => {
       state.isUpdating = true;
-    })
+    });
     builder.addCase(updateProjectProgress.rejected, (state, action) => {
       state.isUpdating = false;
-    })
+    });
 
     builder.addCase(sentProjectToReview.fulfilled, (state, action) => {
-       state.currentProject.status = 'reivew';
+      state.currentProject.status = "reivew";
       state.isUpdating = false;
-    })
+    });
 
     builder.addCase(addBeforeProjectToPortfolio.fulfilled, (state, action) => {
       state.currentProject.beforePictures.push(action.payload.data);
       state.isUpdating = false;
-    })
+    });
     builder.addCase(addBeforeProjectToPortfolio.pending, (state, action) => {
       state.isUpdating = true;
-    })
+    });
     builder.addCase(addBeforeProjectToPortfolio.rejected, (state, action) => {
       state.isUpdating = false;
-    })
+    });
 
-    builder.addCase(deleteBeforeProjectToPortifolio.fulfilled, (state, action) => {
-      state.currentProject.beforePictures = state.currentProject.beforePictures.filter(
-        (picture) => picture._id !== action.payload.data._id
-      );
-      state.isUpdating = false;
-    })
-    builder.addCase(deleteBeforeProjectToPortifolio.pending, (state, action) => {
-      state.isUpdating = true;
-    })
-    builder.addCase(deleteBeforeProjectToPortifolio.rejected, (state, action) => {
-      state.isUpdating = false;
-    })
+    builder.addCase(
+      deleteBeforeProjectToPortifolio.fulfilled,
+      (state, action) => {
+        state.currentProject.beforePictures =
+          state.currentProject.beforePictures.filter(
+            (picture) => picture._id !== action.payload.data._id
+          );
+        state.isUpdating = false;
+      }
+    );
+    builder.addCase(
+      deleteBeforeProjectToPortifolio.pending,
+      (state, action) => {
+        state.isUpdating = true;
+      }
+    );
+    builder.addCase(
+      deleteBeforeProjectToPortifolio.rejected,
+      (state, action) => {
+        state.isUpdating = false;
+      }
+    );
 
     builder.addCase(addAfterProjectToPortfolio.fulfilled, (state, action) => {
       state.currentProject.afterPictures.push(action.payload.data);
       state.isUpdating = false;
-    })
+    });
     builder.addCase(addAfterProjectToPortfolio.pending, (state, action) => {
       state.isUpdating = true;
-    })
+    });
     builder.addCase(addAfterProjectToPortfolio.rejected, (state, action) => {
       state.isUpdating = false;
-    })
+    });
 
-    builder.addCase(deleteAfterProjectToPortifolio.fulfilled, (state, action) => {
-      state.currentProject.afterPictures = state.currentProject.afterPictures.filter(
-        (picture) => picture._id !== action.payload.data._id
-      );
-      state.isUpdating = false;
-    })
+    builder.addCase(
+      deleteAfterProjectToPortifolio.fulfilled,
+      (state, action) => {
+        state.currentProject.afterPictures =
+          state.currentProject.afterPictures.filter(
+            (picture) => picture._id !== action.payload.data._id
+          );
+        state.isUpdating = false;
+      }
+    );
     builder.addCase(deleteAfterProjectToPortifolio.pending, (state, action) => {
       state.isUpdating = true;
-    })
-    builder.addCase(deleteAfterProjectToPortifolio.rejected, (state, action) => {
-      state.isUpdating = false;
-    })
-
-
- 
+    });
+    builder.addCase(
+      deleteAfterProjectToPortifolio.rejected,
+      (state, action) => {
+        state.isUpdating = false;
+      }
+    );
 
     //get designer pending projects
     builder.addCase(getDesignerPendingProjects.fulfilled, (state, action) => {
@@ -254,6 +263,10 @@ const projectSlice = createSlice({
     });
     builder.addCase(getClientCompletedProjects.rejected, (state, action) => {
       state.isLoading = false;
+    });
+    // on accept back to normal state
+    builder.addCase(acceptProjectByClient.fulfilled, (state, action) => {
+      state.currentProject = null;
     });
   },
 });

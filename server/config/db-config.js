@@ -1,8 +1,8 @@
-import chalk from "chalk"; //light weight logger
+import chalk from "chalk"; //light weight for logs coloring
 import mongoose from "mongoose";
 
 //we can also more explicitly pass the connection string by combining url and password but this is fine
-const DB_URI = process.env.MONGO_URL
+const DB_URI = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/navora";
 
 const connectDB = async () => {
   try {

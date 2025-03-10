@@ -16,18 +16,17 @@ const DesignerApplicationProcess = () => {
         <div className="p-2 sm:p-4">
           <div className="flex items-center">
             <Palette className="w-6 h-6 sm:w-8 sm:h-8 text-violet-600" />
-            <h1 className="text-2xl sm:text-3xl p-2 font-bold bg-gradient-to-r from-green-600 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl  p-2 font-bold bg-gradient-to-r from-green-600 to-indigo-600 bg-clip-text text-transparent">
               Designer Position
             </h1>
           </div>
 
-          {/* about */}
-          <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 mt-4 border border-violet-100">
-            <p className="text-base sm:text-lg text-gray-700 leading-relaxed italic">
-              Shape the future of design with us. We're seeking creative minds who
+          <div className="bg-white/50 backdrop-blur-sm  p-3 sm:p-4 mt-1 border border-violet-100">
+            <p className=" font-montserrat  text-sm text-gray-700 leading-relaxed italic">
+             ** Shape the future of design with us. We're seeking creative minds who
               can transform ideas into stunning visuals. Join our global design
               community and work on exciting projects while maintaining your
-              creative freedom.
+              creative freedom.**
             </p>
           </div>
 
@@ -56,7 +55,6 @@ const DesignerApplicationProcess = () => {
             </div>
           </div>
 
-          {/* benifits */}
           <div className="mt-4 sm:mt-6">
             <h2 className="text-lg sm:text-xl font-semibold text-gray-800 flex items-center gap-2">
               <Briefcase className="w-5 h-5 text-violet-500" />
@@ -121,7 +119,6 @@ const DesignerApplicationProcess = () => {
             </div>
           </div>
 
-          {/* requirements */}
           <div className="mt-4 sm:mt-6">
             <h2 className="text-lg sm:text-xl font-semibold text-gray-800 flex items-center gap-2">
               <Shield className="w-5 h-5 text-violet-500" />

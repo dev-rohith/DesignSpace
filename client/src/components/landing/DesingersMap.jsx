@@ -23,8 +23,6 @@ const DesignersMap = ({ locations }) => {
     if (zoom > 1) setZoom(zoom - 1);
   };
 
-  console.log(locations)
-
   return (
     <div className="w-xl md:max-w-2xl  h-80 relative ring-3 ring-offset-3 ring-gray-400 border-2 border-violet-500 overflow-hidden shadow-md">
       <div className="absolute right-4 bottom-4 z-10 flex flex-col gap-2">
@@ -69,19 +67,22 @@ const DesignersMap = ({ locations }) => {
                   geography={geo}
                   style={{
                     default: {
-                      fill: geo.properties.name === "India" ? "#438526" : "#dffae0",
+                      fill:
+                        geo.properties.name === "India" ? "#60aa41" : "#dffae0",
                       stroke: "#1E3A8A",
                       strokeWidth: 0.5,
                       outline: "none",
                     },
                     hover: {
-                      fill: geo.properties.name === "India" ? "#6d28d9" : "#c4b5fd",
+                      fill:
+                        geo.properties.name === "India" ? "#6d28d9" : "#c4b5fd",
                       stroke: "#ffffff",
                       strokeWidth: 0.5,
                       outline: "none",
                     },
                     pressed: {
-                      fill: geo.properties.name === "India" ? "#5b21b6" : "#ddd6fe",
+                      fill:
+                        geo.properties.name === "India" ? "#5b21b6" : "#ddd6fe",
                       stroke: "#ffffff",
                       strokeWidth: 0.5,
                       outline: "none",
@@ -100,35 +101,31 @@ const DesignersMap = ({ locations }) => {
                 marker.location.coordinates[0],
               ]}
             >
-              <g transform="translate(-8, -8)">
+              <g transform="translate(-8, -8)" className="group">
                 <circle
-                  r={5}
+                  r={6}
                   fill="#8b5cf6"
                   stroke="#ffffff"
-                  strokeWidth={2}
-                  className="cursor-pointer hover:fill-violet-700 transition-colors"
+                  strokeWidth={1}
+                  className="cursor-pointer group-hover:fill-violet-700 transition-colors"
                 />
-                <circle
-                  r={2}
-                  fill="#ffffff"
-                  className="cursor-pointer"
-                />
+                <text
+                  textAnchor="middle"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  y={-8}
+                  style={{
+                    fontFamily: "system-ui",
+                    fill: "#0a070e",
+                    fontSize: "6px",
+                    fontWeight: "600",
+                    stroke: "#ffffff",
+                    strokeWidth: 0.4,
+                    paintOrder: "stroke",
+                  }}
+                >
+                  {marker.address.city}
+                </text>
               </g>
-              <text
-                textAnchor="middle"
-                y={-16}
-                style={{
-                  fontFamily: "system-ui",
-                  fill: "#4c1d95",
-                  fontSize: "10px",
-                  fontWeight: "600",
-                  stroke: "#ffffff",
-                  strokeWidth: 0.4,
-                  paintOrder: "stroke",
-                }}
-              >
-                {marker.address.city}
-              </text>
             </Marker>
           ))}
         </ZoomableGroup>

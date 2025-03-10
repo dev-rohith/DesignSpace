@@ -3,7 +3,6 @@ import SidebarItem from "../common/SidebarItem";
 import { Link } from "react-router-dom";
 import { SidebarProvider } from "../../context/SidebarProvider";
 import {
-  BadgeIndianRupee,
   ChartArea,
   CircleCheckBig,
   ClipboardList,

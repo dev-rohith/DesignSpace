@@ -6,6 +6,7 @@ import {
   DollarSign,
   Languages,
   Layout,
+  MapPin,
   Palette,
   User,
 } from "lucide-react";
@@ -112,13 +113,18 @@ const DesignerProfileBody = ({
           className="px-4 py-2 bg-transparent border-b border-violet-200 focus:border-violet-500 outline-none transition-colors disabled:opacity-70"
         />
       </div>
-
+     <div>
+     <div className="flex items-center mb-6 py-1 rounded-4xl justify-center bg-gradient-to-r from-violet-500 via-purple-600 to-pink-500 ">
+      <MapPin className="w-4 h-4 mr-1 text-white" />
+      <h2 className="text-lg font-semibold text-gray-50">Address Details</h2>
+    </div>
       <AddressSection
         address={formData.address}
         handleInputChange={handleInputChange}
         isEditing={isEditing}
         error={errors.address}
-      />
+        />
+        </div>
     </div>
   );
 };

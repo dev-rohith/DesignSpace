@@ -31,38 +31,51 @@ const PortfolioGallery = ({ data }) => {
     }
   };
 
+  if(!data.length > 0) return (
+    <div className="bg-gradient-to-b from-gray-50 to-white">
+      <div className="container mx-auto px-4  pt-6">
+        <h5 className="text-2xl md:text-3xl font-bold ml-2 underline underline-offset-3  decoration-pink-400 mb-5 text-gray-800">
+          <span className="bg-clip-text font-raleway text-transparent bg-gradient-to-r from-violet-500 to-indigo-400">
+            Featured Designers :
+          </span>
+        </h5>
+        <p className="text-gray-500">No designers found.</p>
+      </div>
+    </div>
+  )
+
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white">
-      <div className="container mx-auto px-4 pb-10 pt-6">
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-indigo-600">
-            Featured Designers
+      <div className="container mx-auto px-4  pt-6">
+        <h5 className="text-2xl md:text-3xl font-bold ml-2 underline underline-offset-3  decoration-pink-400 mb-5 text-gray-800">
+          <span className="bg-clip-text font-raleway text-transparent bg-gradient-to-r from-violet-500 to-indigo-400">
+            Featured Designers :
           </span>
-        </h1>
+        </h5>
 
         <div className="space-y-16">
           {data.map((designer) => (
             <div key={designer._id} className="border-b border-gray-200 pb-12">
               {/* designer */}
-              <div className="flex items-center gap-4 mb-8">
+              <div className="flex items-center gap-3 md:gap-6 ml-2 ">
                 <div className="relative">
                   <img
                     src={designer.user.profilePicture}
                     alt={`${designer.user.firstName} ${designer.user.lastName}`}
-                    className="w-8 h-8 md:w-18 md:h-18 rounded-full p-1 object-cover  shadow-fuchsia-500/50 shadow-md hover:shadow-lg transition-shadow duration-300"
+                    className="w-10 h-10 md:w-15 md:h-15 rounded-full md:rounded-lg p-1 md:p-0 object-cover  shadow-fuchsia-500/50 shadow-md hover:shadow-lg transition-shadow duration-300"
                   />
                 </div>
-                <div>
-                  <h2 className="font-bold md:text-lg  text-gray-800 first-letter:uppercase">
+                <div >
+                  <h2 className="font-bold md:text-lg  text-gray-800 border-b font-sansita first-letter:uppercase">
                     {designer.user.firstName} {designer.user.lastName}
                   </h2>
-                  <p className="text-gray-600 font-medium text-xs md:text-sm">
-                    {designer.portfolio.length} Projects
+                  <p className="text-gray-600 font-medium text-xs mt-2 font-raleway md:text-sm">
+                    Top <b>{designer.portfolio.length}</b> Projects
                   </p>
                 </div>
               </div>
 
-              {/* Portfolio */}
+              {/*portfolio */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                 {designer.portfolio.map((item) => (
                   <div
@@ -70,7 +83,7 @@ const PortfolioGallery = ({ data }) => {
                     className="bg-white overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100"
                   >
                     {item.images.length > 0 && (
-                      <div className="relative h-48 overflow-hidden group">
+                      <div className="relative h-48 overflow-hidden group ">
                         <img
                           src={item.images[0].url}
                           alt={item.title}
@@ -92,15 +105,15 @@ const PortfolioGallery = ({ data }) => {
                       </div>
                     )}
 
-                    <div className="p-5">
-                      <h3 className="text-lg font-bold text-gray-800 mb-2">
+                    <div className="pt-4 px-4">
+                      <h3 className="text-lg font-raleway font-bold text-gray-800 mb-2 first-letter:uppercase">
                         {item.title}
                       </h3>
-                      <p className="text-gray-600 mb-4 line-clamp-2">
+                      <p className="text-gray-600 text-sm -mt-2 h-14 line-clamp-3">
                         {item.description}
                       </p>
 
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-2 mb-4 ">
                         {item.tags &&
                           item.tags.map((tag, index) => (
                             <span
@@ -150,8 +163,8 @@ const PortfolioGallery = ({ data }) => {
           ))}
         </div>
       </div>
-
-      {selectedImages && (
+       {/* image modal */}
+      {selectedImages && (   
         <ImagesModal
           prevImage={prevImage}
           nextImage={nextImage}

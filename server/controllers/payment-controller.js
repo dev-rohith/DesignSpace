@@ -1,4 +1,6 @@
 import razorpayInstance from "../config/razorpay-config.js";
+import { redisClient } from "../config/redis-config.js";
+import ChatRoom from "../models/chatRoom-model.js";
 import Pricing from "../models/pricing-modal.js";
 import User from "../models/user-model.js";
 import AppError from "../utils/app-error-util.js";
@@ -70,7 +72,12 @@ paymentCrl.verifyPayment = async (req, res) => {
       user.subscription.lastPaymentDate = Date.now();
       user.subscription.expiryDate = Date.now() + 365 * 24 * 60 * 60 * 1000;
     }
-    await user.save();
+    
+    await redisClient.del(`subscription:${userId}`);  // deleting cached subscription
+
+    await user.save();    //incase payment fails making sure it should hadled currently informing user for the type of actions to take.
+    
+    await ChatRoom.updateMany({client: user._id}, {isFreeTrial: false})  //this may be optional for better user experience
 
     return res.status(200).json({
       message: "Payment verified",

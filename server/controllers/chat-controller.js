@@ -4,9 +4,9 @@ import Media from "../models/media-model.js";
 import { redisClient } from "../config/redis-config.js";
 import User from "../models/user-model.js";
 import AppError from "../utils/app-error-util.js";
-import QueryHelper from "../utils/query-helper.js";
 import CloudinaryService from "../services/cloudinary-service.js";
 import fs from "fs";
+import QueryHelper from "../utils/query-helper.js";
 
 const chatCtrl = {};
 
@@ -74,12 +74,12 @@ chatCtrl.sendMessage = async (req, res) => {
         return next(new AppError("You have used all free messages", 403));
       }
 
-      // Decrementing free chats
+      // decrementing free chats
       await User.findByIdAndUpdate(senderId, {
         $inc: { freeChatRemaining: -1 },
       });
 
-      // redisClient cache
+      // caching
       const cachedSubscription = await redisClient.get(
         `subscription:${senderId}`
       );
@@ -136,10 +136,12 @@ chatCtrl.sendMessage = async (req, res) => {
       $inc: { messageCount: 1 },
     });
 
-    try {
-      await fs.promises.unlink(req.file.path);
-    } catch (error) {
-      console.error("Error while deleting the file:", error.message);
+    if (req.file) {
+      try {
+        await fs.promises.unlink(req.file.path);
+      } catch (error) {
+        console.error("Error while deleting the file:", error.message);
+      }
     }
 
     req.app
@@ -179,7 +181,7 @@ chatCtrl.getMessages = async (req, res) => {
     req.query
   )
     .filterAndSearch()
-    .sort("-createdAt")
+    .sort("readAt")
     .paginate(20);
 
   const finalQuery = features.query

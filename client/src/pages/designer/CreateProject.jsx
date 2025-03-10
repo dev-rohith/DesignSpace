@@ -236,6 +236,7 @@ const CreateProject = () => {
             </div>
 
             <div className="w-1/2 min-h-[calc(100vh-130px)] p-4 bg-white rounded-xl shadow-xs ">
+            <h5 className="mb-3 font-raleway p-4 text-lg text-gray-700 font-semibold">Enter the project address correctly only you can modify it before client acceptance :</h5>
               <AddressSection
                 address={formData.address}
                 error={errors.address}
@@ -245,7 +246,7 @@ const CreateProject = () => {
               <button
                 disabled={isUpdating}
                 type="submit"
-                className="py-2 px-4 mt-20  w-xl mx-9 bg-green-600  text-white rounded-xl font-medium transition-all hover:bg-green-700 focus:outline-none focus:ring-2  focus:ring-violet-500 focus:ring-offset-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-gray-500 uppercase"
+                className="py-2 px-4 mt-12  w-xl mx-9 bg-green-500  text-white  font-medium transition-all hover:bg-green-700 focus:outline-none focus:ring-2  focus:ring-violet-500 focus:ring-offset-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-gray-500 uppercase"
               >
                 {isUpdating ? (
                   <span className="flex items-center justify-center gap-2">

@@ -11,20 +11,12 @@ import { Token } from "../services/token-service.js";
 import AppError from "../utils/app-error-util.js";
 import catchErrors from "../utils/catch-async-util.js";
 import Email from "../utils/send-email.js";
-import {
-  deviceIdValidator,
-  forgotPasswordValidator,
-  loginValidator,
-  otpValidator,
-  resetPasswordValidator,
-  signupValidator,
-  userIdValidator,
-} from "../validators/auth-validation.js";
+import { deviceIdValidator, forgotPasswordValidator, loginValidator, otpValidator, 
+  resetPasswordValidator, signupValidator, userIdValidator} from "../validators/auth-validation.js";
 import Otp from "../models/otp-model.js";
 
 const authController = {};
 
-//---------------------------------------------------Normal-login-flow----------------------------------------------------//
 
 authController.signup = async (req, res, next) => {
   const { value, error } = signupValidator.validate(req.body);
@@ -160,7 +152,7 @@ authController.login = async (req, res, next) => {
   const cookie = req.cookies;
 
   const userAgent =
-    req.get["User-Agent"] ||
+    req.get["User-Agent"] ||  //on local this will take casre
     "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/537.36";
   const parser = new UAParser();
   const { device, os, browser } = parser.setUA(userAgent).getResult();
@@ -241,17 +233,14 @@ authController.forgotPassword = async (req, res, next) => {
   const { value, error } = forgotPasswordValidator.validate(req.body);
   if (error) return next(new AppError(error.details[0].message, 422));
   const { email } = value;
-  // 1) Get user based on POSTed email
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(new AppError("There is no user with email address.", 404));
   }
-
-  // 2) Generate the random reset token
+     //some functionality i done on schema methods for decreasing code for better quality encapsulating 
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  // 3) Send it to user's email
   try {
     const resetURL = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
@@ -335,7 +324,7 @@ authController.logoutDevice = async (req, res, next) => {
       await TokenManager.removeRefreshToken(user._id, deviceId);
 
       user.save();
-      // ---------         if we clear cookie here then user can only logout one device at a time
+      // --------- if we clear cookie here then user can only logout one device at a time
       res.status(200).json({
         message: "user device logouted successfully go back and login again",
       });

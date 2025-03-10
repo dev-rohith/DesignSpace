@@ -57,10 +57,8 @@ import PaymentSucess from "../pages/PaymentSucess";
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={<PrivateRoute exculde={true} allowedRoles={["client"]} />}
-      >
+      {/* To avoid the other roles to interact with this routes in sigle shot */}
+      <Route path="/" element={<PrivateRoute exculde={true} allowedRoles={["client"]} />}>
         <Route index element={<Landing />} />
         <Route path="/our-work" element={<OurWork />} />
         <Route path="/login" element={<Login />} />
@@ -70,15 +68,16 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Route>
-
-      <Route
-        path="/application-designer"
-        element={
-          <PrivateRoute>
-            <DesignerApplication />
-          </PrivateRoute>
+      
+      {/* It could be done in single layout wrapping inside but i done this way because if in case if i desided to change the layout for each individual */}
+      <Route path="/application-designer" 
+      element={
+        <PrivateRoute>
+        <DesignerApplication />
+        </PrivateRoute>
         }
       />
+
       <Route
         path="/application-associate"
         element={
@@ -163,6 +162,18 @@ const AppRoutes = () => {
         />
       </Route>
 
+      {/* Shared routes */}
+      <Route element={<PrivateRoute allowedRoles={["designer", "client"]} />}>
+        <Route path="project/:project_id" element={<ProjectDetails />} />
+      </Route>
+      <Route
+        element={<PrivateRoute allowedRoles={["designer", "associate"]} />}
+      >
+        <Route element={<InternalSpaceLayout />}>
+          <Route path="task/:task_id" element={<TaskDetails />} />
+        </Route>
+      </Route>
+
       {/* Admin Routes */}
       <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
         <Route path="/admin" element={<InternalSpaceLayout />}>
@@ -185,21 +196,11 @@ const AppRoutes = () => {
         </Route>
       </Route>
 
-      <Route element={<PrivateRoute allowedRoles={["designer", "client"]} />}>
-        <Route path="project/:project_id" element={<ProjectDetails />} />
-      </Route>
-      <Route
-        element={<PrivateRoute allowedRoles={["designer", "associate"]} />}
-      >
-        <Route element={<InternalSpaceLayout />}>
-          <Route path="task/:task_id" element={<TaskDetails />} />
-        </Route>
-      </Route>
-
       {/* Designer Routes */}
       <Route element={<PrivateRoute allowedRoles={["designer"]} />}>
         <Route path="/designer" element={<InternalSpaceLayout />}>
-          <Route index element={<DesignerDashboard />} />
+          <Route index element={<DesignerProfile />} />
+          {/* <Route 'dashboard' element={<DesignerDashboard />} /> */}
           <Route path="profile" element={<DesignerProfile />} />
           <Route path="portfolio" element={<DesignerPortfolio />} />
           <Route path="create-project" element={<CreateProject />} />
@@ -232,7 +233,8 @@ const AppRoutes = () => {
       {/* Assocaite Routes */}
       <Route element={<PrivateRoute allowedRoles={["associate"]} />}>
         <Route path="/associate" element={<InternalSpaceLayout />}>
-          <Route index element={<AssociateDashboard />} />
+          {/* <Route index element={<AssociateDashboard />} /> */}
+          <Route index element={<AssociateProfile />} />
           <Route path="profile" element={<AssociateProfile />} />
           <Route path="live-tasks" element={<LiveTasks />} />
           <Route path="running-tasks" element={<RunningTasks />} />

@@ -10,7 +10,6 @@ export const onPayment = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      console.log(error.response.data.message);
       return rejectWithValue(error.response.data.message);
     }
   }

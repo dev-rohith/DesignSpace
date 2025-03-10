@@ -6,7 +6,7 @@ const About = () => {
       </div>
 
       <div className="w-full flex justify-around  pt-17 pb-26  bg-gray-50">
-        <div className=" w-full">
+        <div className=" w-full hidden md:block">
           <div className="relative h-full ml-20 ">
             <img
               src="https://res.cloudinary.com/dlbyxcswi/image/upload/f_auto,q_auto/v1/product_uploads/bowpqtmfqss3u3nuxay9"

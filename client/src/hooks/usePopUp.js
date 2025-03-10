@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-const usePopUp = () => {
+const usePopUp = () => {   //I preffer use the custom hooks if the operation is repeating 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const dropdownRef = useRef(null);
 

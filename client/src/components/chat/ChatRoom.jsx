@@ -7,6 +7,7 @@ import {
   addNewMessage,
   setPeerUser,
   setPeerUserStatus,
+  updateChatView,
 } from "../../features/slices/chatSlice";
 import toast from "react-hot-toast";
 import ChatHeader from "./ChatHeader";
@@ -16,20 +17,13 @@ import Spinner from "../common/Spinner";
 import ErrorState from "../common/placeholders/ErrorState";
 
 const ChatRoom = () => {
-  const {
-    chatRooms,
-    chatRoomId,
-    messages,
-    isLoadingMessages,
-    messagesError,
-    peerUser,
-  } = useSelector((store) => store.chat);
+  const { chatRooms, chatRoomId, messages, messagesError, peerUser } =
+    useSelector((store) => store.chat);
   const { user } = useSelector((store) => store.auth);
-  const { socket, joinRoom, leaveRoom, sendTyping } = useSocket();
+  const { socket, joinRoom, leaveRoom, sendTyping, sendViewed } = useSocket();
 
-  const [page, setPage] = useState(1);
   const [peerTyping, setPeerTyping] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const page = messages.page || 1;
 
   const typingTimeoutRef = useRef(null);
 
@@ -44,6 +38,7 @@ const ChatRoom = () => {
         socket.on("new_message", handleNewMessage);
         socket.on("typing", handleTypingIndicator);
         socket.on("user_status", handleUserStatus);
+        socket.on("update_read", handleViewMessages);
       }
     }
 
@@ -54,6 +49,7 @@ const ChatRoom = () => {
           socket.off("new_message", handleNewMessage);
           socket.off("typing", handleTypingIndicator);
           socket.off("user_status", handleUserStatus);
+          socket.on("update_read", handleViewMessages);
         }
         dispatch(setPeerUser(null));
       }
@@ -64,6 +60,7 @@ const ChatRoom = () => {
     const fetchMessages = async () => {
       const actionResut = await dispatch(getMessages({ chatRoomId, page }));
       if (getMessages.rejected.match(actionResut)) {
+        console.log(actionResut.payload);
         toast.error(actionResut.payload.message);
       }
       const currentRoom = chatRooms.find((room) => room._id === chatRoomId);
@@ -73,13 +70,16 @@ const ChatRoom = () => {
       }
       const peer =
         user.role === "client" ? currentRoom.designer : currentRoom.client;
-      dispatch(setPeerUser(peer));
+       dispatch(setPeerUser(peer));
+       sendViewed(chatRoomId);
     };
     if (chatRoomId) {
-      fetchMessages();
+       fetchMessages();
     }
-  }, [chatRoomId, page, user._id]);
+    
 
+  }, [chatRoomId, page, user._id, chatRooms, dispatch, sendViewed]); //important dependencies here
+  //  console.log(chatRoomId)
   const handleSendMessage = async (content, file) => {
     if (!content && file) content = "";
     if (!content && !file) return;
@@ -93,6 +93,7 @@ const ChatRoom = () => {
       sendMessage({ chatRoomId, data: fromData })
     );
     if (sendMessage.rejected.match(actionResult)) {
+      console.log(actionResult.payload);
       toast.error(actionResult.payload.message);
     }
   };
@@ -112,6 +113,7 @@ const ChatRoom = () => {
   };
 
   const handleNewMessage = async (data) => {
+    // console.log(data);
     dispatch(addNewMessage(data.message));
     setPeerTyping(false);
   };
@@ -127,8 +129,12 @@ const ChatRoom = () => {
     dispatch(setPeerUserStatus(data));
   };
 
-  if (isLoadingMessages && !peerUser && messages.length === 0)
-    return <Spinner />;
+   //only handling the double check we can also do the list notification it will be implemented in upcomming versions
+  const handleViewMessages = (data) => {
+     dispatch(updateChatView(data))
+  };
+
+  if (!peerUser && messages.length === 0) return <Spinner />;
 
   if (messagesError) return <ErrorState error={messagesError} />;
 
@@ -137,16 +143,6 @@ const ChatRoom = () => {
       <ChatHeader peerUser={peerUser} />
 
       <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-        {/* {hasMore && (
-          <button
-            // onClick={loadMoreMessages}
-            className="w-full py-2 text-sm text-gray-500 hover:text-gray-700"
-            disabled={loading}
-          >
-            {loading ? "Loading more..." : "Load earlier messages"}
-          </button>
-        )} */}
-
         <MessageList
           messages={messages.data}
           currentUserId={user._id}

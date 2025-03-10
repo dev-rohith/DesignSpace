@@ -19,12 +19,12 @@ designerProfileCtrl.getDesingerProfile = async (req, res, next) => {
     .select(req.query.select || "-location -portfolio")
     .lean();
   res.json(desingerProfile);
-}
+};
 
 designerProfileCtrl.getAllDesingers = async (req, res, next) => {
   const features = new QueryHelper(DesignerProfile, req.query)
     .filterAndSearch()
-    .sort()
+    .sort("-createdAt")
     .paginate(16);
 
   const finalQuery = features.query
@@ -40,7 +40,7 @@ designerProfileCtrl.getAllDesingers = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
 
   res.json({ page, perPage, totalPages, total, data: desingers });
-}
+};
 
 designerProfileCtrl.getAllPortfolios = async (req, res, next) => {
   const portifolios = await DesignerProfile.find({
@@ -54,7 +54,7 @@ designerProfileCtrl.getAllPortfolios = async (req, res, next) => {
     .lean();
 
   res.json(portifolios);
-}
+};
 
 //////////////////////////--private--/////////////////////////////////
 
@@ -83,7 +83,7 @@ designerProfileCtrl.createMyProfile = async (req, res, next) => {
     .lean();
 
   res.json(createdDesignerProfile);
-}
+};
 
 designerProfileCtrl.getMyProfile = async (req, res, next) => {
   const myProfile = await DesignerProfile.findOne({
@@ -93,7 +93,7 @@ designerProfileCtrl.getMyProfile = async (req, res, next) => {
     .lean();
   if (!myProfile) return next(new AppError("Profile not found", 404));
   res.json(myProfile);
-}
+};
 
 designerProfileCtrl.getMyPortfolio = async (req, res, next) => {
   const portifolio = await DesignerProfile.findOne({ user: req.user.userId })
@@ -101,7 +101,7 @@ designerProfileCtrl.getMyPortfolio = async (req, res, next) => {
     .lean();
   if (!portifolio) return next(new AppError("Profile not found", 404));
   res.json(portifolio);
-}
+};
 
 designerProfileCtrl.editMyProfile = async (req, res, next) => {
   const { address } = req.body;
@@ -129,7 +129,7 @@ designerProfileCtrl.editMyProfile = async (req, res, next) => {
   }
 
   res.json({ message: "Profile updated successfully", data: updatedProfile });
-}
+};
 
 designerProfileCtrl.addItemToPortfolio = async (req, res, next) => {
   const { title, description } = req.body;
@@ -184,87 +184,83 @@ designerProfileCtrl.addItemToPortfolio = async (req, res, next) => {
     message: "Portfolio item added successfully",
     data: addedItem,
   });
-}
+};
 
-designerProfileCtrl.deleteItemFromPortfolio = 
-  async (req, res, next) => {
-    const { item_id } = req.params;
-    const userProfile = await DesignerProfile.findOneAndUpdate(
-      { user: req.user.userId },
-      { $pull: { portfolio: { _id: item_id } } }
-    );
-    const deletedItem = userProfile.portfolio.find(
-      (item) => `${item._id}` === item_id
-    );
+designerProfileCtrl.deleteItemFromPortfolio = async (req, res, next) => {
+  const { item_id } = req.params;
+  const userProfile = await DesignerProfile.findOneAndUpdate(
+    { user: req.user.userId },
+    { $pull: { portfolio: { _id: item_id } } }
+  );
+  const deletedItem = userProfile.portfolio.find(
+    (item) => `${item._id}` === item_id
+  );
 
-    const removeItemsPromises = deletedItem.images.map((image) => {
-      return CloudinaryService.deleteFile(image.public_id, "image");
+  const removeItemsPromises = deletedItem.images.map((image) => {
+    return CloudinaryService.deleteFile(image.public_id, "image");
+  });
+
+  await Promise.all(removeItemsPromises);
+
+  res.json({
+    message: "item deleted successfully",
+    data: deletedItem,
+  });
+};
+
+designerProfileCtrl.editItemFromPortfolio = async (req, res, next) => {
+  const { item_id } = req.params;
+  const { title, description } = req.body;
+
+  const newPortfolioItem = {
+    title,
+    description,
+    date: new Date(),
+  };
+
+  const designer = await DesignerProfile.findOne({
+    user: req.user.userId,
+  });
+
+  if (req.files) {
+    const fileUploadPromises = req.files.map((file) => {
+      return CloudinaryService.uploadFile(file);
     });
-
-    await Promise.all(removeItemsPromises);
-
-    res.json({
-      message: "item deleted successfully",
-      data: deletedItem,
-    });
-  }
-
-designerProfileCtrl.editItemFromPortfolio = 
-  async (req, res, next) => {
-    const { item_id } = req.params;
-    const { title, description } = req.body;
-
-    const newPortfolioItem = {
-      title,
-      description,
-      date: new Date(),
-    };
-
-    const designer = await DesignerProfile.findOne({
-      user: req.user.userId,
-    });
-
-    if (req.files) {
-      const fileUploadPromises = req.files.map((file) => {
-        return CloudinaryService.uploadFile(file);
-      });
-      const uploadResults = await Promise.all(fileUploadPromises);
-      try {
-        await Promise.all(
-          req.files.map((file) => fs.promises.unlink(file.path))
-        );
-      } catch (unlinkError) {
-        console.error("Error while deleting the file:", unlinkError.message);
-      }
-
-      const uploads = uploadResults.map((upload) => {
-        return {
-          url: upload.secure_url,
-          public_id: upload.public_id,
-        };
-      });
-
-      if (uploads.length > 0) {
-        newPortfolioItem.images = uploads;
-
-        const targetItem = designer.portfolio.find((element) => {
-          return `${element._id}` === item_id;
-        });
-        const removePreviousImages = targetItem.images.map((image) => {
-          CloudinaryService.deleteFile(image.public_id, "image");
-        });
-        await Promise.allSettled(removePreviousImages);
-      }
+    const uploadResults = await Promise.all(fileUploadPromises);
+    try {
+      await Promise.all(req.files.map((file) => fs.promises.unlink(file.path)));
+    } catch (unlinkError) {
+      console.error("Error while deleting the file:", unlinkError.message);
     }
 
-    designer.portfolio = designer.portfolio.map((element) =>
-      `${element._id}` === item_id ? newPortfolioItem : element
-    );
+    const uploads = uploadResults.map((upload) => {
+      return {
+        url: upload.secure_url,
+        public_id: upload.public_id,
+      };
+    });
 
-    designer.save();
+    if (uploads.length > 0) {
+      newPortfolioItem.images = uploads;
 
-    const editedItem = designer.portfolio[designer.portfolio.length - 1];
-    res.status(200).json({ message: "updated sucessfully", data: editedItem });
+      const targetItem = designer.portfolio.find((element) => {
+        return `${element._id}` === item_id;
+      });
+      const removePreviousImages = targetItem.images.map((image) => {
+        CloudinaryService.deleteFile(image.public_id, "image");
+      });
+      await Promise.allSettled(removePreviousImages);
+    }
   }
+
+  designer.portfolio = designer.portfolio.map((element) =>
+    `${element._id}` === item_id ? newPortfolioItem : element
+  );
+
+  designer.save();
+
+  const editedItem = designer.portfolio[designer.portfolio.length - 1];
+  res.status(200).json({ message: "updated sucessfully", data: editedItem });
+};
 
 export default designerProfileCtrl;

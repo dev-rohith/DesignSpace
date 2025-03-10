@@ -25,7 +25,7 @@ export function SidebarProvider({ children }) {
               className={`overflow-hidden transition-all ${
                 expanded ? "w-32" : "w-0"
               }`}
-              alt=""
+              alt="company logo"
             />
           </Link>
           <button

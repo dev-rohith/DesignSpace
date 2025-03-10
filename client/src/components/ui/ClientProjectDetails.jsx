@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   MapPin,
-  DollarSign,
   Clock,
   Target,
   CreditCard,
@@ -10,14 +9,18 @@ import {
   IndianRupeeIcon,
 } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { getProjectDetails, reviewProject } from "../../features/actions/projectActions";
-import { useParams } from "react-router-dom";
+import {
+  acceptProjectByClient,
+  getProjectDetails,
+  reviewProject,
+} from "../../features/actions/projectActions";
+import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import ErrorState from "../common/placeholders/ErrorState";
 import ProjectImages from "./clientProjectDetails/ProjectImages";
 import LocationMap from "../common/LocationMap";
 import ClientRatingAndReview from "./clientProjectDetails/ClientRatingAndReview";
-import {format, formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 
 const ProjectDetailsView = () => {
   const [projectDetails, setProjectDetails] = useState(null);
@@ -26,6 +29,7 @@ const ProjectDetailsView = () => {
 
   const { project_id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -52,19 +56,30 @@ const ProjectDetailsView = () => {
   }, [projectDetails]);
 
   const handleReviewSubmit = async (data) => {
-    console.log(data)
     const actionResult = await dispatch(
-       reviewProject({
-         id: projectDetails._id,
-         formData : data,
-       })
-     );
-     if (reviewProject.fulfilled.match(actionResult)) {
-       toast.success(actionResult.payload.message);
-     } else if (reviewProject.rejected.match(actionResult)) {
-       toast.error(actionResult.payload.message);
-     }
- }
+      reviewProject({
+        id: projectDetails._id,
+        formData: data,
+      })
+    );
+    if (reviewProject.fulfilled.match(actionResult)) {
+      toast.success(actionResult.payload.message);
+    } else if (reviewProject.rejected.match(actionResult)) {
+      toast.error(actionResult.payload.message);
+    }
+  };
+
+  const handleProjectAccept = async (data) => {
+    const actionResult = await dispatch(
+      acceptProjectByClient(projectDetails._id)
+    );
+    if (acceptProjectByClient.fulfilled.match(actionResult)) {
+      navigate("/design-space/inprogress-projects");
+      toast.success(actionResult.payload.message);
+    } else if (acceptProjectByClient.rejected.match(actionResult)) {
+      toast.error(actionResult.payload.message);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -143,8 +158,11 @@ const ProjectDetailsView = () => {
           </div>
 
           {status === "pending" && !isPaid && (
-            <button className="mt-6 w-full sm:w-auto px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg flex items-center justify-center gap-2">
-              <CreditCard className="w-5 h-5" /> Make Payment
+            <button
+            onClick={handleProjectAccept}
+             className="mt-6 w-full sm:w-auto px-6 py-2 font-raleway bg-green-600 hover:bg-green-700 focus:-translate-1 text-white font-medium  flex items-center justify-center gap-2 cursor-pointer">
+              <CreditCard onClick={handleProjectAccept} className="w-5 h-5" />{" "}
+              Accept the Project To Start
             </button>
           )}
         </div>
@@ -153,8 +171,10 @@ const ProjectDetailsView = () => {
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold  mb-2">Project Progress</h3>
-                
+                <h3 className="text-xl font-semibold  mb-2">
+                  Project Progress
+                </h3>
+
                 <div
                   className={`text-2xl font-bold ${
                     completion_percentage === 100
@@ -175,12 +195,15 @@ const ProjectDetailsView = () => {
                     )}%`,
                   }}
                 />
-                <div className="text-xs ml-1 font-medium text-gray-500">Progress updated on: {updatedAt
-                                    ? `${format(
-                                        new Date(updatedAt),
-                                        "PPpp"
-                                      )} (${formatDistanceToNow(new Date(updatedAt))} ago)`
-                                    : "N/A"}</div>
+                <div className="text-xs ml-1 font-medium text-gray-500">
+                  Progress updated on:{" "}
+                  {updatedAt
+                    ? `${format(
+                        new Date(updatedAt),
+                        "PPpp"
+                      )} (${formatDistanceToNow(new Date(updatedAt))} ago)`
+                    : "N/A"}
+                </div>
               </div>
             </div>
             <ProjectImages
@@ -188,7 +211,10 @@ const ProjectDetailsView = () => {
               beforePictures={beforePictures}
             />
             {status === "review" && (
-                <ClientRatingAndReview designerPicture={projectDetails.designer?.profilePicture} handleReviewSubmit={handleReviewSubmit} />
+              <ClientRatingAndReview
+                designerPicture={projectDetails.designer?.profilePicture}
+                handleReviewSubmit={handleReviewSubmit}
+              />
             )}
           </div>
           <div className="space-y-6">
@@ -233,7 +259,7 @@ const ProjectDetailsView = () => {
             </div>
             {location.length > 0 && (
               <div className="bg-white rounded-lg shadow p-2  ">
-                <LocationMap locations={location}  />
+                <LocationMap locations={location} />
               </div>
             )}
           </div>

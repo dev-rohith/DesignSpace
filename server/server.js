@@ -21,11 +21,11 @@ const server = app.listen(port, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST"],
   },
 });
 
 initSocket(io);
 
-app.set("io", io);
+app.set("io", io);   //so that i will use it on controller by using app.get('io')

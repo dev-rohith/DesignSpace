@@ -8,6 +8,7 @@ const MessageInput = ({ onSend, onTyping }) => {
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
   const fileInputRef = useRef(null);
+  const sendInputRef = useRef(null);
 
   const handleChange = (e) => {
     setMessage(e.target.value);
@@ -47,6 +48,7 @@ const MessageInput = ({ onSend, onTyping }) => {
       clearFile();
       onTyping(false);
       setMessage("");
+      sendInputRef.current.focus()
     } catch (error) {
       console.error("Send error:", error);
     }
@@ -103,11 +105,12 @@ const MessageInput = ({ onSend, onTyping }) => {
           ref={fileInputRef}
           onChange={handleFileChange}
           className="hidden"
-          accept="image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4"
+          accept="image/jpeg,image/png,audio/mp3,application/pdf,video/mp4"
         />
 
         <input
           type="text"
+          ref={sendInputRef}
           value={message}
           onChange={handleChange}
           placeholder="Type a message..."

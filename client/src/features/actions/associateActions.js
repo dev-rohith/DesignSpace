@@ -7,7 +7,6 @@ export const getMyProfileAssociate = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.get("associate/profile");
-            console.log(response.data)
             return response.data;
         } catch (error) {
             if (error.status === 404) {
@@ -23,7 +22,6 @@ export const createMyProfileAssociate = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post("associate/profile",data);
-            console.log(response.data)
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);

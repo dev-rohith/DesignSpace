@@ -1,9 +1,8 @@
 import React, { createContext, useContext, useState } from 'react';
 
-// Create Context
 const FormContext = createContext();
 
-// Form Provider Component
+// Form Provider 
 export const MultiFormProvider = ({ children, steps, formComponents }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({});
@@ -44,7 +43,7 @@ export const MultiFormProvider = ({ children, steps, formComponents }) => {
   );
 };
 
-// Custom Hook
+// Custom Hook for simplifing
 export const useForm = () => {
   const context = useContext(FormContext);
   if (!context) {

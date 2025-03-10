@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
-import { useSelector } from 'react-redux';
+import { createContext, useContext, useEffect, useState } from "react";
+import { io } from "socket.io-client";
+import { useSelector } from "react-redux";
 
 const SocketContext = createContext();
 
@@ -10,30 +10,29 @@ export const SocketProvider = ({ children }) => {
 
   const { user, isLoggedIn } = useSelector((state) => state.auth);
 
-
   useEffect(() => {
-    let socketInstance = null;  
+    let socketInstance = null;
 
     if (isLoggedIn && user) {
       socketInstance = io(import.meta.env.VITE_SOCKET_URL, {
-        auth: { userId: user._id },
-        transports: ['websocket'],
-        withCredentials: true
+        auth: { userId: user._id },  //not for auth anyway i am doing in front end and back end middleware for getting using id to do tuff
+        transports: ["websocket"],  //making it uses websocket for communication we can also add polling if needed 
+        withCredentials: true,
       });
 
-      socketInstance.on('connect', () => {
-        console.log('Socket connected');
+      socketInstance.on("connect", () => {
+        console.log("Socket connected");
         setConnected(true);
-        socketInstance.emit('update_status', true);
+        socketInstance.emit("update_status", true);
       });
 
-      socketInstance.on('disconnect', () => {
-        console.log('Socket disconnected');
+      socketInstance.on("disconnect", () => {
+        console.log("Socket disconnected");
         setConnected(false);
       });
 
-      socketInstance.on('connect_error', (error) => {
-        console.error('Socket connection error:', error);
+      socketInstance.on("connect_error", (error) => {
+        console.error("Socket connection error:", error);
         setConnected(false);
       });
 
@@ -42,7 +41,7 @@ export const SocketProvider = ({ children }) => {
 
     return () => {
       if (socketInstance) {
-        socketInstance.emit('update_status', false);
+        socketInstance.emit("update_status", false);
         socketInstance.disconnect();
       }
     };
@@ -50,28 +49,35 @@ export const SocketProvider = ({ children }) => {
 
   const joinRoom = (roomId) => {
     if (socket && roomId) {
-      socket.emit('join_room', roomId);
+      socket.emit("join_room", roomId);
     }
   };
 
   const leaveRoom = (roomId) => {
     if (socket && roomId) {
-      socket.emit('leave_room', roomId);
+      socket.emit("leave_room", roomId);
     }
   };
 
   const sendTyping = (roomId, isTyping) => {
     if (socket && roomId) {
-      socket.emit(isTyping ? 'typing' : 'stop_typing', { roomId });
+      socket.emit(isTyping ? "typing" : "stop_typing", { roomId });
+    }
+  };
+
+  const sendViewed = (roomId) => {
+    if (socket && roomId) {
+      socket.emit("update_read", roomId);
     }
   };
 
   return (
-    <SocketContext.Provider value={{ socket, connected, joinRoom, leaveRoom, sendTyping }}>
+    <SocketContext.Provider
+      value={{ socket, connected, joinRoom, leaveRoom, sendTyping, sendViewed }}
+    >
       {children}
     </SocketContext.Provider>
   );
 };
-
 
 export const useSocket = () => useContext(SocketContext);

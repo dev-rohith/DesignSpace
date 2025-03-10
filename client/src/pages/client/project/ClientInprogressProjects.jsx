@@ -29,7 +29,6 @@ const PendingProjects = () => {
     })();
   }, [searchParams]);
 
-  console.log(projects);
 
   const handleViewProject = (id) => {
     if (!id) {
