@@ -19,10 +19,10 @@ const DesignerCard = ({
   designStyle,
   aboutMe,
   experience,
-  handleChat
+  handleChat,
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm max-h-70 p-1 group  border hover:shadow-md hover:-translate-0.5 hover:bg-fuchsia hover:border hover:border-violet-500  border-violet-50">
+    <div className="bg-white rounded-lg shadow-sm h-80 overflow-hidden p-1 group  border hover:shadow-md hover:-translate-0.5 hover:bg-fuchsia hover:border hover:border-violet-500  border-violet-50">
       <div className="flex flex-col space-y-2">
         <div className="bg-gradient-to-r from-pink-50/90 to-fuchsia-50/8  group-hover:border group-hover:border-violet-500 group-hover:bg-white rounded-lg p-2.5">
           <div className="flex items-start gap-3">
@@ -115,15 +115,16 @@ const DesignerCard = ({
           </div>
         </div>
       </div>
-      <div className="flex justify-between mt-1">
-        <p className="text-xs text-gray-600 pl-0.5 pb-0.5 leading-tight h-15 line-clamp-4 first-letter:uppercase">{aboutMe}</p>
-        <div className="flex justify-end mb-4">
-          <button 
+      <div className="flex justify-between items-start mt-1">
+        <p className="text-xs text-gray-600 pl-0.5 pb-0.5  leading-tight h-15 line-clamp-4 first-letter:uppercase">
+          {aboutMe}
+        </p>
+        <button
           onClick={() => handleChat(user._id)}
-          className="italic ml-2 self-end h-max bg-gradient-to-tl from-violet-600 to-fuchsia-600 text-white px-6 mr-4 ring-2 ring-gray-400 rounded hover:scale-105 cursor-pointer">
-            chat
-          </button>
-        </div>
+          className="italic mr-2  self-start bg-gradient-to-tl from-violet-600 to-fuchsia-600 text-white px-6 ring-2 ring-gray-400 rounded hover:scale-105 cursor-pointer"
+        >
+          Chat
+        </button>
       </div>
     </div>
   );
