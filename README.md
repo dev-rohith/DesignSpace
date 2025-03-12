@@ -16,7 +16,7 @@ It provides a space where designers can showcase their portfolios, communicate w
 - **Authentication**: JWT & Token rotation with help of cookies
 - **State Management**: Redux Toolkit & Context API
 - **Real-time Features**: Socket.io for instant messaging
-- **Deployment**: Render (Backend), Vercel (Frontend)
+- **Deployment**: Aws(ssl, sub domain, pm2, secure connection, strict cors) (Backend), Vercel (Frontend with domain), dns on point.
 
 ## ✨ Features
 - ✅ Interactive Chat System (with media sharing & real-time updates)
@@ -51,7 +51,7 @@ https://www.designspace.live/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/repo-name.git
+git clone you will find it on green code button
 
 # Navigate to the project folder
 cd repo-name
@@ -60,7 +60,7 @@ cd repo-name
 npm install
 
 # Run the application
-npm run dev
+npm run dev (for both frontend and backend as development run)
 ```
 
 ## 🛡️ Security Considerations
